@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb860b8a549c1844aa5184fb9c7db5d1, type: 3}
+  m_Name: GenesisSettings
+  m_EditorClassIdentifier: 
+  _keyValuePairs:
+  - key: Genesis.SearchPaths
+    value: Library\ScriptAssemblies
+  - key: Genesis.Plugins
+    value: Genesis.Editor.Plugins
+  - key: Genesis.PreProcessors
+    value: JCMG.Genesis.Editor.Plugins.ValidateProjectPathPreProcessor, JCMG.Genesis.Editor.Plugins.WarnIfCompilationErrorsPreProcessor,
+      JCMG.Genesis.Editor.Plugins.TargetFrameworkProfilePreProcessor
+  - key: Genesis.DataProviders
+    value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryDataProvider
+  - key: Genesis.CodeGenerators
+    value: JCMG.Genesis.Editor.Plugins.CodeGenerators.ScriptableFactoryCodeGenerator
+  - key: Genesis.PostProcessors
+    value: JCMG.Genesis.Editor.Plugins.AddFileHeaderPostProcessor, JCMG.Genesis.Editor.Plugins.CleanTargetDirectoryPostProcessor,
+      JCMG.Genesis.Editor.Plugins.MergeFilesPostProcessor, JCMG.Genesis.Editor.Plugins.NewLinePostProcessor,
+      JCMG.Genesis.Editor.Plugins.UpdateCSharpProjectPostProcessor, JCMG.Genesis.Editor.Plugins.WriteToDiskPostProcessor,
+      JCMG.Genesis.Editor.Plugins.DebugLogPostProcessor
+  - key: Genesis.LineEndings
+    value: Unix
+  - key: Genesis.CSharp.ProjectPath
+    value: Assembly-CSharp.csproj
+  - key: Genesis.TargetDirectory
+    value: Assets/ExampleContent/Scripts/Generated
