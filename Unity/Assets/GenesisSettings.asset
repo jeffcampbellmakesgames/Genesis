@@ -23,7 +23,7 @@ MonoBehaviour:
   - key: Genesis.DataProviders
     value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryDataProvider
   - key: Genesis.CodeGenerators
-    value: JCMG.Genesis.Editor.Plugins.CodeGenerators.ScriptableFactoryCodeGenerator
+    value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryCodeGenerator
   - key: Genesis.PostProcessors
     value: JCMG.Genesis.Editor.Plugins.AddFileHeaderPostProcessor, JCMG.Genesis.Editor.Plugins.CleanTargetDirectoryPostProcessor,
       JCMG.Genesis.Editor.Plugins.MergeFilesPostProcessor, JCMG.Genesis.Editor.Plugins.NewLinePostProcessor,
