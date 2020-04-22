@@ -31,9 +31,9 @@ using UnityEditor;
 namespace JCMG.Genesis.Editor
 {
 	/// <summary>
-	/// A preferences drawer for core general settings for Genesis
+	/// A settings drawer for core general settings for Genesis
 	/// </summary>
-	internal sealed class CodeGeneratorPreferencesDrawer : AbstractPreferencesDrawer
+	internal sealed class CodeGeneratorSettingsDrawer : AbstractSettingsDrawer
 	{
 		public override string Title => TITLE;
 
@@ -51,7 +51,7 @@ namespace JCMG.Genesis.Editor
 		private string[] _availablePreProcessorTypes;
 		private ICodeGenerationPlugin[] _instances;
 
-		public CodeGeneratorPreferencesDrawer()
+		public CodeGeneratorSettingsDrawer()
 		{
 			_codeGeneratorConfig = new CodeGeneratorConfig();
 		}

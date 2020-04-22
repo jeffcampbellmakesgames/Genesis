@@ -28,7 +28,7 @@ using UnityEditor;
 
 namespace JCMG.Genesis.Editor.Plugins
 {
-	internal sealed class WarnIfCompilationErrorsPreProcessor : IPreProcessor
+	internal sealed class WarnIfCompilingPreProcessor : IPreProcessor
 	{
 		public string Name => NAME;
 
@@ -40,23 +40,10 @@ namespace JCMG.Genesis.Editor.Plugins
 
 		public void PreProcess()
 		{
-			string str = null;
 			if (EditorApplication.isCompiling)
 			{
-				str = "Cannot generate because Unity is still compiling. Please wait...";
-			}
-
-			var assembly = typeof(UnityEditor.Editor).Assembly;
-			var type = assembly.GetType("UnityEditorInternal.LogEntries") ?? assembly.GetType("UnityEditor.LogEntries");
-			type.GetMethod("Clear").Invoke(new object(), null);
-			if ((int)type.GetMethod("GetCount").Invoke(new object(), null) != 0)
-			{
-				str = "There are compilation errors! Please fix all errors first.";
-			}
-
-			if (str != null)
-			{
-				throw new Exception(str + "\n\nYou can disable this warning by removing '" + Name + "' from the Pre Processors.");
+				throw new Exception("Cannot generate because Unity is still compiling. Please wait...\n\n" +
+				                    "You can disable this warning by removing '" + Name + "' from the Pre Processors.");
 			}
 		}
 	}

@@ -76,7 +76,6 @@ namespace JCMG.Genesis.Editor
 			}
 		}
 
-
 		// UI
 		private const string PREFERENCES_TITLE_PATH = "Preferences/Genesis";
 		private const string PROJECT_TITLE_PATH = "Project/Genesis";
@@ -106,8 +105,6 @@ namespace JCMG.Genesis.Editor
 			"gen"
 		};
 
-		private static readonly IPreferencesDrawer[] PREFERENCES_DRAWERS;
-
 		// User Editor Preferences
 		private const string LOG_LEVEL_PREF = "Genesis.LogLevel";
 		private const string ENABLE_DRY_RUN_PREF = "Genesis.DryRun";
@@ -115,35 +112,9 @@ namespace JCMG.Genesis.Editor
 		private const LogLevel DEFAULT_LOG_LEVEL = LogLevel.Info;
 		private const bool ENABLE_DRY_RUN_DEFAULT = false;
 
-		private static Vector2 _scrollViewPosition;
-
 		// Cacheable Prefs
 		private static bool? _executeDryRun;
 		private static LogLevel? _logLevel;
-
-		static GenesisPreferences()
-		{
-			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<IPreferencesDrawer>().ToArray();
-
-			var settings = GenesisSettings.GetOrCreateSettings();
-
-			foreach (var preferencesDrawer in PREFERENCES_DRAWERS)
-			{
-				preferencesDrawer.Initialize(settings);
-			}
-
-			EditorUtility.SetDirty(settings);
-		}
-
-		[SettingsProvider]
-		private static SettingsProvider CreateProjectPreferenceSettingsProvider()
-		{
-			return new SettingsProvider(PROJECT_TITLE_PATH, SettingsScope.Project)
-			{
-				guiHandler = DrawProjectGUI,
-				keywords = KEYWORDS
-			};
-		}
 
 		[SettingsProvider]
 		private static SettingsProvider CreatePersonalPreferenceSettingsProvider()
@@ -153,35 +124,6 @@ namespace JCMG.Genesis.Editor
 				guiHandler = DrawPersonalPrefsGUI,
 				keywords = KEYWORDS
 			};
-		}
-
-		private static void DrawProjectGUI(string value = "")
-		{
-			EditorGUILayout.LabelField(PROJECT_REFERENCES_HEADER, EditorStyles.boldLabel);
-
-			_scrollViewPosition = EditorGUILayout.BeginScrollView(_scrollViewPosition);
-			using (var scope = new EditorGUI.ChangeCheckScope())
-			{
-				var settings = GenesisSettings.GetOrCreateSettings();
-				for (var i = 0; i < PREFERENCES_DRAWERS.Length; i++)
-				{
-					var preferencesDrawer = PREFERENCES_DRAWERS[i];
-					preferencesDrawer.DrawHeader(settings);
-					preferencesDrawer.DrawContent(settings);
-
-					if (i < PREFERENCES_DRAWERS.Length - 1)
-					{
-						EditorGUILayout.Space();
-					}
-				}
-
-				if (scope.changed)
-				{
-					EditorUtility.SetDirty(settings);
-				}
-			}
-
-			EditorGUILayout.EndScrollView();
 		}
 
 		private static void DrawPersonalPrefsGUI(string value = "")

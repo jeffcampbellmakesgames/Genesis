@@ -39,8 +39,15 @@ namespace JCMG.Genesis.Editor
 		public const string CODE_GENERATION_SUCCESS = LOG_PREFIX + "Code generation successful!";
 		public const string CODE_GENERATION_FAILURE = LOG_PREFIX + "Code generation failed, process exited with code {0}.";
 		public const string CODE_GENERATION_UPDATE = LOG_PREFIX + "[{0}] {1}";
-		public const string CODE_GENERATION_UPDATE_ERROR = LOG_PREFIX + "An unexpected error occured during code generation: {0}";
-		public const string DOTNET_COMMAND_EXECUTION_FORMAT = LOG_PREFIX + "{0} {1}";
+		public const string CODE_GENERATION_UPDATE_ERROR = LOG_PREFIX + "An unexpected error occured during code generation.";
+
+		public const string COULD_NOT_FIND_DEFAULT_SETTINGS_SET =
+			"A single default Settings could not be found. Please update your GenesisSettings asset to mark one " +
+			"Settings as Default.";
+
+		public const string MULTIPLE_DEFAULT_SETTINGS_SET =
+			"Multiple Settings have been marked as default. Please update your GenesisSettings asset to mark only" +
+			" one Settings as default.";
 
 		// Dotnet Core and Genesis Assemblies
 		public const string DOTNET_EXE = "dotnet";
@@ -54,5 +61,6 @@ namespace JCMG.Genesis.Editor
 
 		// Search filters
 		public const string WILDCARD_ALL_DLLS = "*.dll";
+
 	}
 }

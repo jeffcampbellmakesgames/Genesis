@@ -81,5 +81,28 @@ namespace JCMG.Genesis.Editor
 
 			return asset != null;
 		}
+
+		/// <summary>
+		/// Returns all assets of type <typeparamref name="T"/> found in the Project.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static T[] GetAssets<T>()
+			where T : UnityEngine.Object
+		{
+			var assets = new List<T>();
+			var assetGUIDs = AssetDatabase.FindAssets(string.Format(FILTER_TYPE_SEARCH, typeof(T).Name));
+			for (var i = 0; i < assetGUIDs.Length; i++)
+			{
+				var assetPath = AssetDatabase.GUIDToAssetPath(assetGUIDs[i]);
+				var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(T)) as T;
+				if (asset != null)
+				{
+					assets.Add(asset);
+				}
+			}
+
+			return assets.ToArray();
+		}
 	}
 }

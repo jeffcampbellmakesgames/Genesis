@@ -27,9 +27,9 @@ namespace JCMG.Genesis.Editor
 {
 	/// <summary>
 	/// Represents methods for an EditorGUI Drawer for a set of properties on a <see cref="GenesisSettings"/> instance.
-	/// Enables custom drawing of zero or more settings that will appear on the `Project Settings\Genesis` UI.
+	/// Enables custom drawing of zero or more settings that will appear on the <see cref="GenesisSettings"/> inspector.
 	/// </summary>
-	public interface IPreferencesDrawer
+	public interface ISettingsDrawer
 	{
 		/// <summary>
 		/// The display title for this drawer

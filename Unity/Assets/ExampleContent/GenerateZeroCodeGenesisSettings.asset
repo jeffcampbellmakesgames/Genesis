@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb860b8a549c1844aa5184fb9c7db5d1, type: 3}
-  m_Name: GenesisSettings
+  m_Name: GenerateZeroCodeGenesisSettings
   m_EditorClassIdentifier: 
   _keyValuePairs:
   - key: Genesis.SearchPaths
@@ -18,17 +18,13 @@ MonoBehaviour:
   - key: Genesis.Plugins
     value: Genesis.Editor.Plugins
   - key: Genesis.PreProcessors
-    value: JCMG.Genesis.Editor.Plugins.ValidateProjectPathPreProcessor, JCMG.Genesis.Editor.Plugins.TargetFrameworkProfilePreProcessor,
-      JCMG.Genesis.Editor.Plugins.WarnIfCompilationErrorsPreProcessor
+    value: JCMG.Genesis.Editor.Plugins.WarnIfCompilationErrorsPreProcessor
   - key: Genesis.DataProviders
-    value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryDataProvider
+    value: 
   - key: Genesis.CodeGenerators
-    value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryCodeGenerator
+    value: 
   - key: Genesis.PostProcessors
-    value: JCMG.Genesis.Editor.Plugins.AddFileHeaderPostProcessor, JCMG.Genesis.Editor.Plugins.CleanTargetDirectoryPostProcessor,
-      JCMG.Genesis.Editor.Plugins.MergeFilesPostProcessor, JCMG.Genesis.Editor.Plugins.NewLinePostProcessor,
-      JCMG.Genesis.Editor.Plugins.UpdateCSharpProjectPostProcessor, JCMG.Genesis.Editor.Plugins.WriteToDiskPostProcessor,
-      JCMG.Genesis.Editor.Plugins.DebugLogPostProcessor
+    value: 
   - key: Genesis.LineEndings
     value: Unix
   - key: Genesis.CSharp.ProjectPath

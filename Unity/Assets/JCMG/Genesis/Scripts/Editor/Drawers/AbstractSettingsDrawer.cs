@@ -29,7 +29,7 @@ namespace JCMG.Genesis.Editor
 	/// A base class for an EditorGUI Drawer for a set of properties on a <see cref="GenesisSettings"/> instance.
 	/// Enables custom drawing of zero or more settings that will appear on the `Project Settings\Genesis` UI.
 	/// </summary>
-	public abstract class AbstractPreferencesDrawer : IPreferencesDrawer
+	public abstract class AbstractSettingsDrawer : ISettingsDrawer
 	{
 		protected bool _drawContent = true;
 

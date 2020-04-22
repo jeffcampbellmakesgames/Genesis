@@ -28,8 +28,11 @@ using UnityEngine;
 
 namespace JCMG.Genesis.Editor.Plugins
 {
-	internal sealed class DebugLogPostProcessor : IPostProcessor
+	internal sealed class DebugLogPostProcessor : IPostProcessor,
+												  IConfigurable
 	{
+		private GenesisSettings _settings;
+
 		public string Name => NAME;
 
 		public int Priority
@@ -45,11 +48,14 @@ namespace JCMG.Genesis.Editor.Plugins
 		private const string NAME = "Debug.Log Generated Files to Console Window";
 
 		// Logs
+		private const string LOG_TOTAL_RESULTS = "Generated {0} Files based on [{1}] configuration.";
 		private const string LOG_HEADER = "Plugin to Files Generated Report\n\n";
 		private const string LOG_FORMAT = "Plugin {0} => {1}\n";
 
 		public CodeGenFile[] PostProcess(CodeGenFile[] files)
 		{
+			Debug.LogFormat(LOG_TOTAL_RESULTS, files.Length, _settings.name);
+
 			if (files.Length > 0)
 			{
 				var aggregatedFileLogs = LOG_HEADER + files.Aggregate(
@@ -60,6 +66,15 @@ namespace JCMG.Genesis.Editor.Plugins
 			}
 
 			return files;
+		}
+
+		/// <summary>
+		/// Configures preferences
+		/// </summary>
+		/// <param name="settings"></param>
+		public void Configure(GenesisSettings settings)
+		{
+			_settings = settings;
 		}
 	}
 }

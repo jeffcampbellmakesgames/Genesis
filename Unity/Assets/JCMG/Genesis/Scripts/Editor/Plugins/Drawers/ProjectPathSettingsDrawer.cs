@@ -25,20 +25,20 @@ THE SOFTWARE.
 
 namespace JCMG.Genesis.Editor.Plugins
 {
-	internal sealed class NewLinePreferencesDrawer : AbstractPreferencesDrawer
+	internal sealed class ProjectPathSettingsDrawer : AbstractSettingsDrawer
 	{
 		/// <summary>
-		/// The display title for this drawer.
+		/// The display title for this drawer
 		/// </summary>
 		public override string Title => TITLE;
 
-		private LineEndingConfig _lineEndingConfig;
+		private readonly ProjectPathConfig _projectPathConfig;
 
-		private const string TITLE = "Convert Line Endings";
+		private const string TITLE = "CSharp Project Path";
 
-		public NewLinePreferencesDrawer()
+		public ProjectPathSettingsDrawer()
 		{
-			_lineEndingConfig = new LineEndingConfig();
+			_projectPathConfig = new ProjectPathConfig();
 		}
 
 		/// <summary>
@@ -47,14 +47,12 @@ namespace JCMG.Genesis.Editor.Plugins
 		/// <param name="settings"></param>
 		public override void Initialize(GenesisSettings settings)
 		{
-			_lineEndingConfig.Configure(settings);
+			_projectPathConfig.Configure(settings);
 		}
 
 		protected override void DrawContentBody(GenesisSettings settings)
 		{
-			_lineEndingConfig.LineEnding = (LineEndingMode)UnityEditor.EditorGUILayout.EnumPopup(
-				typeof(LineEndingMode).Name,
-				_lineEndingConfig.LineEnding);
+			_projectPathConfig.ProjectPath = UnityEditor.EditorGUILayout.TextField(_projectPathConfig.ProjectPath);
 		}
 	}
 }

@@ -34,6 +34,7 @@ namespace JCMG.Genesis.Editor
 	/// <summary>
 	/// Contains a serialized settings lookup for Genesis Code Gen
 	/// </summary>
+	[CreateAssetMenu(fileName = "NewGenesisSettings", menuName = "Genesis/GenesisSettings")]
 	public sealed class GenesisSettings : ScriptableObject
 	{
 		/// <summary>
@@ -48,14 +49,22 @@ namespace JCMG.Genesis.Editor
 
 		private List<KVP> KeyValuePairs
 		{
-			get { return _keyValuePairs; }
+			get
+			{
+				if (_keyValuePairs == null)
+				{
+					_keyValuePairs = new List<KVP>();
+				}
+
+				return _keyValuePairs;
+			}
 			set { _keyValuePairs = value; }
 		}
 
 		[SerializeField]
+		#pragma warning disable 649
 		private List<KVP> _keyValuePairs;
-
-		public const string DEFAULT_SETTINGS_PATH = "Assets/GenesisSettings.asset";
+		#pragma warning restore 649
 
 		/// <summary>
 		/// Gets the value for existing KeyValuePair with <paramref name="key"/>. If none is found a new KeyValuePair
@@ -68,15 +77,15 @@ namespace JCMG.Genesis.Editor
 		{
 			Assert.IsFalse(string.IsNullOrEmpty(key));
 
-			for (var i = 0; i < _keyValuePairs.Count; i++)
+			for (var i = 0; i < KeyValuePairs.Count; i++)
 			{
-				if (_keyValuePairs[i].key == key)
+				if (KeyValuePairs[i].key == key)
 				{
-					return _keyValuePairs[i].value;
+					return KeyValuePairs[i].value;
 				}
 			}
 
-			_keyValuePairs.Add(new KVP
+			KeyValuePairs.Add(new KVP
 			{
 				key = key,
 				value = defaultValue
@@ -95,11 +104,11 @@ namespace JCMG.Genesis.Editor
 		public void SetValue(string key, string value)
 		{
 			var foundValue = false;
-			for (var i = 0; i < _keyValuePairs.Count; i++)
+			for (var i = 0; i < KeyValuePairs.Count; i++)
 			{
-				if (_keyValuePairs[i].key == key)
+				if (KeyValuePairs[i].key == key)
 				{
-					_keyValuePairs[i].value = value;
+					KeyValuePairs[i].value = value;
 					foundValue = true;
 					break;
 				}
@@ -107,7 +116,7 @@ namespace JCMG.Genesis.Editor
 
 			if (!foundValue)
 			{
-				_keyValuePairs.Add(
+				KeyValuePairs.Add(
 					new KVP
 					{
 						key = key, value = value
@@ -136,15 +145,15 @@ namespace JCMG.Genesis.Editor
 		/// <param name="value"></param>
 		public void SetIfNotPresent(string key, string value)
 		{
-			for (var i = 0; i < _keyValuePairs.Count; i++)
+			for (var i = 0; i < KeyValuePairs.Count; i++)
 			{
-				if (_keyValuePairs[i].key == key)
+				if (KeyValuePairs[i].key == key)
 				{
 					return;
 				}
 			}
 
-			_keyValuePairs.Add(
+			KeyValuePairs.Add(
 				new KVP
 				{
 					key = key, value = value
@@ -154,21 +163,12 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
-		/// Retrieves the first instance of a GenesisSettings instance that it can find.
+		/// Returns all <see cref="GenesisSettings"/> found in the Project.
 		/// </summary>
 		/// <returns></returns>
-		internal static GenesisSettings GetOrCreateSettings()
+		internal static GenesisSettings[] GetAllSettings()
 		{
-			if (!AssetDatabaseTools.TryGetSingleScriptableAsset<GenesisSettings>(out var settings))
-			{
-				settings = CreateInstance<GenesisSettings>();
-				settings.KeyValuePairs = new List<KVP>();
-
-				AssetDatabase.CreateAsset(settings, DEFAULT_SETTINGS_PATH);
-				AssetDatabase.SaveAssets();
-			}
-
-			return settings;
+			return AssetDatabaseTools.GetAssets<GenesisSettings>();
 		}
 	}
 }

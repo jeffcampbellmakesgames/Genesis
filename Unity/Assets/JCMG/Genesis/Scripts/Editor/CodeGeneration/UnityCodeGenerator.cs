@@ -41,52 +41,67 @@ namespace JCMG.Genesis.Editor
 		public static void Generate()
 		{
 			LOGGER.Info("Generating...");
-			var codeGenerator = CodeGeneratorTools.CodeGeneratorFromPreferences(GenesisSettings.GetOrCreateSettings());
-			var progressOffset = 0.0f;
-			codeGenerator.OnProgress += (title, info, progress) =>
-			{
-				if (!EditorUtility.DisplayCancelableProgressBar(title, info, progressOffset + progress / 2f))
-				{
-					return;
-				}
-
-				codeGenerator.Cancel();
-			};
-			CodeGenFile[] codeGenFileArray1;
-			CodeGenFile[] codeGenFileArray2;
+			var didSucceed = true;
 			try
 			{
-				codeGenFileArray1 = GenesisPreferences.ExecuteDryRun
-					? codeGenerator.DryRun()
-					: new CodeGenFile[0];
-				progressOffset = 0.5f;
-				codeGenFileArray2 = codeGenerator.Generate();
+				EditorApplication.LockReloadAssemblies();
+				AssetDatabase.StartAssetEditing();
+
+				var allSettings = GenesisSettings.GetAllSettings();
+				for (var i = 0; i < allSettings.Length; i++)
+				{
+					var settings = allSettings[i];
+					var codeGenerator = CodeGeneratorTools.CodeGeneratorFromPreferences(settings);
+					var progressOffset = 0.0f;
+					codeGenerator.OnProgress += (title, info, progress) =>
+					{
+						if (!EditorUtility.DisplayCancelableProgressBar(title, info, progressOffset + progress / 2f))
+						{
+							return;
+						}
+
+						codeGenerator.Cancel();
+					};
+
+					try
+					{
+						if(GenesisPreferences.ExecuteDryRun)
+						{
+							codeGenerator.DryRun();
+						}
+
+						progressOffset = 0.5f;
+						codeGenerator.Generate();
+					}
+					catch (Exception ex)
+					{
+						didSucceed = false;
+						EditorUtility.DisplayDialog("Error", ex.Message, "Ok");
+					}
+
+					EditorUtility.ClearProgressBar();
+				}
 			}
 			catch (Exception ex)
 			{
-				codeGenFileArray1 = new CodeGenFile[0];
-				codeGenFileArray2 = new CodeGenFile[0];
-				EditorUtility.DisplayDialog("Error", ex.Message, "Ok");
+				LOGGER.Error(ex, EditorConstants.CODE_GENERATION_UPDATE_ERROR);
+				didSucceed = false;
+			}
+			finally
+			{
+				AssetDatabase.StopAssetEditing();
+				EditorApplication.UnlockReloadAssemblies();
+				EditorUtility.ClearProgressBar();
 			}
 
-			EditorUtility.ClearProgressBar();
-			LOGGER.Info(
-				"Generated " +
-				codeGenFileArray2.Select(file => file.FileName).Distinct().Count() +
-				" files (" +
-				codeGenFileArray1.Select(file => file.FileContent.ToUnixLineEndings())
-					.Sum(
-						content => content.Split(
-								new char[1]
-								{
-									'\n'
-								},
-								StringSplitOptions.RemoveEmptyEntries)
-							.Length) +
-				" sloc, " +
-				codeGenFileArray2.Select(file => file.FileContent.ToUnixLineEndings())
-					.Sum(content => content.Split('\n').Length) +
-				" loc)");
+			if (didSucceed)
+			{
+				LOGGER.Info(EditorConstants.CODE_GENERATION_SUCCESS);
+			}
+			else
+			{
+				LOGGER.Warn(EditorConstants.CODE_GENERATION_FAILURE);
+			}
 
 			AssetDatabase.Refresh();
 		}

@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 namespace JCMG.Genesis.Editor.Plugins
 {
-	internal sealed class TargetDirectoryPreferencesDrawer : AbstractPreferencesDrawer
+	internal sealed class TargetDirectorySettingsDrawer : AbstractSettingsDrawer
 	{
 		/// <summary>
 		/// The display title for this drawer
@@ -36,7 +36,7 @@ namespace JCMG.Genesis.Editor.Plugins
 
 		private const string TITLE = "Output Directory";
 
-		public TargetDirectoryPreferencesDrawer()
+		public TargetDirectorySettingsDrawer()
 		{
 			_directoryConfig = new TargetDirectoryConfig();
 		}
