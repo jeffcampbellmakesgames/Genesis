@@ -31,7 +31,7 @@ There is an `.editorconfig` at the root of the repository that can be used by mo
 ## Naming and Formatting
 | Object Name | Notation | Example |
 | ----------- | -------- | ------- |
-| Namespaces | PascalCase | `JCMG.Library.Editor` |
+| Namespaces | PascalCase | `JCMG.Genesis.Editor` |
 | Classes | PascalCase | `SemVersion` |
 | Methods | PascalCase | `ParseVersion` |
 | Method arguments | camelCase | `oldValue` |
