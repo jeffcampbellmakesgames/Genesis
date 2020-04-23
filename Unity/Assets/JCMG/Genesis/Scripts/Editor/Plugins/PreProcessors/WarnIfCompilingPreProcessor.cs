@@ -36,7 +36,7 @@ namespace JCMG.Genesis.Editor.Plugins
 
 		public bool RunInDryMode => true;
 
-		private const string NAME = "Warn If Compilation Errors";
+		private const string NAME = "Warn If Compiling";
 
 		public void PreProcess()
 		{
