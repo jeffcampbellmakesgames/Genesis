@@ -18,8 +18,7 @@ MonoBehaviour:
   - key: Genesis.Plugins
     value: Genesis.Editor.Plugins
   - key: Genesis.PreProcessors
-    value: JCMG.Genesis.Editor.Plugins.ValidateProjectPathPreProcessor, JCMG.Genesis.Editor.Plugins.TargetFrameworkProfilePreProcessor,
-      JCMG.Genesis.Editor.Plugins.WarnIfCompilationErrorsPreProcessor
+    value: JCMG.Genesis.Editor.Plugins.WarnIfCompilingPreProcessor
   - key: Genesis.DataProviders
     value: JCMG.Genesis.Editor.Plugins.ScriptableFactoryDataProvider
   - key: Genesis.CodeGenerators
@@ -27,8 +26,7 @@ MonoBehaviour:
   - key: Genesis.PostProcessors
     value: JCMG.Genesis.Editor.Plugins.AddFileHeaderPostProcessor, JCMG.Genesis.Editor.Plugins.CleanTargetDirectoryPostProcessor,
       JCMG.Genesis.Editor.Plugins.MergeFilesPostProcessor, JCMG.Genesis.Editor.Plugins.NewLinePostProcessor,
-      JCMG.Genesis.Editor.Plugins.UpdateCSharpProjectPostProcessor, JCMG.Genesis.Editor.Plugins.WriteToDiskPostProcessor,
-      JCMG.Genesis.Editor.Plugins.DebugLogPostProcessor
+      JCMG.Genesis.Editor.Plugins.WriteToDiskPostProcessor, JCMG.Genesis.Editor.Plugins.DebugLogPostProcessor
   - key: Genesis.LineEndings
     value: Unix
   - key: Genesis.CSharp.ProjectPath

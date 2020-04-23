@@ -18,7 +18,7 @@ MonoBehaviour:
   - key: Genesis.Plugins
     value: Genesis.Editor.Plugins
   - key: Genesis.PreProcessors
-    value: JCMG.Genesis.Editor.Plugins.WarnIfCompilationErrorsPreProcessor
+    value: 
   - key: Genesis.DataProviders
     value: 
   - key: Genesis.CodeGenerators
