@@ -1,5 +1,6 @@
-<a href="https://openupm.com/packages/com.jeffcampbellmakesgames.genesis/"><img src="https://img.shields.io/npm/v/com.jeffcampbellmakesgames.Genesis?label=openupm&amp;registry_uri=https://package.openupm.com" /></a>
-<img alt="GitHub issues" src="https://img.shields.io/github/issues/jeffcampbellmakesgames/Genesis"><img alt="GitHub" src="https://img.shields.io/github/license/jeffcampbellmakesgames/Genesis?style=flat-square">[![Twitter Follow](https://img.shields.io/badge/twitter-%40stampyturtle-blue.svg?style=flat&label=Follow)](https://twitter.com/stampyturtle)
+<a href="https://openupm.com/packages/com.jeffcampbellmakesgames.genesis/"><img src="https://img.shields.io/npm/v/com.jeffcampbellmakesgames.genesis?label=openupm&amp;registry_uri=https://package.openupm.com" /></a>
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/jeffcampbellmakesgames/Genesis?style=flat-square">[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Twitter Follow](https://img.shields.io/badge/twitter-%40stampyturtle-blue.svg?style=flat&label=Follow)](https://twitter.com/stampyturtle)
 
 # Genesis
 
