@@ -24,7 +24,7 @@ Using the native Unity Package Manager introduced in 2017.2, you can add this li
 {
 	"dependencies": {
 		...
-		"com.jeffcampbellmakesgames.Genesis" : "https://github.com/jeffcampbellmakesgames/Genesis.git#release/stable",
+		"com.jeffcampbellmakesgames.genesis" : "https://github.com/jeffcampbellmakesgames/genesis.git#release/stable",
 		...
 	}
 }
