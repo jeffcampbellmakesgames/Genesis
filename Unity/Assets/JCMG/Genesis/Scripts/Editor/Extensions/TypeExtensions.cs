@@ -42,9 +42,10 @@ namespace JCMG.Genesis.Editor
 		/// <param name="type"></param>
 		public static bool ImplementsInterface<T>(this Type type)
 		{
-			Assert.IsTrue(type.IsInterface);
+			var interfaceType = typeof(T);
+			Assert.IsTrue(interfaceType.IsInterface);
 
-			return type.GetInterface(typeof(T).FullName) != null;
+			return type.GetInterface(interfaceType.FullName) != null;
 		}
 
 		/// <summary>
