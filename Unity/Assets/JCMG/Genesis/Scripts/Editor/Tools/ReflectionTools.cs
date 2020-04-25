@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using UnityEngine.Assertions;
 
 namespace JCMG.Genesis.Editor
 {
@@ -62,6 +63,32 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllDerivedInstancesOfType<T>(string[] whitelistOfAssemblies)
+			where T : class
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.IsSubclassOf(typeof(T))))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
 		/// Returns an IEnumerable of class instances of Types derived from T and decorated with TV.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -80,6 +107,34 @@ namespace JCMG.Genesis.Editor
 								  !myType.IsGenericType &&
 								  myType.IsSubclassOf(typeof(T)) &&
 								  myType.IsDefined(typeof(TV), true)))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T and decorated with TV.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TV"></typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllDerivedInstancesOfTypeWithAttribute<T, TV>(string[] whitelistOfAssemblies)
+			where T : class, new()
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.IsSubclassOf(typeof(T)) &&
+						          myType.IsDefined(typeof(TV), true)))
 				{
 					objects.Add((T)Activator.CreateInstance(type));
 				}
@@ -119,6 +174,34 @@ namespace JCMG.Genesis.Editor
 		/// Returns an IEnumerable of class instances of Type T that implement interface V
 		/// </summary>
 		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <typeparam name="TV">The Type a class must implement</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllInstancesOfTypeWithInterface<T, TV>(string[] whitelistOfAssemblies)
+			where T : class, new()
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          (myType.IsAssignableFrom(typeof(T)) || myType.IsSubclassOf(typeof(T))) &&
+						          myType.GetInterfaces().Contains(typeof(TV))))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Type T that implement interface V
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
 		/// <typeparam name="TV">The Attribute a class must have</typeparam>
 		/// <returns></returns>
 		public static IEnumerable<T> GetAllInstancesOfTypeWithAttribute<T, TV>()
@@ -134,6 +217,34 @@ namespace JCMG.Genesis.Editor
 								  !myType.IsGenericType &&
 								  (myType.IsAssignableFrom(typeof(T)) || myType.IsSubclassOf(typeof(T))) &&
 								  myType.IsDefined(typeof(TV), true)))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Type T that implement interface V
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <typeparam name="TV">The Attribute a class must have</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllInstancesOfTypeWithAttribute<T, TV>(string[] whitelistOfAssemblies)
+			where T : class, new()
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          (myType.IsAssignableFrom(typeof(T)) || myType.IsSubclassOf(typeof(T))) &&
+						          myType.IsDefined(typeof(TV), true)))
 				{
 					objects.Add((T)Activator.CreateInstance(type));
 				}
@@ -170,6 +281,34 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T that implement V.
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <typeparam name="TV">the Type a class must implement</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllDerivedInstancesOfTypeWithInterface<T, TV>(string[] whitelistOfAssemblies)
+			where T : class, new()
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.IsSubclassOf(typeof(T)) &&
+						          myType.GetInterfaces().Contains(typeof(TV))))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
 		/// Returns an IEnumerable of class instances of Types that implement V.
 		/// </summary>
 		/// <typeparam name="T">the Type a class must implement</typeparam>
@@ -178,6 +317,31 @@ namespace JCMG.Genesis.Editor
 		{
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.GetInterfaces().Contains(typeof(T))))
+				{
+					objects.Add((T)Activator.CreateInstance(type));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Types that implement V.
+		/// </summary>
+		/// <typeparam name="T">the Type a class must implement</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllImplementingInstancesOfInterface<T>(string[] whitelistOfAssemblies)
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
 				foreach (var type in assembly.GetTypes()
 					.Where(
@@ -260,6 +424,30 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns an IEnumerable of Types that implement <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">the Type a class must implement</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		public static IEnumerable<Type> GetAllImplementingTypesOfInterface<T>(string[] whitelistOfAssemblies)
+		{
+			var objects = new List<Type>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.GetInterfaces().Contains(typeof(T))))
+				{
+					objects.Add(type);
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
 		/// Returns an IEnumerable of class instances of Types derived from T that take arguments constructorArgs
 		/// </summary>
 		/// <typeparam name="T">The Type a class must derive from</typeparam>
@@ -286,6 +474,33 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T that take arguments constructorArgs
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <param name="constructorArgs"></param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetAllDerivedInstancesOfType<T>(string[] whitelistOfAssemblies, params object[] constructorArgs)
+			where T : class, new()
+		{
+			var objects = new List<T>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.IsSubclassOf(typeof(T))))
+				{
+					objects.Add((T)Activator.CreateInstance(type, constructorArgs));
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
 		/// Returns an IEnumerable of class instances of Types derived from T
 		/// </summary>
 		/// <typeparam name="T">The Type a class must derive from</typeparam>
@@ -300,6 +515,30 @@ namespace JCMG.Genesis.Editor
 					.Where(
 						myType => myType.IsClass &&
 								  myType.IsSubclassOf(typeof(T))))
+				{
+					objects.Add(type);
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<Type> GetAllDerivedTypesOfType<T>(string[] whitelistOfAssemblies)
+			where T : class
+		{
+			var objects = new List<Type>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          myType.IsSubclassOf(typeof(T))))
 				{
 					objects.Add(type);
 				}
@@ -336,6 +575,35 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from</typeparam>
+		/// <typeparam name="TV"></typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <param name="inherit"></param>
+		/// <returns></returns>
+		public static IEnumerable<Type> GetAllDerivedTypesOfTypeWithAttribute<T, TV>(string[] whitelistOfAssemblies, bool inherit = true)
+			where T : class
+			where TV : Attribute
+		{
+			var objects = new List<Type>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly
+					.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          myType.IsSubclassOf(typeof(T)) &&
+						          myType.IsDefined(typeof(TV), inherit)))
+				{
+					objects.Add(type);
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
 		/// Returns an IEnumerable of class instances of Types derived from T that implement V.
 		/// </summary>
 		/// <typeparam name="T">The Type a class must derive from</typeparam>
@@ -362,44 +630,56 @@ namespace JCMG.Genesis.Editor
 			return objects;
 		}
 
+		/// <summary>
+		/// Returns an IEnumerable of class instances of Types derived from T that implement V.
+		/// </summary>
+		/// <typeparam name="T">The Type a class must derive from. </typeparam>
+		/// <typeparam name="TV">the Type a class must implement. </typeparam>
+		/// <param name = "whitelistOfAssemblies">The array of assemblies types must belong to.</param>
+		/// <returns></returns>
+		public static IEnumerable<Type> GetAllDerivedTypesWithInterface<T, TV>(string[] whitelistOfAssemblies)
+			where T : class
+		{
+			var objects = new List<Type>();
+			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
+			{
+				foreach (var type in assembly.GetTypes()
+					.Where(
+						myType => myType.IsClass &&
+						          !myType.IsAbstract &&
+						          !myType.IsGenericType &&
+						          myType.IsSubclassOf(typeof(T)) &&
+						          myType.GetInterfaces().Contains(typeof(TV))))
+				{
+					objects.Add(type);
+				}
+			}
+
+			return objects;
+		}
+
+		/// <summary>
+		/// Returns an IEnumerable of all loaded <see cref="Assembly"/> instances in <see cref="AppDomain"/>
+		/// </summary>
+		/// <returns></returns>
 		public static IEnumerable<Assembly> GetAvailableAssemblies()
 		{
 			return AppDomain.CurrentDomain.GetAssemblies();
 		}
 
-		public static string ToEnumString<T>(T type)
+		/// <summary>
+		/// Returns an IEnumerable of all loaded <see cref="Assembly"/> instances in <see cref="AppDomain"/> where the
+		/// name of the <see cref="Assembly"/> has been specified in the <paramref name="whitelistOfAssemblies"/>.
+		/// </summary>
+		/// <param name = "whitelistOfAssemblies">
+		/// The array of assemblies that whitelist what assemblies are returned in the IEnumerable.
+		/// </param>
+		/// <returns></returns>
+		public static IEnumerable<Assembly> GetAvailableAssemblies(string[] whitelistOfAssemblies)
 		{
-			var enumType = typeof(T);
-			var name = Enum.GetName(enumType, type);
-			var enumMemberAttribute =
-				((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
-			return enumMemberAttribute.Value;
-		}
+			Assert.IsNotNull(whitelistOfAssemblies);
 
-		public static string GetRealTypeName(this Type t)
-		{
-			if (!t.IsGenericType)
-			{
-				return t.Name;
-			}
-
-			var sb = new StringBuilder();
-			sb.Append(t.Name.Substring(0, t.Name.IndexOf('`')));
-			sb.Append('<');
-			var appendComma = false;
-			foreach (var arg in t.GetGenericArguments())
-			{
-				if (appendComma)
-				{
-					sb.Append(',');
-				}
-
-				sb.Append(GetRealTypeName(arg));
-				appendComma = true;
-			}
-
-			sb.Append('>');
-			return sb.ToString();
+			return AppDomain.CurrentDomain.GetAssemblies().Where(x => whitelistOfAssemblies.Contains(x.GetName().Name));
 		}
 	}
 }
