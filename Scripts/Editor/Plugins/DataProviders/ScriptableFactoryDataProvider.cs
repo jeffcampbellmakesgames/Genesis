@@ -27,7 +27,8 @@ using System.Linq;
 
 namespace JCMG.Genesis.Editor.Plugins
 {
-	internal sealed class ScriptableFactoryDataProvider : IDataProvider
+	internal sealed class ScriptableFactoryDataProvider : IDataProvider,
+														  IConfigurable
 	{
 		/// <summary>
 		/// The name of the plugin.
@@ -45,6 +46,8 @@ namespace JCMG.Genesis.Editor.Plugins
 		/// </summary>
 		public bool RunInDryMode => true;
 
+		private AssembliesConfig _assembliesConfig;
+
 		private const string NAME = "Scriptable Factory Data";
 
 		/// <summary>
@@ -53,7 +56,12 @@ namespace JCMG.Genesis.Editor.Plugins
 		/// <returns></returns>
 		public CodeGeneratorData[] GetData()
 		{
-			var codeData = ReflectionTools.GetAvailableAssemblies()
+			// If we are only searching specific assemblies use that whitelist, otherwise get all loaded assemblies.
+			var assemblies = _assembliesConfig.DoUseWhitelistOfAssemblies
+				? ReflectionTools.GetAvailableAssemblies(_assembliesConfig.WhiteListedAssemblies)
+				: ReflectionTools.GetAvailableAssemblies();
+
+			var codeData = assemblies
 				.SelectMany(x => x.GetTypes())
 				.Where(
 					x => x.IsEnum &&
@@ -78,6 +86,15 @@ namespace JCMG.Genesis.Editor.Plugins
 				.ToArray();
 
 			return codeData;
+		}
+
+		/// <summary>
+		/// Configures preferences
+		/// </summary>
+		/// <param name="settings"></param>
+		public void Configure(GenesisSettings settings)
+		{
+			_assembliesConfig = settings.CreateAndConfigure<AssembliesConfig>();
 		}
 	}
 }

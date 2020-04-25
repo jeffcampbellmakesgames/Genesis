@@ -41,32 +41,31 @@ namespace JCMG.Genesis.Editor
 
 		private readonly CodeGeneratorConfig _codeGeneratorConfig;
 
-		private string[] _availableDataProviderNames;
-		private string[] _availableDataProviderTypes;
-		private string[] _availableGeneratorNames;
-		private string[] _availableGeneratorTypes;
-		private string[] _availablePostProcessorNames;
-		private string[] _availablePostProcessorTypes;
-		private string[] _availablePreProcessorNames;
-		private string[] _availablePreProcessorTypes;
-		private ICodeGenerationPlugin[] _instances;
+		private readonly string[] _availableDataProviderNames;
+		private readonly string[] _availableDataProviderTypes;
+		private readonly string[] _availableGeneratorNames;
+		private readonly string[] _availableGeneratorTypes;
+		private readonly string[] _availablePostProcessorNames;
+		private readonly string[] _availablePostProcessorTypes;
+		private readonly string[] _availablePreProcessorNames;
+		private readonly string[] _availablePreProcessorTypes;
 
 		public CodeGeneratorSettingsDrawer()
 		{
 			_codeGeneratorConfig = new CodeGeneratorConfig();
+
+			// Add per plugin interface type preferences.
+			var instances = CodeGeneratorTools.LoadFromPlugins();
+			SetTypesAndNames<IPreProcessor>(instances, out _availablePreProcessorTypes, out _availablePreProcessorNames);
+			SetTypesAndNames<IDataProvider>(instances, out _availableDataProviderTypes, out _availableDataProviderNames);
+			SetTypesAndNames<ICodeGenerator>(instances, out _availableGeneratorTypes, out _availableGeneratorNames);
+			SetTypesAndNames<IPostProcessor>(instances, out _availablePostProcessorTypes, out _availablePostProcessorNames);
 		}
 
 		public override void Initialize(GenesisSettings settings)
 		{
 			// Add default code gen preferences.
 			_codeGeneratorConfig.Configure(settings);
-
-			// Add per plugin interface type preferences.
-			_instances = CodeGeneratorTools.LoadFromPlugins();
-			SetTypesAndNames<IPreProcessor>(_instances, out _availablePreProcessorTypes, out _availablePreProcessorNames);
-			SetTypesAndNames<IDataProvider>(_instances, out _availableDataProviderTypes, out _availableDataProviderNames);
-			SetTypesAndNames<ICodeGenerator>(_instances, out _availableGeneratorTypes, out _availableGeneratorNames);
-			SetTypesAndNames<IPostProcessor>(_instances, out _availablePostProcessorTypes, out _availablePostProcessorNames);
 		}
 
 		protected override void DrawContentBody(GenesisSettings settings)

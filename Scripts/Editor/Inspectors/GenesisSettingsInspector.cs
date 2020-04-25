@@ -12,6 +12,7 @@ namespace JCMG.Genesis.Editor.Inspectors
 		{
 			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<ISettingsDrawer>().ToArray();
 		}
+
 		/// <summary>
 		///   <para>Implement this function to make a custom inspector.</para>
 		/// </summary>
