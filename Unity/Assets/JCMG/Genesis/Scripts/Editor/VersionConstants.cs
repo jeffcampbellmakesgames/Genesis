@@ -33,7 +33,7 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The version of this library in SemVer format.
 		/// </summary>
-		public const string VERSION = "1.1.0";
+		public const string VERSION = "1.1.1";
 
 		/// <summary>
 		/// The branch this library was created from.
