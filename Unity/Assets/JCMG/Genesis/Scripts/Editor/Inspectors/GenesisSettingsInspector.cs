@@ -10,7 +10,9 @@ namespace JCMG.Genesis.Editor.Inspectors
 
 		static GenesisSettingsInspector()
 		{
-			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<ISettingsDrawer>().ToArray();
+			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<ISettingsDrawer>()
+				.OrderBy(x => x.Order)
+				.ToArray();
 		}
 
 		/// <summary>

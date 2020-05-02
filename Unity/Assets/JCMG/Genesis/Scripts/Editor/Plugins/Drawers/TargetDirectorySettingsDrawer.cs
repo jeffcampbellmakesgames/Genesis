@@ -32,6 +32,12 @@ namespace JCMG.Genesis.Editor.Plugins
 		/// </summary>
 		public override string Title => TITLE;
 
+		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		public override int Order => 4;
+
 		private readonly TargetDirectoryConfig _directoryConfig;
 
 		private const string TITLE = "Output Directory";
