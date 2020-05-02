@@ -24,7 +24,7 @@ MonoBehaviour:
   - key: Genesis.CodeGenerators
     value: 
   - key: Genesis.PostProcessors
-    value: 
+    value: JCMG.Genesis.Editor.Plugins.DebugLogPostProcessor
   - key: Genesis.LineEndings
     value: Unix
   - key: Genesis.CSharp.ProjectPath

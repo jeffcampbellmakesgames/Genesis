@@ -23,8 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace JCMG.Genesis.Editor
 {
@@ -34,12 +36,15 @@ namespace JCMG.Genesis.Editor
 	internal static class MenuItems
 	{
 		// Menu item paths
-		private const string GENERATE_CODE_MENU_ITEM = "Tools/JCMG/Genesis/Generate #%g";
+		private const string GENERATE_CODE_MENU_ITEM = "Tools/JCMG/Genesis/Generate Code #%g";
 		private const string BUG_OR_FEATURE_REQUEST_MENU_ITEM = "Tools/JCMG/Genesis/Submit bug or feature request";
 		private const string CHECK_FOR_UPDATES_MENU_ITEM = "Tools/JCMG/Genesis/Check for Updates...";
 		private const string DOCUMENTATION_MENU_ITEM = "Tools/JCMG/Genesis/Documentation...";
 		private const string DONATE_MENU_ITEM = "Tools/JCMG/Genesis/Donate to support development";
 		private const string ABOUT_MENU_ITEM = "Tools/JCMG/Genesis/About";
+
+		// Context menu item paths
+		private const string GENESIS_SETTINGS_GENERATE_CODE_MENU_ITEM = "Assets/Genesis/Generate Code";
 
 		// Menu item priorities
 		private const int GENERATE_CODE_PRIORITY = 1;
@@ -59,10 +64,12 @@ namespace JCMG.Genesis.Editor
 		// KOFI URL
 		private const string KOFI_URL = "https://ko-fi.com/stampyturtle";
 
+		#region Window Menu Items
+
 		[MenuItem(GENERATE_CODE_MENU_ITEM, priority = GENERATE_CODE_PRIORITY)]
 		internal static void ExecuteGenesisCodeGeneration()
 		{
-			UnityCodeGenerator.Generate();
+			UnityCodeGenerator.GenerateAll();
 		}
 
 		[MenuItem(BUG_OR_FEATURE_REQUEST_MENU_ITEM, priority = BUG_OR_FEATURE_REQUEST_PRIORITY)]
@@ -94,5 +101,49 @@ namespace JCMG.Genesis.Editor
 		{
 			AboutWindow.View();
 		}
+
+		#endregion
+
+		#region Context Menu Items
+
+		[MenuItem(GENESIS_SETTINGS_GENERATE_CODE_MENU_ITEM)]
+		public static void InitiateSingleGenesisRun()
+		{
+			Assert.IsNotNull(Selection.assetGUIDs);
+			Assert.IsTrue(Selection.assetGUIDs.Length >= 1);
+
+			var settingsData = Selection.assetGUIDs.Select(
+					assetGUID =>
+					{
+						var assetPath = AssetDatabase.GUIDToAssetPath(assetGUID);
+						return AssetDatabase.LoadAssetAtPath<GenesisSettings>(assetPath);
+					})
+				.ToArray();
+
+			UnityCodeGenerator.GenerateMultiple(settingsData);
+		}
+
+		[MenuItem(GENESIS_SETTINGS_GENERATE_CODE_MENU_ITEM, isValidateFunction:true)]
+		public static bool ValidateInitiateSingleGenesisRun()
+		{
+			if (Selection.assetGUIDs.Length == 0)
+			{
+				return false;
+			}
+
+			foreach (var assetGUID in Selection.assetGUIDs)
+			{
+				var assetPath = AssetDatabase.GUIDToAssetPath(assetGUID);
+				var settings = AssetDatabase.LoadAssetAtPath<GenesisSettings>(assetPath);
+				if (settings == null)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		#endregion
 	}
 }
