@@ -37,6 +37,12 @@ namespace JCMG.Genesis.Editor
 	{
 		public override string Title => TITLE;
 
+		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		public override int Order => 0;
+
 		private const string TITLE = "General Code Generation";
 
 		private readonly CodeGeneratorConfig _codeGeneratorConfig;
