@@ -38,7 +38,39 @@ namespace JCMG.Genesis.Editor
 			LOGGER = Log.GetLogger(typeof(UnityCodeGenerator).FullName);
 		}
 
-		public static void Generate()
+		/// <summary>
+		/// Executes a code generation run using all <see cref="GenesisSettings"/> assets found in the project.
+		/// </summary>
+		public static void GenerateAll()
+		{
+			var allSettings = GenesisSettings.GetAllSettings();
+
+			Generate(allSettings);
+		}
+
+		/// <summary>
+		/// Executes a code generation run using the single passed <paramref name="settings"/> asset.
+		/// </summary>
+		/// <param name="settings"></param>
+		public static void GenerateSingle(GenesisSettings settings)
+		{
+			Generate(new []{settings});
+		}
+
+		/// <summary>
+		/// Executes a code generation run using the passed <paramref name="settingsData"/> assets.
+		/// </summary>
+		/// <param name="settingsData"></param>
+		public static void GenerateMultiple(GenesisSettings[] settingsData)
+		{
+			Generate(settingsData);
+		}
+
+		/// <summary>
+		/// Generates code from all passed <see cref="GenesisSettings"/> assets in <paramref name="settingsData"/>
+		/// </summary>
+		/// <param name="settingsData"></param>
+		private static void Generate(GenesisSettings[] settingsData)
 		{
 			LOGGER.Info("Generating...");
 			var didSucceed = true;
@@ -47,10 +79,9 @@ namespace JCMG.Genesis.Editor
 				EditorApplication.LockReloadAssemblies();
 				AssetDatabase.StartAssetEditing();
 
-				var allSettings = GenesisSettings.GetAllSettings();
-				for (var i = 0; i < allSettings.Length; i++)
+				for (var i = 0; i < settingsData.Length; i++)
 				{
-					var settings = allSettings[i];
+					var settings = settingsData[i];
 					var codeGenerator = CodeGeneratorTools.CodeGeneratorFromPreferences(settings);
 					var progressOffset = 0.0f;
 					codeGenerator.OnProgress += (title, info, progress) =>

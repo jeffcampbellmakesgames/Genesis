@@ -9,6 +9,12 @@ namespace JCMG.Genesis.Editor
 		/// </summary>
 		public override string Title => TITLE;
 
+		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		public override int Order => 1;
+
 		private readonly AssembliesConfig _config;
 
 		// UI

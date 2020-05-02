@@ -37,6 +37,12 @@ namespace JCMG.Genesis.Editor
 		string Title { get; }
 
 		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		int Order { get; }
+
+		/// <summary>
 		/// Initializes any setup for the drawer prior to rendering any GUI.
 		/// </summary>
 		/// <param name="settings"></param>

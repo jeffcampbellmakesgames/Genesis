@@ -33,20 +33,46 @@ namespace JCMG.Genesis.Editor
 	{
 		protected bool _drawContent = true;
 
+
+		/// <summary>
+		/// The display title for this drawer
+		/// </summary>
 		public abstract string Title { get; }
 
+		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		public virtual int Order => 100;
+
+		/// <summary>
+		/// Draws the foldout content body
+		/// </summary>
+		/// <param name="settings"></param>
 		protected abstract void DrawContentBody(GenesisSettings settings);
 
+		/// <summary>
+		/// Initializes any setup for the drawer prior to rendering any GUI.
+		/// </summary>
+		/// <param name="settings"></param>
 		public virtual void Initialize(GenesisSettings settings)
 		{
 
 		}
 
+		/// <summary>
+		/// Draws the header GUI section
+		/// </summary>
+		/// <param name="settings"></param>
 		public virtual void DrawHeader(GenesisSettings settings)
 		{
 			// No-op
 		}
 
+		/// <summary>
+		/// Draws the body GUI section
+		/// </summary>
+		/// <param name="settings"></param>
 		public virtual void DrawContent(GenesisSettings settings)
 		{
 			// The default implementation for draw content enables its content to be collapsed via a foldout header bar.

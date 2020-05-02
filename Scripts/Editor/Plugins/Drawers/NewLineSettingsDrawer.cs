@@ -32,6 +32,12 @@ namespace JCMG.Genesis.Editor.Plugins
 		/// </summary>
 		public override string Title => TITLE;
 
+		/// <summary>
+		/// The ascending order in which this drawer should be shown with regards to other <see cref="ISettingsDrawer"/>
+		/// instances
+		/// </summary>
+		public override int Order => 3;
+
 		private LineEndingConfig _lineEndingConfig;
 
 		private const string TITLE = "Convert Line Endings";

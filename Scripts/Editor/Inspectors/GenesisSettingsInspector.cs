@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace JCMG.Genesis.Editor.Inspectors
 {
@@ -8,14 +9,16 @@ namespace JCMG.Genesis.Editor.Inspectors
 	{
 		private static readonly ISettingsDrawer[] PREFERENCES_DRAWERS;
 
+		private const string ACTIONS_TITLE = "Actions";
+		private const string GENERATE_BUTTON_TEXT = "Generate";
+
 		static GenesisSettingsInspector()
 		{
-			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<ISettingsDrawer>().ToArray();
+			PREFERENCES_DRAWERS = ReflectionTools.GetAllImplementingInstancesOfInterface<ISettingsDrawer>()
+				.OrderBy(x => x.Order)
+				.ToArray();
 		}
 
-		/// <summary>
-		///   <para>Implement this function to make a custom inspector.</para>
-		/// </summary>
 		public override void OnInspectorGUI()
 		{
 			var settings = (GenesisSettings)target;
@@ -38,6 +41,13 @@ namespace JCMG.Genesis.Editor.Inspectors
 				{
 					EditorUtility.SetDirty(settings);
 				}
+			}
+
+			EditorGUILayout.Space(5);
+			EditorGUILayout.LabelField(ACTIONS_TITLE, EditorStyles.boldLabel);
+			if(GUILayout.Button(GENERATE_BUTTON_TEXT))
+			{
+				UnityCodeGenerator.GenerateSingle(settings);
 			}
 		}
 	}
