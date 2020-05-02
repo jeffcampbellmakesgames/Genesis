@@ -29,6 +29,17 @@ Each of the mask fields below it enables confguring which plugins should be enab
 
 For example, disabling the "Write Code Gen Files to Disk" `IPostProcessor` plugin enables running the code generation process without writing any of the generated `CodeGenFile` instances to disk.
 
+#### Assemblies
+
+This section enables a user to limit the scope of reflection for data providers and other plugins to an array of white-listed assemblies. By default, this feature is turned off, but is recommended to enhance the performance of code generation runs, particularly in larger projects where there may be many assemblies. 
+
+* **Do Use Whitelist**: If enabled, searching via  reflection for Data Providers will be limited to the array of assemblies below. Otherwise all loaded assemblies will be searched.
+
+* **Assembly Whitelist**: The comma delimited array of assemblies that searching via reflection for Data Providers should be limited to.
+
+##### For Devs
+Data providers are recommended to take advantage of this feature by implementing `IConfigurable` and use `AssembliesConfig` to acquire these user settings for which assemblies should be searched via reflection if enabled. `ReflectionTools` is a great example of a utility class that can then be used in a DataProvider to limit reflection search scope to only the assmblies the user has specified.
+
 #### Convert Line Endings
 
 This allows a user to configure the line endings all code-generated files generated from this `GenesisSettings` instance. This can be useful where one line ending type is preferred over another or plugins create files with mixed line endings which often causes Unity to warn about in the console.
@@ -37,9 +48,12 @@ This allows a user to configure the line endings all code-generated files genera
 
 This allows a user to specify the root folder all code-generated files will be written to directly or in a subfolder to.
 
-### Decorating Running Code Generation
+### Running Code Generation
 
-Once you have a `GenesisSettings` asset created and configured, you can easily kick off a code-generation run by running the menu item "Tools/Genesis/Generate Code".
+Once you have a `GenesisSettings` asset created and configured, there are multiple ways to easily kick off a code-generation run:
+* Running the menu item "Tools/JCMG/Genesis/Generate Code" will execute code-gen for all `GenesisSettings` assets in the project. There is also a hotkey to execute this command via pressing **Ctrl + Shift + G** or **CMD + Shift + G**.
+* Selecting one or more `GenesisSettings` assets in the **Project** window, right-clicking, and selecting the context menu item **Genesis => Generate Code** will execute-code gen just for those assets/.
+* When selecting a single `GenesisSettings` asset, on its inspector underneath **Actions** you can click a button labeled **Generate Code** to execute code-gen just for that asset.
 
 You'll notice at this point that there are likely not any generated files. Thats because Genesis plugins uses C# reflection to search through your code to find any classes decorated with custom attributes like `[FactoryKeyEnumFor]` as an example and generates code based on the discovered results.
 
