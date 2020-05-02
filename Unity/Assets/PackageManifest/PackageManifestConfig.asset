@@ -31,4 +31,6 @@ MonoBehaviour:
   - Code
   - Gen
   dependencies: []
+  versionConstantsPath: Assets/JCMG/Genesis/Scripts/Editor
+  versionConstantsNamespace: JCMG.Genesis.Editor
   _id: 66f64dad-4bda-4f2e-b960-22b7974f8604
