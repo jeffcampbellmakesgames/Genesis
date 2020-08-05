@@ -24,7 +24,6 @@ THE SOFTWARE.
 */
 
 using System;
-using System.Linq;
 using UnityEditor;
 
 namespace JCMG.Genesis.Editor
@@ -106,8 +105,10 @@ namespace JCMG.Genesis.Editor
 					}
 					catch (Exception ex)
 					{
+						LOGGER.Error(ex, string.Format(EditorConstants.CODE_GENERATION_UPDATE_ERROR_FORMAT, settings.name));
+
 						didSucceed = false;
-						EditorUtility.DisplayDialog("Error", ex.Message, "Ok");
+						EditorUtility.DisplayDialog("Code Generation Error", ex.Message, "Ok");
 					}
 
 					EditorUtility.ClearProgressBar();
