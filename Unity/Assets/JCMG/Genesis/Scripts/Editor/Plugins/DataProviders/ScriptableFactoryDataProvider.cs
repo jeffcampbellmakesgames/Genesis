@@ -76,9 +76,7 @@ namespace JCMG.Genesis.Editor.Plugins
 						return attrData.Select(
 							z =>
 							{
-								var data = new FactoryKeyEnumData();
-								data.SetKeyType(y);
-								data.SetValueType(z.ValueType);
+								var data = new FactoryKeyEnumData(y, z.ValueType);
 
 								return data;
 							});

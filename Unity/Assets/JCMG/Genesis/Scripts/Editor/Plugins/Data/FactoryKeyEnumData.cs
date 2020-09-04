@@ -31,10 +31,7 @@ namespace JCMG.Genesis.Editor.Plugins
 	{
 		// Keys
 		private const string KEY_TYPE = "Factory.KeyType";
-		private const string KEY_FULL_TYPE = "Factory.KeyFullType";
-
 		private const string VALUE_TYPE = "Factory.ValueType";
-		private const string VALUE_FULL_TYPE = "Factory.ValueFullType";
 
 		// Format
 		private const string OUTPUT_FILE_PATH_FORMAT = @"Factory\{0}.cs";
@@ -45,56 +42,53 @@ namespace JCMG.Genesis.Editor.Plugins
 		private const string KEY_FULL_TYPE_TOKEN = "${KeyFullType}";
 		private const string VALUE_FULL_TYPE_TOKEN = "${ValueFullType}";
 
-		public string GetKeyShortTypeName()
+		private const string EXCEPTION_KEY = "No type found for Key.";
+		private const string EXCEPTION_VALUE = "No type found for Value.";
+
+		public FactoryKeyEnumData(Type keyType, Type valueType)
 		{
-			if(TryGetValue(KEY_TYPE, out var result))
+			this[KEY_TYPE] = keyType;
+			this[VALUE_TYPE] = valueType;
+		}
+
+		public Type GetKeyType()
+		{
+			if (TryGetValue(KEY_TYPE, out var result))
 			{
-				return (string)result;
+				return (Type)result;
 			}
 
-			return string.Empty;
+			throw new Exception(EXCEPTION_KEY);
+		}
+
+		public string GetKeyShortTypeName()
+		{
+			return GetKeyType().GetHumanReadableName();
 		}
 
 		public string GetKeyFullTypeName()
 		{
-			if (TryGetValue(KEY_FULL_TYPE, out var result))
+			return GetKeyType().GetFullTypeName();
+		}
+
+		public Type GetValueType()
+		{
+			if (TryGetValue(VALUE_TYPE, out var result))
 			{
-				return (string)result;
+				return (Type)result;
 			}
 
-			return string.Empty;
+			throw new Exception(EXCEPTION_VALUE);
 		}
 
 		public string GetValueShortTypeName()
 		{
-			if (TryGetValue(VALUE_TYPE, out var result))
-			{
-				return (string)result;
-			}
-
-			return string.Empty;
+			return GetValueType().GetHumanReadableName();
 		}
 
 		public string GetValueFullTypeName()
 		{
-			if (TryGetValue(VALUE_FULL_TYPE, out var result))
-			{
-				return (string)result;
-			}
-
-			return string.Empty;
-		}
-
-		public void SetKeyType(Type type)
-		{
-			this[KEY_TYPE] = type.Name;
-			this[KEY_FULL_TYPE] = type.FullName;
-		}
-
-		public void SetValueType(Type type)
-		{
-			this[VALUE_TYPE] = type.Name;
-			this[VALUE_FULL_TYPE] = type.FullName;
+			return GetValueType().GetFullTypeName();
 		}
 
 		public string GetFilename()
