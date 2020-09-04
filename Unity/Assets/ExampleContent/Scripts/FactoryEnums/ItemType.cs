@@ -1,4 +1,5 @@
 ﻿using JCMG.Genesis;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ExampleContent
@@ -9,6 +10,8 @@ namespace ExampleContent
 	/// </summary>
 	[FactoryKeyEnumFor(typeof(Sprite))]
 	[FactoryKeyEnumFor(typeof(GameObject))]
+	[FactoryKeyEnumFor(typeof(GameObject[]))]
+	[FactoryKeyEnumFor(typeof(List<GameObject>))]
 	public enum ItemType
 	{
 		Sword,

@@ -14,8 +14,8 @@ using UnityEngine;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultItemTypeToSprite", menuName = "Genesis/Factory/ItemTypeToSprite")]
-	public sealed partial class ItemTypeToSprite : ScriptableObject
+	[CreateAssetMenu(fileName = "DefaultItemTypeToGameObjectArray", menuName = "Genesis/Factory/ItemTypeToGameObjectArray")]
+	public sealed partial class ItemTypeToGameObjectArray : ScriptableObject
 	{
 		[Serializable]
 		private class Mapping
@@ -23,7 +23,7 @@ namespace Genesis
 			#pragma warning disable 0649
 			public ExampleContent.ItemType key;
 
-			public UnityEngine.Sprite value;
+			public UnityEngine.GameObject[] value;
 			#pragma warning restore 0649
 		}
 
@@ -75,12 +75,12 @@ namespace Genesis
 
 		/// <summary>
 		/// Returns true if a mapping is found for <see cref="ExampleContent.ItemType"/> <paramref name="key"/> to a
-		/// <see cref="UnityEngine.Sprite"/>, otherwise false.
+		/// <see cref="UnityEngine.GameObject[]"/>, otherwise false.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public bool TryGetValue(ExampleContent.ItemType key, out UnityEngine.Sprite value)
+		public bool TryGetValue(ExampleContent.ItemType key, out UnityEngine.GameObject[] value)
 		{
 			value = null;
 
