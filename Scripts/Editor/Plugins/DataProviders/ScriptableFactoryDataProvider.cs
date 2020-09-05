@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JCMG.Genesis.Editor.Plugins
@@ -61,8 +63,40 @@ namespace JCMG.Genesis.Editor.Plugins
 				? ReflectionTools.GetAvailableAssemblies(_assembliesConfig.WhiteListedAssemblies)
 				: ReflectionTools.GetAvailableAssemblies();
 
-			var codeData = assemblies
-				.SelectMany(x => x.GetTypes())
+			var types = assemblies
+				.SelectMany(x => x.GetTypes()).ToArray();
+
+			var codeGenData = new List<CodeGeneratorData>();
+			codeGenData.AddRange(GetFactoryCodeGeneratorData(types));
+			codeGenData.AddRange(GetFactoryEnumCodeGeneratorData(types));
+
+			return codeGenData.ToArray();
+		}
+
+		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IEnumerable<Type> types)
+		{
+			return types
+				.Where(
+					x => x.GetCustomAttributes(typeof(FactoryKeyForAttribute), false).Length > 0)
+				.SelectMany(
+					y =>
+					{
+						var attrData = (FactoryKeyForAttribute[])y.GetCustomAttributes(
+							typeof(FactoryKeyForAttribute),
+							false);
+
+						return attrData.Select(
+							z =>
+							{
+								var data = new FactoryKeyData(y, z.ValueType);
+								return data;
+							});
+					});
+		}
+
+		private IEnumerable<CodeGeneratorData> GetFactoryEnumCodeGeneratorData(IEnumerable<Type> types)
+		{
+			return types
 				.Where(
 					x => x.IsEnum &&
 					     x.GetCustomAttributes(typeof(FactoryKeyEnumForAttribute), false).Length > 0)
@@ -76,16 +110,10 @@ namespace JCMG.Genesis.Editor.Plugins
 						return attrData.Select(
 							z =>
 							{
-								var data = new FactoryKeyEnumData();
-								data.SetKeyType(y);
-								data.SetValueType(z.ValueType);
-
+								var data = new FactoryKeyEnumData(y, z.ValueType);
 								return data;
 							});
-					})
-				.ToArray();
-
-			return codeData;
+					});
 		}
 
 		/// <summary>

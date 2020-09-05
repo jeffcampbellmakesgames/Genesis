@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 MIT License
 
@@ -23,36 +23,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-namespace JCMG.Genesis.Editor
+using System;
+using System.Diagnostics;
+
+namespace JCMG.Genesis
 {
 	/// <summary>
-	/// Version info for this library.
+	/// Indicates that a scriptable factory should be created using the decorated class as a key to
+	/// <see cref="ValueType"/>.
 	/// </summary>
-	internal static class VersionConstants
+	[Conditional("UNITY_EDITOR")]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
+	public sealed class FactoryKeyForAttribute : Attribute
 	{
-		/// <summary>
-		/// The semantic version
-		/// </summary>
-		public const string VERSION = "1.3.0";
+		public Type ValueType { get; }
 
-		/// <summary>
-		/// The branch of GIT this package was published from.
-		/// </summary>
-		public const string GIT_BRANCH = "develop";
-
-		/// <summary>
-		/// The current GIT commit hash this package was published on.
-		/// </summary>
-		public const string GIT_COMMIT = "9856855de862b790448b18ec400d71ca09d7c809";
-
-		/// <summary>
-		/// The UTC human-readable date this package was published at.
-		/// </summary>
-		public const string PUBLISH_DATE = "Saturday, September 5, 2020";
-
-		/// <summary>
-		/// The UTC time this package was published at.
-		/// </summary>
-		public const string PUBLISH_TIME = "09/05/2020 11:50:36";
+		public FactoryKeyForAttribute(Type valueType)
+		{
+			ValueType = valueType;
+		}
 	}
 }
