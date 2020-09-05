@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JCMG.Genesis.Editor.Plugins
@@ -50,28 +51,43 @@ namespace JCMG.Genesis.Editor.Plugins
 
 		static ScriptableFactoryCodeGenerator()
 		{
-			GENERATOR_NAME = typeof(ScriptableFactoryCodeGenerator).Name;
+			GENERATOR_NAME = nameof(ScriptableFactoryCodeGenerator);
 		}
 
 		public CodeGenFile[] Generate(CodeGeneratorData[] data)
 		{
-			var codeGenData = data
+			var factoryKeyEnumData = data
 				.OfType<FactoryKeyEnumData>()
 				.ToArray();
 
-			var codeGenFiles = codeGenData.Select(CreateCodeGenFile).ToArray();
+			var factoryKeyData = data
+				.OfType<FactoryKeyData>()
+				.ToArray();
 
-			return codeGenFiles;
+			var codeGenFiles = new List<CodeGenFile>();
+			codeGenFiles.AddRange(factoryKeyEnumData.Select(CreateFactoryEnumCodeGenFile));
+			codeGenFiles.AddRange(factoryKeyData.Select(CreateFactoryCodeGenFile));
+
+			return codeGenFiles.ToArray();
 		}
-		public CodeGenFile CreateCodeGenFile(FactoryKeyEnumData data)
+
+		private CodeGenFile CreateFactoryCodeGenFile(FactoryKeyData data)
 		{
 			return new CodeGenFile(
 				data.GetFilename(),
-				data.ReplaceTemplateTokens(TEMPLATE),
+				data.ReplaceTemplateTokens(GENERAL_TEMPLATE),
 				GENERATOR_NAME);
 		}
 
-		private const string TEMPLATE
+		public CodeGenFile CreateFactoryEnumCodeGenFile(FactoryKeyEnumData data)
+		{
+			return new CodeGenFile(
+				data.GetFilename(),
+				data.ReplaceTemplateTokens(ENUM_TEMPLATE),
+				GENERATOR_NAME);
+		}
+
+		private const string ENUM_TEMPLATE
 = @"
 using System;
 using System.Collections.Generic;
@@ -135,6 +151,88 @@ namespace Genesis
 						key = values[i]
 					});
 				}
+			}
+		}
+
+		/// <summary>
+		/// Returns true if a mapping is found for <see cref=""${KeyFullType}""/> <paramref name=""key""/> to a
+		/// <see cref=""${ValueFullType}""/>, otherwise false.
+		/// </summary>
+		/// <param name=""key""></param>
+		/// <param name=""value""></param>
+		/// <returns></returns>
+		public bool TryGetValue(${KeyFullType} key, out ${ValueFullType} value)
+		{
+			value = null;
+
+			Mapping mapping;
+			if (!MappingLookup.TryGetValue(key, out mapping))
+			{
+				return false;
+			}
+
+			value = mapping.value;
+
+			return true;
+		}
+	}
+}
+";
+		private const string GENERAL_TEMPLATE
+			= @"
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Genesis
+{
+	[CreateAssetMenu(fileName = ""Default${TypeName}"", menuName = ""Genesis/Factory/${TypeName}"")]
+	public sealed partial class ${TypeName} : ScriptableObject
+	{
+		[Serializable]
+		private class Mapping
+		{
+			#pragma warning disable 0649
+			public ${KeyFullType} key;
+
+			public ${ValueFullType} value;
+			#pragma warning restore 0649
+		}
+
+		#pragma warning disable 0649
+		[SerializeField]
+		private List<Mapping> _mappings;
+		#pragma warning restore 0649
+
+		private Dictionary<${KeyFullType}, Mapping> MappingLookup
+		{
+			get
+			{
+				if(_mappingLookup == null)
+				{
+					_mappingLookup = new Dictionary<${KeyFullType}, Mapping>();
+					for (var i = 0; i < _mappings.Count; i++)
+					{
+						if(_mappingLookup.ContainsKey(_mappings[i].key))
+						{
+							continue;
+						}
+
+						_mappingLookup.Add(_mappings[i].key, _mappings[i]);
+					}
+				}
+
+				return _mappingLookup;
+			}
+		}
+
+		private Dictionary<${KeyFullType}, Mapping> _mappingLookup;
+
+		private void OnEnable()
+		{
+			if(_mappings == null)
+			{
+				_mappings = new List<Mapping>();
 			}
 		}
 
