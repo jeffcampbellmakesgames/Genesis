@@ -7,6 +7,9 @@
 ## About
 Genesis is a general-purpose, plugin-extensible code generation framework for Unity.
 
+## Minimum Requirenments
+* Unity 2019.4.X
+
 ## Installing Genesis
 Using this library in your project can be done in three ways:
 
