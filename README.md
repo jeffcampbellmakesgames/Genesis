@@ -1,4 +1,4 @@
-<a href="https://openupm.com/packages/com.jeffcampbellmakesgames.genesis/"><img src="https://img.shields.io/npm/v/com.jeffcampbellmakesgames.genesis?label=openupm&amp;registry_uri=https://package.openupm.com" /></a>
+![Unit-Tests](https://github.com/jeffcampbellmakesgames/Genesis/workflows/Unit%20Tests/badge.svg)<a href="https://openupm.com/packages/com.jeffcampbellmakesgames.genesis/"><img src="https://img.shields.io/npm/v/com.jeffcampbellmakesgames.genesis?label=openupm&amp;registry_uri=https://package.openupm.com" /></a>
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/jeffcampbellmakesgames/Genesis?style=flat-square">[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Twitter Follow](https://img.shields.io/badge/twitter-%40stampyturtle-blue.svg?style=flat&label=Follow)](https://twitter.com/stampyturtle)
 
