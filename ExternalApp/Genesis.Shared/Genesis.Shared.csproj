@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>Genesis.Shared</AssemblyName>
+		<RootNamespace>Genesis.Shared</RootNamespace>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+
+	<Target Name="CopyBuildArtifacts" AfterTargets="Build">
+		<ItemGroup>
+			<DataFiles Include="$(ProjectDir)$(OutDir)*.dll;$(ProjectDir)$(OutDir)*.pdb" />
+		</ItemGroup>
+		<Copy SourceFiles="@(DataFiles)" 
+		      DestinationFolder="$(ProjectDir)..\..\Unity\Assets\JCMG\Genesis\Plugins\" 
+		      SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(DataFiles)"
+		      DestinationFolder="$(ProjectDir)..\UnityProjectFixtures\Assets\JCMG\Genesis\Plugins\"
+		      SkipUnchangedFiles="true" />
+	</Target>
+
+</Project>

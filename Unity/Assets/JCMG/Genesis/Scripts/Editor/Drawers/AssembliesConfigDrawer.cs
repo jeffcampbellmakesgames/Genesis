@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Genesis.Shared;
+using UnityEditor;
 
 namespace JCMG.Genesis.Editor
 {

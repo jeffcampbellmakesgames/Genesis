@@ -1,0 +1,35 @@
+mode: ContinuousDeployment
+tag-prefix: 'nuget[/]v'
+branches:
+  release:
+    regex: '^develop?[/-]'
+    increment: None
+    is-release-branch: true
+    is-mainline: true
+    tracks-release-branches: true
+    prevent-increment-of-merged-branch-version: true
+    tag: ''
+    source-branches: []
+  feature:
+    regex: '^feat?[/-]'
+    increment: None
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+    prevent-increment-of-merged-branch-version: true
+    tag: 'alpha'
+    source-branches:
+      - develop
+  feature:
+    regex: '^feat/v2'
+    increment: None
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+    prevent-increment-of-merged-branch-version: true
+    tag: 'alpha'
+    source-branches:
+      - develop
+ignore:
+  sha: []
+merge-message-formats: {}

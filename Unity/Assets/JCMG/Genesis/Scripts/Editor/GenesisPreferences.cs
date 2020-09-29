@@ -23,35 +23,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using System.Linq;
+using System.IO;
 using UnityEditor;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 
 namespace JCMG.Genesis.Editor
 {
+
 	/// <summary>
 	/// An editor class for managing project and user preferences for the Genesis library.
 	/// </summary>
 	internal static class GenesisPreferences
 	{
 		/// <summary>
-		/// Returns the preferred <see cref="LogLevel"/>.
+		/// The installation folder for the Genesis command-line executable.
 		/// </summary>
-		public static LogLevel PreferredLogLevel
+		public static string GenesisCLIInstallationFolder
 		{
 			get
 			{
-				if (!_logLevel.HasValue)
+				if (_genesisCLIInstallationFolder == null)
 				{
-					_logLevel = (LogLevel)GetIntPref(LOG_LEVEL_PREF, (int)DEFAULT_LOG_LEVEL);
+					_genesisCLIInstallationFolder = ProjectSettings.Get(
+						GENESIS_INSTALLATION_PREF,
+						SettingsScope.Project,
+						string.Empty);
 				}
 
-				return _logLevel.Value;
+				return _genesisCLIInstallationFolder;
 			}
 			set
 			{
-				_logLevel = value;
-				EditorPrefs.SetInt(LOG_LEVEL_PREF, (int)value);
+				_genesisCLIInstallationFolder = value;
+				ProjectSettings.Set(GENESIS_INSTALLATION_PREF, value);
 			}
 		}
 
@@ -64,7 +69,7 @@ namespace JCMG.Genesis.Editor
 			{
 				if (!_executeDryRun.HasValue)
 				{
-					_executeDryRun = GetBoolPref(ENABLE_DRY_RUN_PREF, ENABLE_DRY_RUN_DEFAULT);
+					_executeDryRun = EditorPrefs.GetBool(ENABLE_DRY_RUN_PREF, ENABLE_DRY_RUN_DEFAULT);
 				}
 
 				return _executeDryRun.Value;
@@ -76,6 +81,49 @@ namespace JCMG.Genesis.Editor
 			}
 		}
 
+		/// <summary>
+		/// Returns true if the code generation should be executed with verbose logging, otherwise false.
+		/// </summary>
+		public static bool EnableVerboseLogging
+		{
+			get
+			{
+				if (!_enableVerboseLogging.HasValue)
+				{
+					_enableVerboseLogging = EditorPrefs.GetBool(ENABLE_VERBOSE_LOGGING_PREF, ENABLE_VERBOSE_LOGGING_DEFAULT);
+				}
+
+				return _enableVerboseLogging.Value;
+			}
+			set
+			{
+				_enableVerboseLogging = value;
+				EditorPrefs.SetBool(ENABLE_VERBOSE_LOGGING_PREF, value);
+			}
+		}
+
+		/// <summary>
+		/// The project <see cref="Settings"/> instance for Genesis for this project.
+		/// </summary>
+		private static Settings ProjectSettings
+		{
+			get
+			{
+				if (_PROJECT_SETTINGS == null)
+				{
+					_PROJECT_SETTINGS = new Settings(PACKAGE_NAME, SETTINGS_NAME);
+				}
+
+				return _PROJECT_SETTINGS;
+			}
+		}
+
+		private static Settings _PROJECT_SETTINGS;
+
+		// Project Settings
+		private const string PACKAGE_NAME = "com.jeffcampbellmakesgames.genesis";
+		private const string SETTINGS_NAME = "GenesisSettings";
+
 		// UI
 		private const string PREFERENCES_TITLE_PATH = "Preferences/Genesis";
 		private const string PROJECT_TITLE_PATH = "Project/Genesis";
@@ -83,15 +131,23 @@ namespace JCMG.Genesis.Editor
 		private const string USER_PREFERENCES_HEADER = "User Preferences";
 		private const string PROJECT_REFERENCES_HEADER = "Project Preferences";
 
-		// Config UI
-		private const string LOG_LEVEL_LABEL = "Logging Level";
+		// Labels
 		private const string ENABLE_DRY_RUN_LABEL = "Enable Dry Run";
+		private const string ENABLE_VERBOSE_LOGGING_LABEL = "Enable Verbose Logging";
+		private const string GENESIS_CLI_INSTALL_FOLDER_LABEL = "Installation Folder";
 
-		private const string LOG_LEVEL_DESCRIPTION
-			= "The level of logs that should be output to the Unity Console.";
-
+		// Descriptions
 		private const string ENABLE_DRY_RUN_DESCRIPTION
 			= "If enabled, the code generation process when executed will not write any generated code to disk.";
+
+		private const string ENABLE_VERBOSE_LOGGING_DESCRIPTION =
+			"If enabled, additional information will be logged to the console.";
+
+		private const string GENESIS_CLI_DIRECTORY_DESCRIPTION
+			= "The location of the Genesis command-line executable and related files.";
+
+		// Titles
+		private const string GENESIS_CLI_FOLDER_SELECT_TITLE = "Select Genesis CLI Install Folder";
 
 		// Searchable Fields
 		private static readonly string[] KEYWORDS =
@@ -105,16 +161,22 @@ namespace JCMG.Genesis.Editor
 			"gen"
 		};
 
-		// User Editor Preferences
-		private const string LOG_LEVEL_PREF = "Genesis.LogLevel";
-		private const string ENABLE_DRY_RUN_PREF = "Genesis.DryRun";
+		// Project Editor Preferences
+		private const string GENESIS_INSTALLATION_PREF = "Genesis.InstallationFolder";
 
-		private const LogLevel DEFAULT_LOG_LEVEL = LogLevel.Info;
+		// User Editor Preferences
+		private const string ENABLE_DRY_RUN_PREF = "Genesis.DryRun";
+		private const string ENABLE_VERBOSE_LOGGING_PREF = "Genesis.IsVerbose";
+
 		private const bool ENABLE_DRY_RUN_DEFAULT = false;
+		private const bool ENABLE_VERBOSE_LOGGING_DEFAULT = true;
 
 		// Cacheable Prefs
 		private static bool? _executeDryRun;
-		private static LogLevel? _logLevel;
+		private static bool? _enableVerboseLogging;
+		private static string _genesisCLIInstallationFolder;
+
+		#region SettingsProvider and EditorGUI
 
 		[SettingsProvider]
 		private static SettingsProvider CreatePersonalPreferenceSettingsProvider()
@@ -126,23 +188,19 @@ namespace JCMG.Genesis.Editor
 			};
 		}
 
+		[SettingsProvider]
+		private static SettingsProvider CreateSettingsProvider()
+		{
+			return new SettingsProvider(PROJECT_TITLE_PATH, SettingsScope.Project)
+			{
+				guiHandler = DrawProjectPrefsGUI,
+				keywords = KEYWORDS
+			};
+		}
+
 		private static void DrawPersonalPrefsGUI(string value = "")
 		{
 			EditorGUILayout.LabelField(USER_PREFERENCES_HEADER, EditorStyles.boldLabel);
-
-			GUI.changed = false;
-
-			// Log Level
-			EditorGUILayout.HelpBox(LOG_LEVEL_DESCRIPTION, MessageType.Info);
-			using (var scope = new EditorGUI.ChangeCheckScope())
-			{
-				var newValue = (LogLevel)EditorGUILayout.EnumPopup(LOG_LEVEL_LABEL, PreferredLogLevel);
-
-				if (scope.changed)
-				{
-					PreferredLogLevel = newValue;
-				}
-			}
 
 			// Enable Dry Run
 			EditorGUILayout.HelpBox(ENABLE_DRY_RUN_DESCRIPTION, MessageType.Info);
@@ -155,38 +213,67 @@ namespace JCMG.Genesis.Editor
 					ExecuteDryRun = newValue;
 				}
 			}
+
+			// Enable Verbose Logging
+			EditorGUILayout.HelpBox(ENABLE_VERBOSE_LOGGING_DESCRIPTION, MessageType.Info);
+			using (var scope = new EditorGUI.ChangeCheckScope())
+			{
+				var newValue = EditorGUILayout.Toggle(ENABLE_VERBOSE_LOGGING_LABEL, EnableVerboseLogging);
+
+				if (scope.changed)
+				{
+					EnableVerboseLogging = newValue;
+				}
+			}
+		}
+
+		private static void DrawProjectPrefsGUI(string value = "")
+		{
+			EditorGUILayout.LabelField(PROJECT_REFERENCES_HEADER, EditorStyles.boldLabel);
+
+			// Genesis Command-Line Folder
+			EditorGUILayout.HelpBox(GENESIS_CLI_DIRECTORY_DESCRIPTION, MessageType.Info);
+
+			using (new EditorGUILayout.HorizontalScope())
+			{
+				EditorGUILayout.LabelField(GENESIS_CLI_INSTALL_FOLDER_LABEL, GUILayout.MaxWidth(110f));
+				using (var scope = new EditorGUI.ChangeCheckScope())
+				{
+					var newValue = EditorGUILayout.TextField(GenesisCLIInstallationFolder);
+					if (scope.changed)
+					{
+						GenesisCLIInstallationFolder = newValue;
+					}
+				}
+
+				var currentFolder = GenesisCLIInstallationFolder;
+				if (GUILayoutTools.DrawFolderPickerLayout(ref currentFolder, GENESIS_CLI_FOLDER_SELECT_TITLE))
+				{
+					GenesisCLIInstallationFolder = currentFolder;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Command-line
+
+		/// <summary>
+		/// Returns the absolute path to the <see cref="EditorConstants.GENESIS_EXECUTABLE"/> executable.
+		/// </summary>
+		public static string GetExecutablePath()
+		{
+			return Path.Combine(Path.GetFullPath(GenesisCLIInstallationFolder), EditorConstants.GENESIS_EXECUTABLE);
 		}
 
 		/// <summary>
-		/// Returns the current bool preference; if none exists, the default is set and returned.
+		/// Returns the absolute path to the working folder the the <see cref="EditorConstants.GENESIS_EXECUTABLE"/>.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		private static bool GetBoolPref(string key, bool defaultValue)
+		public static string GetWorkingPath()
 		{
-			if (!EditorPrefs.HasKey(key))
-			{
-				EditorPrefs.SetBool(key, defaultValue);
-			}
-
-			return EditorPrefs.GetBool(key);
+			return Path.GetFullPath(GenesisCLIInstallationFolder);
 		}
 
-		/// <summary>
-		/// Returns the current int preference; if none exists, the default is set and returned.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		private static int GetIntPref(string key, int defaultValue)
-		{
-			if (!EditorPrefs.HasKey(key))
-			{
-				EditorPrefs.SetInt(key, defaultValue);
-			}
-
-			return EditorPrefs.GetInt(key);
-		}
+		#endregion
 	}
 }

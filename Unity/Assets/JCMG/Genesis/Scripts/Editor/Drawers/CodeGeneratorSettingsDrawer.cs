@@ -26,6 +26,7 @@ THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Genesis.Shared;
 using UnityEditor;
 
 namespace JCMG.Genesis.Editor
@@ -43,39 +44,43 @@ namespace JCMG.Genesis.Editor
 		/// </summary>
 		public override int Order => 0;
 
-		private const string TITLE = "General Code Generation";
+		private GenesisSettings _settings;
 
+		private const string TITLE = "General Code Generation";
 		private readonly CodeGeneratorConfig _codeGeneratorConfig;
 
-		private readonly string[] _availableDataProviderNames;
-		private readonly string[] _availableDataProviderTypes;
-		private readonly string[] _availableGeneratorNames;
-		private readonly string[] _availableGeneratorTypes;
-		private readonly string[] _availablePostProcessorNames;
-		private readonly string[] _availablePostProcessorTypes;
-		private readonly string[] _availablePreProcessorNames;
-		private readonly string[] _availablePreProcessorTypes;
+		//private string[] _availableDataProviderNames;
+		//private string[] _availableGeneratorNames;
+		//private string[] _availablePostProcessorNames;
+		//private string[] _availablePreProcessorNames;
 
 		public CodeGeneratorSettingsDrawer()
 		{
 			_codeGeneratorConfig = new CodeGeneratorConfig();
-
-			// Add per plugin interface type preferences.
-			var instances = CodeGeneratorTools.LoadFromPlugins();
-			SetTypesAndNames<IPreProcessor>(instances, out _availablePreProcessorTypes, out _availablePreProcessorNames);
-			SetTypesAndNames<IDataProvider>(instances, out _availableDataProviderTypes, out _availableDataProviderNames);
-			SetTypesAndNames<ICodeGenerator>(instances, out _availableGeneratorTypes, out _availableGeneratorNames);
-			SetTypesAndNames<IPostProcessor>(instances, out _availablePostProcessorTypes, out _availablePostProcessorNames);
 		}
 
 		public override void Initialize(GenesisSettings settings)
 		{
 			// Add default code gen preferences.
+			_settings = settings;
 			_codeGeneratorConfig.Configure(settings);
+
+		//	_availableDataProviderNames = _codeGeneratorConfig.AllDataProviders.Select(FormatTypeName).ToArray();
+		//	_availableGeneratorNames = _codeGeneratorConfig.AllCodeGenerators.Select(FormatTypeName).ToArray();
+		//	_availablePostProcessorNames = _codeGeneratorConfig.AllPostProcessors.Select(FormatTypeName).ToArray();
+		//	_availablePreProcessorNames = _codeGeneratorConfig.AllPreProcessors.Select(FormatTypeName).ToArray();
+		}
+
+		private static string FormatTypeName(string typeName)
+		{
+			var splitTypeName = typeName.Split('.');
+			return splitTypeName[splitTypeName.Length - 1];
 		}
 
 		protected override void DrawContentBody(GenesisSettings settings)
 		{
+			_codeGeneratorConfig.Configure(settings);
+
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Auto Import Plugins");
 			if (EditorGUILayoutTools.MiniButton("Auto Import"))
@@ -85,29 +90,30 @@ namespace JCMG.Genesis.Editor
 
 			EditorGUILayout.EndHorizontal();
 
-			_codeGeneratorConfig.PreProcessors = DrawMaskField(
+			// TODO We need to have a seperate config field for all plugin types versus enabled ones now that we don't know directly which ones are available.
+			_codeGeneratorConfig.EnabledPreProcessors = DrawMaskField(
 				"Pre Processors",
-				_availablePreProcessorTypes,
-				_availablePreProcessorNames,
-				_codeGeneratorConfig.PreProcessors);
+				_codeGeneratorConfig.AllPreProcessors,
+				_codeGeneratorConfig.AllPreProcessors.Select(FormatTypeName).ToArray(),
+				_codeGeneratorConfig.EnabledPreProcessors);
 
-			_codeGeneratorConfig.DataProviders = DrawMaskField(
+			_codeGeneratorConfig.EnabledDataProviders = DrawMaskField(
 				"Data Providers",
-				_availableDataProviderTypes,
-				_availableDataProviderNames,
-				_codeGeneratorConfig.DataProviders);
+				_codeGeneratorConfig.AllDataProviders,
+				_codeGeneratorConfig.AllDataProviders.Select(FormatTypeName).ToArray(),
+				_codeGeneratorConfig.EnabledDataProviders);
 
-			_codeGeneratorConfig.CodeGenerators = DrawMaskField(
+			_codeGeneratorConfig.EnabledCodeGenerators = DrawMaskField(
 				"Code Generators",
-				_availableGeneratorTypes,
-				_availableGeneratorNames,
-				_codeGeneratorConfig.CodeGenerators);
+				_codeGeneratorConfig.AllCodeGenerators,
+				_codeGeneratorConfig.AllCodeGenerators.Select(FormatTypeName).ToArray(),
+				_codeGeneratorConfig.EnabledCodeGenerators);
 
-			_codeGeneratorConfig.PostProcessors = DrawMaskField(
+			_codeGeneratorConfig.EnabledPostProcessors = DrawMaskField(
 				"Post Processors",
-				_availablePostProcessorTypes,
-				_availablePostProcessorNames,
-				_codeGeneratorConfig.PostProcessors);
+				_codeGeneratorConfig.AllPostProcessors,
+				_codeGeneratorConfig.AllPostProcessors.Select(FormatTypeName).ToArray(),
+				_codeGeneratorConfig.EnabledPostProcessors);
 		}
 
 		private void AutoImport(GenesisSettings settings)
@@ -122,35 +128,26 @@ namespace JCMG.Genesis.Editor
 				return;
 			}
 
-			var searchPaths = CodeGeneratorTools.BuildSearchPaths(
-				_codeGeneratorConfig.SearchPaths,
-				new []
-				{
-					"./Assets",
-					"./Library/ScriptAssemblies"
-				});
+			//var searchPaths = CodeGeneratorTools.BuildSearchPaths(
+			//	_codeGeneratorConfig.SearchPaths,
+			//	new []
+			//	{
+			//		"./Assets",
+			//		"./Library/ScriptAssemblies"
+			//	});
 
-			CodeGeneratorTools.AutoImport(_codeGeneratorConfig, searchPaths);
+			//CodeGeneratorTools.AutoImport(_codeGeneratorConfig, searchPaths);
+
+			GenesisCLIRunner.RunConfigurationImport(settings);
 
 			EditorUtility.SetDirty(settings);
 
-			Initialize(settings);
+			//Initialize(settings);
 
-			_codeGeneratorConfig.PreProcessors = _availablePreProcessorTypes;
-			_codeGeneratorConfig.DataProviders = _availableDataProviderTypes;
-			_codeGeneratorConfig.CodeGenerators = _availableGeneratorTypes;
-			_codeGeneratorConfig.PostProcessors = _availablePostProcessorTypes;
-		}
-
-		private static void SetTypesAndNames<T>(
-			ICodeGenerationPlugin[] instances,
-			out string[] availableTypes,
-			out string[] availableNames)
-			where T : ICodeGenerationPlugin
-		{
-			var orderedInstancesOf = CodeGeneratorTools.GetOrderedInstancesOf<T>(instances);
-			availableTypes = orderedInstancesOf.Select(instance => instance.GetType().ToCompilableString()).ToArray();
-			availableNames = orderedInstancesOf.Select(instance => instance.Name).ToArray();
+			//_codeGeneratorConfig.PreProcessors = _availablePreProcessorTypes;
+			//_codeGeneratorConfig.DataProviders = _availableDataProviderTypes;
+			//_codeGeneratorConfig.CodeGenerators = _availableGeneratorTypes;
+			//_codeGeneratorConfig.PostProcessors = _availablePostProcessorTypes;
 		}
 
 		private static string[] DrawMaskField(
