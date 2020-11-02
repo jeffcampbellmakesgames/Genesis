@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+	<Target Name="CopyBuildArtifacts" AfterTargets="Build">
+		<ItemGroup>
+			<DataFiles Include="$(ProjectDir)$(OutDir)**\*.*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(DataFiles)" 
+		      DestinationFolder="$(ProjectDir)..\..\Publish\Plugins\%(RecursiveDir)" 
+		      SkipUnchangedFiles="true" />
+	</Target>
+	<ItemGroup>
+	  <ProjectReference Include="..\Genesis.Plugin\Genesis.Plugin.csproj" />
+	  <ProjectReference Include="..\Genesis.Unity.Factory\Genesis.Unity.Factory.csproj" />
+	</ItemGroup>
+</Project>

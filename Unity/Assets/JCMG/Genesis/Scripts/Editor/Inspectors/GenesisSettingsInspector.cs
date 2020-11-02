@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Genesis.Shared;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,7 +48,7 @@ namespace JCMG.Genesis.Editor.Inspectors
 			EditorGUILayout.LabelField(ACTIONS_TITLE, EditorStyles.boldLabel);
 			if(GUILayout.Button(GENERATE_BUTTON_TEXT))
 			{
-				UnityCodeGenerator.GenerateSingle(settings);
+				GenesisCLIRunner.RunCodeGeneration(new []{ settings });
 			}
 		}
 	}

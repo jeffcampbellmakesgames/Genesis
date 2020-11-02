@@ -1,5 +1,5 @@
-﻿using JCMG.Genesis;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Genesis.Unity.Factory;
 using UnityEngine;
 
 namespace ExampleContent

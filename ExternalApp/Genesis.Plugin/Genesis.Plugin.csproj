@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<RootNamespace>Genesis.Plugin</RootNamespace>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Authors>Jeff Campbell</Authors>
+		<Company>Jeff Campbell</Company>
+		<Product>Genesis Code Generator</Product>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/jeffcampbellmakesgames/Genesis.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>C# Roslyn Unity Unity3D UnityEditor Genesis CodeGeneration</PackageTags>
+		<Description>Genesis is a general-purpose, plugin-extensible code generation framework for Unity. This package enables a developer to write a code-generation plugin for v2 Genesis.</Description>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<PackageId>Genesis.Plugin</PackageId>
+		<AssemblyName>Genesis.Plugin</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LazyCache" Version="2.1.2" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" />
+		<PackageReference Include="Serilog" Version="2.10.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Genesis.Shared\Genesis.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

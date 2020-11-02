@@ -44,7 +44,6 @@ namespace JCMG.Genesis.Editor
 		{
 			SCRIPTABLE_OBJECT_TYPE = typeof(ScriptableObject);
 			SCRIPTABLE_ASSET_LOOKUP = new Dictionary<Type, ScriptableObject>();
-
 		}
 		/// <summary>
 		/// Returns the first <see cref="ScriptableObject"/> asset found of Type <typeparamref name="T"/>.
