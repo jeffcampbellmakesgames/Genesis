@@ -531,6 +531,10 @@
       <Project>{944D5A83-2915-8BF0-B7B7-6FC0FF6A11FA}</Project>
       <Name>Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="Package.csproj">
+      <Project>{9A688807-5EF9-F3F4-984B-F3F7D6EEAF08}</Project>
+      <Name>Package</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

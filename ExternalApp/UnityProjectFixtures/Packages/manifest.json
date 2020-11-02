@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.jeffcampbellmakesgames.examplepackage": "file:../ExamplePackage",
     "com.unity.ide.rider": "1.1.4",
     "com.unity.ide.vscode": "1.2.1",
     "com.unity.test-framework": "1.1.16",

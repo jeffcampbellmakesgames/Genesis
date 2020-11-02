@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.jeffcampbellmakesgames.examplepackage": {
+      "version": "file:../ExamplePackage",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.0",
       "depth": 1,
