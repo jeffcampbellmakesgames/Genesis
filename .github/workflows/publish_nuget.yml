@@ -38,7 +38,7 @@ jobs:
     - name: Build Genesis.CLI .Net Core Console App
       run: dotnet build './ExternalApp/Genesis/Genesis.sln' -c Debug --nologo
     - name: Run .Net Core Unit Tests
-      run: dotnet test './ExternalApp/Genesis/Genesis.sln' --no-build --verbosity normal
+      run: dotnet test './ExternalApp/Genesis/Genesis.sln' --no-build --filter "TestCategory!=CodeAnalysis" --verbosity normal
 
     # Zip published app and write zip to Unity project, and check in build contents on develop
     - name: 'Create Zip for Genesis.CLI'

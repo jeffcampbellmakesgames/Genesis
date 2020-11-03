@@ -33,6 +33,7 @@ using NUnit.Framework;
 namespace Genesis.Plugin.Tests.DataProviders
 {
 	[TestFixture]
+	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	internal class ScriptableFactoryDataProviderTests
 	{
 		private IReadOnlyList<INamedTypeSymbol> _typeSymbols;
