@@ -30,6 +30,7 @@ using NUnit.Framework;
 namespace Genesis.Plugin.Tests
 {
 	[TestFixture]
+	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	public class AssembliesConfigExtensionsTests
 	{
 		private IGenesisConfig _genesisConfig;
