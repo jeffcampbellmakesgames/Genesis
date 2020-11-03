@@ -67,5 +67,5 @@ jobs:
     # Tag commit just made with new Nuget package version
     - name: Create Tag
       run: |
-        git tag -a 'nuget/$GitVersion_SemVer' -m 'Genesis.Plugin $GitVersion_SemVer Nuget Package'
+        git tag -a nuget/$GitVersion_SemVer -m "Genesis.Plugin $GitVersion_SemVer Nuget Package"
         git push origin --tags
