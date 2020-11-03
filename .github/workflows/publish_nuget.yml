@@ -6,6 +6,7 @@ on:
     branches: [ develop ]
     paths:
     - 'ExternalApp/**/*.cs'
+    - '.github/workflows/publish_nuget.yml'
 
 jobs:
   build:
@@ -61,7 +62,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
       with:
         author_name: Github Action Bot
-        cwd: './unity-package-tools_release'
         message: 'Auto-updated ExternalApp Zip contents'
 
     # Tag commit just made with new Nuget package version
