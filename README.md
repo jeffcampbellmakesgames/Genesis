@@ -41,7 +41,7 @@ The latest release can be found [here](https://github.com/jeffcampbellmakesgames
 
 ## Usage
 
-To learn more about how to use JCMG Genesis, see [here](USAGE.md) for more information.
+To learn more about how to use JCMG Genesis, see the wiki [here](https://github.com/jeffcampbellmakesgames/Genesis/wiki/Usage) for more information.
 
 ## Support
 If this is useful to you and/or you’d like to see future development and more tools in the future, please consider supporting it either by contributing to the Github projects (submitting bug reports or features and/or creating pull requests) or by buying me coffee using any of the links below. Every little bit helps!

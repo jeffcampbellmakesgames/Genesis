@@ -144,7 +144,17 @@ namespace JCMG.Genesis.Editor
 			"If enabled, additional information will be logged to the console.";
 
 		private const string GENESIS_CLI_DIRECTORY_DESCRIPTION
-			= "The location of the Genesis command-line executable and related files.";
+			= "The location of the Genesis.CLI command-line executable and related files. These should be extracted " +
+			  "from the \"Genesis.CLI.zip\" included with this framework to a folder outside of the Assets folder.";
+
+		// Warnings
+		private const string DIRECTORY_DOES_NOT_EXIST_WARNING =
+			"Cannot find this directory, please set this path to a valid path containing " +
+			"the Genesis.CLI exectable.";
+
+		private const string GENESIS_EXE_DOES_NOT_EXIST_WARNING =
+			"Cannot find the Genesis.CLI executable contents at this installation path, please set this path to a " +
+			"valid path containing the Genesis.CLI exectable.";
 
 		// Titles
 		private const string GENESIS_CLI_FOLDER_SELECT_TITLE = "Select Genesis CLI Install Folder";
@@ -198,6 +208,14 @@ namespace JCMG.Genesis.Editor
 			};
 		}
 
+		/// <summary>
+		/// Opens the window for the Genesis Project Settings.
+		/// </summary>
+		public static void OpenProjectSettings()
+		{
+			SettingsService.OpenProjectSettings(PROJECT_TITLE_PATH);
+		}
+
 		private static void DrawPersonalPrefsGUI(string value = "")
 		{
 			EditorGUILayout.LabelField(USER_PREFERENCES_HEADER, EditorStyles.boldLabel);
@@ -231,9 +249,21 @@ namespace JCMG.Genesis.Editor
 		{
 			EditorGUILayout.LabelField(PROJECT_REFERENCES_HEADER, EditorStyles.boldLabel);
 
-			// Genesis Command-Line Folder
+			// Genesis Installation Path
 			EditorGUILayout.HelpBox(GENESIS_CLI_DIRECTORY_DESCRIPTION, MessageType.Info);
 
+			// Show warnings if needed for any installation path issues.
+			var currentFolder = GenesisCLIInstallationFolder;
+			if (!Directory.Exists(currentFolder))
+			{
+				EditorGUILayout.HelpBox(DIRECTORY_DOES_NOT_EXIST_WARNING, MessageType.Error);
+			}
+			else if (!File.Exists(GetExecutablePath()))
+			{
+				EditorGUILayout.HelpBox(GENESIS_EXE_DOES_NOT_EXIST_WARNING, MessageType.Error);
+			}
+
+			// Draw selector for Installation Path
 			using (new EditorGUILayout.HorizontalScope())
 			{
 				EditorGUILayout.LabelField(GENESIS_CLI_INSTALL_FOLDER_LABEL, GUILayout.MaxWidth(110f));
@@ -246,7 +276,6 @@ namespace JCMG.Genesis.Editor
 					}
 				}
 
-				var currentFolder = GenesisCLIInstallationFolder;
 				if (GUILayoutTools.DrawFolderPickerLayout(ref currentFolder, GENESIS_CLI_FOLDER_SELECT_TITLE))
 				{
 					GenesisCLIInstallationFolder = currentFolder;
@@ -271,7 +300,9 @@ namespace JCMG.Genesis.Editor
 		/// </summary>
 		public static string GetWorkingPath()
 		{
-			return Path.GetFullPath(GenesisCLIInstallationFolder);
+			return !string.IsNullOrEmpty(GenesisCLIInstallationFolder)
+				? Path.GetFullPath(GenesisCLIInstallationFolder)
+				: string.Empty;
 		}
 
 		#endregion
