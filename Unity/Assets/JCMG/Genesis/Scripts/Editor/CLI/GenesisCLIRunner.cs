@@ -20,6 +20,15 @@ namespace JCMG.Genesis.Editor
 
 		private static GenesisSettings _TEMP_GENESIS_SETTINGS;
 
+		// Logs
+		private const string WORKING_PATH_IS_UNASSIGNED =
+			"[Genesis] Please assign a valid path to Installation Path in the Genesis Project Settings.";
+		private const string CANNOT_FIND_WORKING_PATH =
+			"[Genesis] Please assign a valid Installation Path in the Genesis Project Settings.";
+		private const string CANNOT_FIND_CONTENTS_AT_WORKING_PATH_FORMAT =
+			"[Genesis] Could not find the Genesis Executable [{0}] at Installation Path [{1}], please assign a valid " +
+			"Installation Path in the Genesis Project Settings.";
+
 		static GenesisCLIRunner()
 		{
 			SB = new StringBuilder(10000);
@@ -42,6 +51,33 @@ namespace JCMG.Genesis.Editor
 					string.Format(EditorConstants.SOLUTION_MESSAGE, FileTools.GetProjectPath()),
 					EditorConstants.DIALOG_OK);
 
+				return;
+			}
+
+			// Verify Installation Path and Genesis.CLI executable exists
+			var workingDirectory = GenesisPreferences.GetWorkingPath();
+			if (string.IsNullOrEmpty(workingDirectory))
+			{
+				Debug.LogWarning(WORKING_PATH_IS_UNASSIGNED);
+				GenesisPreferences.OpenProjectSettings();
+				return;
+			}
+
+			if (Directory.Exists(workingDirectory))
+			{
+				Debug.LogWarning(CANNOT_FIND_WORKING_PATH);
+				GenesisPreferences.OpenProjectSettings();
+				return;
+			}
+
+			var executableFullPath = Path.Combine(workingDirectory, EditorConstants.GENESIS_EXECUTABLE);
+			if (!File.Exists(executableFullPath))
+			{
+				Debug.LogWarningFormat(
+					CANNOT_FIND_CONTENTS_AT_WORKING_PATH_FORMAT,
+					EditorConstants.GENESIS_EXECUTABLE,
+					workingDirectory);
+				GenesisPreferences.OpenProjectSettings();
 				return;
 			}
 
