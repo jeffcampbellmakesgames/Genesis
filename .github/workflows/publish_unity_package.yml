@@ -4,7 +4,6 @@ name: Build Unity Package
 # updating the 'VersionConstants.cs' since this asset will change only on a new version
 on:
   push:
-    # Run unit tests anytime any source files change in the external app or Unity integration
     branches: [ develop ]
     paths:
     - 'Unity/Assets/JCMG/Genesis/Scripts/Editor/VersionConstants.cs'
@@ -15,9 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Check out Develop and Release so we can build and perform unit tests on the external solution, Unity
-      # Always check out develop so our GitVersion task will complete when building the external solution
-      # and ensure fetch-depth is zero to avoid errors with GitVersion
+      # Check out the 'develop' and 'release/stable' branch
       - uses: actions/checkout@v2
         with:
           ref: 'develop'
