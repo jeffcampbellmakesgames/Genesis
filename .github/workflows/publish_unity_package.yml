@@ -40,9 +40,7 @@ jobs:
       - name: Run Unity Unit Tests
         uses: webbertakken/unity-test-runner@v1.4
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: './Genesis/Unity'
           unityVersion: 2019.4.11f1
@@ -56,9 +54,7 @@ jobs:
       - name: Execute Unity Package Build
         uses: webbertakken/unity-builder@v2.0-alpha-1
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: './Genesis/Unity'
           unityVersion: 2019.4.11f1
@@ -76,3 +72,8 @@ jobs:
           cwd: './Genesis-Release'
           branch: 'release/stable'
           message: 'Auto-updated package contents'
+      
+      # Return Unity License
+      - name: Return Unity license
+        uses: game-ci/unity-return-license@v1
+        if: always()      
