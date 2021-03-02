@@ -48,6 +48,12 @@ jobs:
         files: './Publish/'
         dest: './Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
 
+    # Create and Publish Nuget package for Genesis.Shared.Base
+    - name: Create Nuget Package for Genesis.Shared
+      run: dotnet pack './ExternalApp/Genesis.Shared/Genesis.Shared.csproj'  -c Release --nologo -p:PackageVersion=$GitVersion_SemVer
+    - name: Publish Nuget Package for Genesis.Shared
+      run: dotnet nuget push ExternalApp/Genesis.Shared/bin/Release/**/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+
     # Create and Publish Nuget package for Genesis.Plugin.Base
     - name: Create Nuget Package for Genesis.Plugin
       run: dotnet pack './ExternalApp/Genesis.Plugin/Genesis.Plugin.csproj'  -c Release --nologo -p:PackageVersion=$GitVersion_SemVer
@@ -67,5 +73,5 @@ jobs:
     # Tag commit just made with new Nuget package version
     - name: Create Tag
       run: |
-        git tag -a nuget/$GitVersion_SemVer -m "Genesis.Plugin $GitVersion_SemVer Nuget Package"
+        git tag -a nuget/$GitVersion_SemVer -m "$GitVersion_SemVer Nuget Package"
         git push origin --tags
