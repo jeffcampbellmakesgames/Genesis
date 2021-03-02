@@ -5,4 +5,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyVersion("0.2.0.0")]
 [assembly: AssemblyFileVersion("0.2.0.0")]
-[assembly: AssemblyInformationalVersion("0.2.0-alpha.1+Branch.develop.Sha.517b936060360435af9bced4b413380253329de0")]
+[assembly: AssemblyInformationalVersion("0.2.0-alpha.10+Branch.develop.Sha.10cbe88009e7af626c278b55b6fcb57fb4c24e2e")]
