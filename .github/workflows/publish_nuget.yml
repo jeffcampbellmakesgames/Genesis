@@ -19,12 +19,14 @@ jobs:
         ref: develop
         fetch-depth: 0
 
-    # Execute GitVersion
+    # Install & Execute GitVersion
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.7
       with:
         versionSpec: '5.3.x'
     - name: Use GitVersion
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       run: |
         dotnet-gitversion /home/runner/work/Genesis/Genesis /output json /output buildserver /nonormalize /config GitVersion.yml /targetpath ExternalApp /updateassemblyinfo /ensureassemblyinfo /diag
         dotnet-gitversion /home/runner/work/Genesis/Genesis /output json /output buildserver /nonormalize /config GitVersion.yml /targetpath Unity/Assets /updateassemblyinfo /ensureassemblyinfo /diag
