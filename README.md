@@ -7,7 +7,11 @@
 ## About
 Genesis is a general-purpose, plugin-extensible code generation framework for Unity.
 
-## Minimum Requirenments
+## Overview
+
+Genesis is architected as a .Net Core console application that leverages Roslyn code analysis to inspect a target C# codebase and generate code files where developers can build custom code generators via an extensible plugin framework. While Genesis v2 is largely engine-agnostic, it has a first-class integration into the Unity game engine.
+
+## Minimum Requirements
 * Unity 2019.4.X
 
 ## Installing Genesis
