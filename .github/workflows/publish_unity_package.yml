@@ -8,6 +8,7 @@ on:
     branches: [ develop ]
     paths:
     - 'Unity/Assets/JCMG/Genesis/Scripts/Editor/VersionConstants.cs'
+    - '.github/workflows/publish_unity_package.yml'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -38,12 +39,14 @@ jobs:
 
       # Execute Unity Unit Tests and Upload results
       - name: Run Unity Unit Tests
-        uses: webbertakken/unity-test-runner@v1.4
+        uses: game-ci/unity-test-runner@v2.0-alpha-3
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           projectPath: './Genesis/Unity'
-          unityVersion: 2019.4.11f1
+          unityVersion: 2019.4.20f1
       - name: Upload Unit Test Results
         uses: actions/upload-artifact@v1
         with:
@@ -52,28 +55,42 @@ jobs:
 
       # Build Unity Package on Develop branch
       - name: Execute Unity Package Build
-        uses: webbertakken/unity-builder@v2.0-alpha-1
+        uses: game-ci/unity-builder@v2.0-alpha-6
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           projectPath: './Genesis/Unity'
-          unityVersion: 2019.4.11f1
+          unityVersion: 2019.4.20f1
           buildMethod: 'JCMG.PackageTools.Editor.PackageToolsCI.Generate'
           allowDirtyBuild: true
+
+      # Parse package version from Json
+      - name: Get Version JSON Property from Package Json
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with: 
+          path: './Genesis-Release/package.json'
+          prop_path: 'version'
+      - name: Print Version JSON Property from Package Json
+        run: echo "${{steps.version.outputs.prop}}"
 
       # Check in Unity Package on Release branch
       - name: Add & Commit Release Changes
         uses: EndBug/add-and-commit@v5.1.0
         env:
           # This is necessary in order to push a commit to the repo
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           author_name: Github Action Bot
           cwd: './Genesis-Release'
           branch: 'release/stable'
-          message: 'Auto-updated package contents'
-      
-      # Return Unity License
-      - name: Return Unity license
-        uses: game-ci/unity-return-license@v1
-        if: always()      
+          message: "v${{steps.version.outputs.prop}}"
+
+      # Tag commit just made with new Nuget package version
+      - name: Create Tag
+        run: |
+          cd './Genesis-Release'
+          git tag -a "upm/v${{steps.version.outputs.prop}}" -m "v${{steps.version.outputs.prop}}"
+          git push origin --tags
