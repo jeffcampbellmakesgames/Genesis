@@ -1,6 +1,7 @@
 {
     "name": "Genesis.Editor",
     "references": [
+        "GUID:49818357e697641afb75d2f8acaf1861",
         "GUID:1c40f02dc29efdc4c902cd41c03f76c1"
     ],
     "includePlatforms": [
