@@ -55,9 +55,6 @@ namespace JCMG.Genesis.Editor
 		/// Draw a folder picker button in <see cref="Rect"/> <paramref name="rect"/> that allows setting a
 		/// relative folder path value on <see cref="SerializedProperty"/> <paramref name="property"/>.
 		/// </summary>
-		/// <param name="rect"></param>
-		/// <param name="property"></param>
-		/// <param name="title"></param>
 		public static void DrawFolderPicker(Rect rect, SerializedProperty property, string title)
 		{
 			if (GUI.Button(
@@ -85,9 +82,6 @@ namespace JCMG.Genesis.Editor
 		/// Draw a file picker button in <see cref="Rect"/> <paramref name="rect"/> that allows setting a
 		/// relative file path value on <see cref="SerializedProperty"/> <paramref name="property"/>.
 		/// </summary>
-		/// <param name="rect"></param>
-		/// <param name="property"></param>
-		/// <param name="title"></param>
 		public static void DrawFilePicker(Rect rect, SerializedProperty property, string title)
 		{
 			if (GUI.Button(
@@ -115,8 +109,6 @@ namespace JCMG.Genesis.Editor
 		/// Draw a folder picker button using <see cref="GUILayout"/> that allows setting a
 		/// relative folder path value on <see cref="SerializedProperty"/> <paramref name="property"/>.
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="title"></param>
 		public static void DrawFolderPickerLayout(SerializedProperty property, string title)
 		{
 			if (GUILayout.Button(
@@ -139,6 +131,35 @@ namespace JCMG.Genesis.Editor
 					property.stringValue = relativePath;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Draw a folder picker button using <see cref="GUILayout"/> that allows setting a
+		/// relative folder path value on <see cref="SerializedProperty"/> <paramref name="property"/>.
+		/// </summary>
+		public static bool DrawFolderPickerLayout(ref string folder, string title)
+		{
+			if (GUILayout.Button(
+				EditorGUIUtility.IconContent(EDITOR_FOLDER_ICON),
+				GUILayout.Width(FOLDER_PATH_PICKER_HEIGHT),
+				GUILayout.Height(FOLDER_PATH_PICKER_HEIGHT)))
+			{
+				var currentFolder = string.IsNullOrEmpty(folder) ? string.Empty : folder;
+				var path = EditorUtility.SaveFolderPanel(
+					title,
+					currentFolder,
+					string.Empty);
+
+				if (!string.IsNullOrEmpty(path))
+				{
+					var relativePath = FileTools.ConvertToRelativePath(path, Application.dataPath);
+					folder = relativePath;
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

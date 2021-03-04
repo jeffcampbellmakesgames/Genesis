@@ -44,7 +44,11 @@ namespace JCMG.Genesis.Editor
 			if (remoteVersionString != string.Empty)
 			{
 				var localVersion = new Version(localVersionString);
-				var remoteVersion = new Version(remoteVersionString);
+
+				// Parse remote version to remove any tag prefixes and 'v' character
+				var vIndex = remoteVersionString.IndexOf('v');
+				var normalizedRemoteVersion = remoteVersionString.Substring(vIndex + 1);
+				var remoteVersion = new Version(normalizedRemoteVersion);
 
 				switch (remoteVersion.CompareTo(localVersion))
 				{

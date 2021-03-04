@@ -36,7 +36,8 @@ namespace JCMG.Genesis.Editor
 	internal static class MenuItems
 	{
 		// Menu item paths
-		private const string GENERATE_CODE_MENU_ITEM = "Tools/JCMG/Genesis/Generate Code #%g";
+		private const string GENERATE_CODE_MENU_ITEM = "Tools/JCMG/Genesis/Generate CLI Code #%g";
+		private const string SELECT_EXTERNAL_APP_ZIP_MENU_ITEM = "Tools/JCMG/Genesis/Select Generate.CLI.zip";
 		private const string BUG_OR_FEATURE_REQUEST_MENU_ITEM = "Tools/JCMG/Genesis/Submit bug or feature request";
 		private const string CHECK_FOR_UPDATES_MENU_ITEM = "Tools/JCMG/Genesis/Check for Updates...";
 		private const string DOCUMENTATION_MENU_ITEM = "Tools/JCMG/Genesis/Documentation...";
@@ -48,6 +49,7 @@ namespace JCMG.Genesis.Editor
 
 		// Menu item priorities
 		private const int GENERATE_CODE_PRIORITY = 1;
+		private const int SELECT_EXTERNAL_ZIP_PRIORITY = 1;
 		private const int BUG_OR_FEATURE_REQUEST_PRIORITY = 100;
 		private const int CHECK_FOR_UPDATES_PRIORITY = 101;
 		private const int DOCUMENTATION_PRIORITY = 102;
@@ -67,9 +69,31 @@ namespace JCMG.Genesis.Editor
 		#region Window Menu Items
 
 		[MenuItem(GENERATE_CODE_MENU_ITEM, priority = GENERATE_CODE_PRIORITY)]
-		internal static void ExecuteGenesisCodeGeneration()
+		internal static void RunCodeGeneration()
 		{
-			UnityCodeGenerator.GenerateAll();
+			GenesisCLIRunner.RunCodeGeneration();
+		}
+
+		[MenuItem(SELECT_EXTERNAL_APP_ZIP_MENU_ITEM, priority = SELECT_EXTERNAL_ZIP_PRIORITY)]
+		internal static void TrySelectExternalAppZip()
+		{
+			const string APP_ZIP_GUID = "ed87908a8d9915e44bdb635e9ac30a90";
+
+			var assetPath = AssetDatabase.GUIDToAssetPath(APP_ZIP_GUID);
+			if (string.IsNullOrEmpty(assetPath))
+			{
+				const string WARNING =
+					"[Genesis] Could not find Genesis.CLI.zip, please reimport or reinstall Genesis so that this " +
+					"file is present.";
+				Debug.LogWarning(WARNING);
+			}
+			else
+			{
+				var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
+
+				EditorGUIUtility.PingObject(asset);
+				Selection.SetActiveObjectWithContext(asset, null);
+			}
 		}
 
 		[MenuItem(BUG_OR_FEATURE_REQUEST_MENU_ITEM, priority = BUG_OR_FEATURE_REQUEST_PRIORITY)]
@@ -79,13 +103,13 @@ namespace JCMG.Genesis.Editor
 		}
 
 		[MenuItem(CHECK_FOR_UPDATES_MENU_ITEM, false, CHECK_FOR_UPDATES_PRIORITY)]
-		public static void DisplayUpdates()
+		internal static void DisplayUpdates()
 		{
 			SDKUpdateTools.CheckUpdateInfo(EditorConstants.SDK_NAME, GITHUB_API_LATEST_RELEASE);
 		}
 
 		[MenuItem(DOCUMENTATION_MENU_ITEM, false, DOCUMENTATION_PRIORITY)]
-		public static void OpenURLToDocumentation()
+		internal static void OpenURLToDocumentation()
 		{
 			Application.OpenURL(GITHUB_URL);
 		}
@@ -120,7 +144,8 @@ namespace JCMG.Genesis.Editor
 					})
 				.ToArray();
 
-			UnityCodeGenerator.GenerateMultiple(settingsData);
+			// TODO Rewrite to use external CLI
+			//UnityCodeGenerator.GenerateMultiple(settingsData);
 		}
 
 		[MenuItem(GENESIS_SETTINGS_GENERATE_CODE_MENU_ITEM, isValidateFunction:true)]
