@@ -6,6 +6,7 @@ on:
     branches: [ develop ]
     paths:
     - 'ExternalApp/**/*.cs'
+    - 'ExternalApp/**/*.cproj'
     - '.github/workflows/publish_nuget.yml'
 
 jobs:
