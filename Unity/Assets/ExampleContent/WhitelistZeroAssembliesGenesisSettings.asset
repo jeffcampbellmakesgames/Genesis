@@ -50,7 +50,7 @@ MonoBehaviour:
       value: Genesis.Unity.Factory.Plugin.ScriptableFactoryCodeGenerator
     - key: Genesis.PostProcessors
       value: Genesis.Core.Plugin.AddFileHeaderPostProcessor, Genesis.Core.Plugin.NewLinePostProcessor,
-        Genesis.Core.Plugin.MergeFilesPostProcessor, Genesis.Core.Plugin.WriteToDiskPostProcessor
+        Genesis.Core.Plugin.MergeFilesPostProcessor
     - key: Genesis.DoUseWhiteListedAssemblies
       value: true
     - key: Genesis.WhiteListedAssemblies
