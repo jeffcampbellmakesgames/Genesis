@@ -22,7 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 namespace JCMG.Genesis.Editor
 {
 	/// <summary>
@@ -33,7 +32,7 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The semantic version
 		/// </summary>
-		public const string VERSION = "2.0.0";
+		public const string VERSION = "2.0.1";
 
 		/// <summary>
 		/// The branch of GIT this package was published from.
@@ -43,16 +42,16 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "e4a6719748e486aa2dfed668f50cac33c84139cc";
+		public const string GIT_COMMIT = "54cf2f40d67c7841bd687edf4eeaa478ba1d9bdd";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Tuesday, March 2, 2021";
+		public const string PUBLISH_DATE = "Friday, March 12, 2021";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "03/02/2021 13:22:08";
+		public const string PUBLISH_TIME = "03/12/2021 13:55:07";
 	}
 }

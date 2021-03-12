@@ -63,7 +63,7 @@ namespace JCMG.Genesis.Editor
 				return;
 			}
 
-			if (Directory.Exists(workingDirectory))
+			if (!Directory.Exists(workingDirectory))
 			{
 				Debug.LogWarning(CANNOT_FIND_WORKING_PATH);
 				GenesisPreferences.OpenProjectSettings();
