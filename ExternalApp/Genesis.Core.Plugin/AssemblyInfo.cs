@@ -32,4 +32,4 @@ using System.Runtime.CompilerServices;
 // Assembly Info
 [assembly: AssemblyVersion("0.2.0.0")]
 [assembly: AssemblyFileVersion("0.2.0.0")]
-[assembly: AssemblyInformationalVersion("0.2.0-alpha.15+Branch.develop.Sha.62337fd636b11c9e0548d5fa957b6de20fe47300")]
+[assembly: AssemblyInformationalVersion("0.2.0-alpha.18+Branch.develop.Sha.a4f0594565b2c6f07c3d1ff24437020c37c5e65e")]
