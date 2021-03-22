@@ -28,7 +28,7 @@ namespace Genesis.Shared
 	/// <summary>
 	/// A configuration for enabling user customization of assemblies to search for types via reflection.
 	/// </summary>
-	internal sealed class AssembliesConfig : AbstractConfigurableConfig
+	public sealed class AssembliesConfig : AbstractConfigurableConfig
 	{
 		/// <summary>
 		/// Returns true if reflection-based logic should only search types in <see cref="WhiteListedAssemblies"/>,
