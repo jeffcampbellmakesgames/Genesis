@@ -32,7 +32,7 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The semantic version
 		/// </summary>
-		public const string VERSION = "2.0.2";
+		public const string VERSION = "2.0.3";
 
 		/// <summary>
 		/// The branch of GIT this package was published from.
@@ -42,16 +42,16 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "8be3f671cb85e3ee9719b24c315cdfb22bb4d15f";
+		public const string GIT_COMMIT = "b28a6e3e62545cc0b6f50de23973411bf629dad9";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Saturday, March 13, 2021";
+		public const string PUBLISH_DATE = "Thursday, April 1, 2021";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "03/13/2021 14:26:43";
+		public const string PUBLISH_TIME = "04/01/2021 11:57:16";
 	}
 }
