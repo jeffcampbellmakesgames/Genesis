@@ -26,7 +26,7 @@ THE SOFTWARE.
 namespace Genesis.Plugin
 {
 	/// <summary>
-	/// Helper class for comments
+	///     Helper class for comments
 	/// </summary>
 	public static class CommentTools
 	{

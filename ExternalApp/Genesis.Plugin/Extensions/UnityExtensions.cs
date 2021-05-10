@@ -23,42 +23,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using System.Collections.Generic;
 using System.Linq;
-using Genesis.Shared;
 using Microsoft.CodeAnalysis;
 
 namespace Genesis.Plugin
 {
 	/// <summary>
-	///     Helper methods for <see cref="AssembliesConfig" />
+	/// Helper methods for Unity related types.
 	/// </summary>
-	internal static class AssembliesConfigExtensions
+	public static class UnityExtensions
 	{
 		/// <summary>
-		///     If <paramref name="config" /> is set to whitelist assemblies, it filters the superset of
-		///     <paramref name="namedTypeSymbols" /> to only those contained in assemblies
-		///     defined in this config.
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity MonoBehaviour.
 		/// </summary>
-		public static IReadOnlyList<INamedTypeSymbol> FilterTypeSymbols(
-			this AssembliesConfig config,
-			IReadOnlyList<INamedTypeSymbol> namedTypeSymbols)
+		public static bool IsMonoBehaviour(this ITypeSymbol typeSymbol)
 		{
-			if (config.DoUseWhitelistOfAssemblies)
-			{
-				var whitelistedAssemblies = config.WhiteListedAssemblies.ToList();
-				var filteredList = new List<INamedTypeSymbol>();
-				for (var i = namedTypeSymbols.Count - 1; i >= 0; i--)
-				{
-					var namedTypeSymbol = namedTypeSymbols[i];
-					if (whitelistedAssemblies.Contains(namedTypeSymbol.ContainingAssembly.Name))
-						filteredList.Add(namedTypeSymbol);
-				}
+			return typeSymbol
+				.GetBaseTypesAndThis()
+				.Any(x => x.GetFullTypeName() == UnityConstants.FULL_MONOBEHAVIOUR_TYPE_NAME);
+		}
 
-				return filteredList;
-			}
-
-			return namedTypeSymbols;
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity ScriptableObject.
+		/// </summary>
+		public static bool IsScriptableObject(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol
+				.GetBaseTypesAndThis()
+				.Any(x => x.GetFullTypeName() == UnityConstants.FULL_SCRIPTABLE_OBJECT_TYPE_NAME);
 		}
 	}
 }

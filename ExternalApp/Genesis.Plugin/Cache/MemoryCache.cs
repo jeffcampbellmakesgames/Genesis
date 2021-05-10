@@ -129,7 +129,14 @@ namespace Genesis.Plugin
 				}
 			}
 
-			return _cacheService.Get<T>(key) != null;
+			if (!typeof(T).IsValueType)
+			{
+				#pragma warning disable RECS0017 // Possible compare of value type with 'null'
+				return _cacheService.Get<T>(key) != null;
+				#pragma warning restore RECS0017 // Possible compare of value type with 'null'
+			}
+
+			return true;
 		}
 
 		/// <summary>
