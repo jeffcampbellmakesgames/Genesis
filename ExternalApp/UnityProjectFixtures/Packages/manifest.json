@@ -2,8 +2,7 @@
   "dependencies": {
     "com.jeffcampbellmakesgames.examplepackage": "file:../ExamplePackage",
     "com.unity.ide.rider": "1.1.4",
-    "com.unity.ide.vscode": "1.2.1",
-    "com.unity.test-framework": "1.1.16",
+    "com.unity.ide.vscode": "1.2.3",
     "com.unity.modules.jsonserialize": "1.0.0"
   }
 }
