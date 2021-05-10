@@ -3,6 +3,7 @@
 namespace Genesis.Plugin.Tests
 {
 	[TestFixture]
+	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	public static class UnityExtensionsTests
 	{
 		[Test]

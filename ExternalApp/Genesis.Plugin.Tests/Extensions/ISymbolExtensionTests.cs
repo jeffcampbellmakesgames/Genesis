@@ -4,10 +4,10 @@ using NUnit.Framework;
 namespace Genesis.Plugin.Tests
 {
 	[TestFixture]
+	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	public static class ISymbolExtensionTests
 	{
 		[Test]
-		[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 		public static void CanDetectUnderlyingNullableType()
 		{
 			var classMemberTypeSymbol = TestTools.GetClassMembersTypeSymbol();

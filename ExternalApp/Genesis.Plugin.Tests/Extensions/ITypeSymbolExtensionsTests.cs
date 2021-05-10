@@ -24,7 +24,6 @@ THE SOFTWARE.
 */
 
 using System.Linq;
-using Microsoft.CodeAnalysis;
 using NUnit.Framework;
 
 namespace Genesis.Plugin.Tests
