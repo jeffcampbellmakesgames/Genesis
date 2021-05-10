@@ -28,7 +28,7 @@ using System;
 namespace Genesis.Plugin
 {
 	/// <summary>
-	/// Extension methods for <see cref="PublicMemberInfo"/>
+	///     Extension methods for <see cref="PublicMemberInfo" />
 	/// </summary>
 	public static class PublicMemberInfoExtensions
 	{

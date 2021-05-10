@@ -26,6 +26,7 @@ THE SOFTWARE.
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Genesis.Unity.Factory;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -38,6 +39,8 @@ namespace Genesis.Plugin.Tests
 	public static class TestTools
 	{
 		private static IReadOnlyList<INamedTypeSymbol> _ALL_NAMED_TYPE_SYMBOLS;
+		private static IReadOnlyList<IAssemblySymbol> _ALL_ASSEMBLY_SYMBOLS;
+		private static bool _HAVE_DEFAULTS_BEEN_REGISTERED;
 
 		private const string SOLUTION_PATH = @"../../../../UnityProjectFixtures/UnityProjectFixtures.sln";
 
@@ -52,16 +55,55 @@ namespace Genesis.Plugin.Tests
 				return _ALL_NAMED_TYPE_SYMBOLS;
 			}
 
-			Solution solution;
-			MSBuildLocator.RegisterDefaults();
+			if (!_HAVE_DEFAULTS_BEEN_REGISTERED)
+			{
+				MSBuildLocator.RegisterDefaults();
+
+				_HAVE_DEFAULTS_BEEN_REGISTERED = true;
+			}
+
 			using (var workspace = MSBuildWorkspace.Create())
 			{
 				var path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), SOLUTION_PATH));
+				var solution = workspace.OpenSolutionAsync(path).Result;
 
-				solution = workspace.OpenSolutionAsync(path).Result;
+				_ALL_NAMED_TYPE_SYMBOLS = CodeAnalysisTools.FindAllTypes(solution);
 			}
 
-			return _ALL_NAMED_TYPE_SYMBOLS = CodeAnalysisTools.FindAllTypes(solution);
+			return _ALL_NAMED_TYPE_SYMBOLS;
+		}
+
+		public static IReadOnlyList<IAssemblySymbol> GetAllFixtureAssemblySymbols()
+		{
+			if (_ALL_ASSEMBLY_SYMBOLS != null)
+			{
+				return _ALL_ASSEMBLY_SYMBOLS;
+			}
+
+			if (!_HAVE_DEFAULTS_BEEN_REGISTERED)
+			{
+				MSBuildLocator.RegisterDefaults();
+
+				_HAVE_DEFAULTS_BEEN_REGISTERED = true;
+			}
+
+			using (var workspace = MSBuildWorkspace.Create())
+			{
+				var path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), SOLUTION_PATH));
+				var solution = workspace.OpenSolutionAsync(path).Result;
+				var assemblySymbolList = new List<IAssemblySymbol>();
+				foreach (var solutionProject in solution.Projects)
+				{
+					var compilation = solutionProject.GetCompilationAsync().Result;
+					if (compilation != null)
+					{
+						assemblySymbolList.Add(compilation.Assembly);
+					}
+				}
+				_ALL_ASSEMBLY_SYMBOLS = new List<IAssemblySymbol>(assemblySymbolList);
+			}
+
+			return _ALL_ASSEMBLY_SYMBOLS;
 		}
 
 		/// <summary>
@@ -81,12 +123,12 @@ namespace Genesis.Plugin.Tests
 		}
 
 		/// <summary>
-		/// Returns a generic C# <see cref="ITypeSymbol"/>.
+		/// Returns a generic C# <see cref="ITypeSymbol"/> for <see cref="List{T}"/>.
 		/// </summary>
-		public static ITypeSymbol GetClosedGenericTypeSymbol()
+		public static ITypeSymbol GetGenericCollectionTypeSymbol()
 		{
 			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
-			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes()
+			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
 				.First(x => x.ConstructorArguments[0].Value.ToString() == "System.Collections.Generic.List<UnityEngine.GameObject>")
 				.ConstructorArguments[0]
 				.Value;
@@ -95,17 +137,110 @@ namespace Genesis.Plugin.Tests
 		}
 
 		/// <summary>
+		/// Returns a generic C# <see cref="ITypeSymbol"/> for <see cref="List{T}"/>.
+		/// </summary>
+		public static ITypeSymbol GetClosedGenericTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "ClosedGenericBehaviour");
+		}
+
+		/// <summary>
+		/// Returns a C# <see cref="ITypeSymbol"/> for an enum type.
+		/// </summary>
+		public static ITypeSymbol GetEnumTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
+		}
+
+		/// <summary>
 		/// Returns an array C# <see cref="ITypeSymbol"/>.
 		/// </summary>
 		public static ITypeSymbol GetArrayTypeSymbol()
 		{
 			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
-			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes()
+			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
 				.First(x => x.ConstructorArguments[0].Value.ToString() == "UnityEngine.GameObject[]")
 				.ConstructorArguments[0]
 				.Value;
 
 			return arrayTypeSymbol;
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly with many member type examples.
+		/// </summary>
+		public static ITypeSymbol GetClassMembersTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "ClassMembersExample");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a delegate type.
+		/// </summary>
+		public static ITypeSymbol GetDelegateTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "DelegateType");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a nested class type.
+		/// </summary>
+		public static ITypeSymbol GetNestedTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "NestedClassType");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a Attribute-derived class.
+		/// </summary>
+		public static ITypeSymbol GetAttributeTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "ExampleAttribute");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Editor" assembly.
+		/// </summary>
+		public static ITypeSymbol GetEditorTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "EditorClass");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Runtime" assembly.
+		/// </summary>
+		public static ITypeSymbol GetRuntimeTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "RuntimeClass");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a Unity MonoBehaviour derived
+		/// type.
+		/// </summary>
+		public static ITypeSymbol GetUnityMonoBehaviourTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "ExampleMonoBehaviour");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a Unity ScriptableObject derived
+		/// type.
+		/// </summary>
+		public static ITypeSymbol GetUnityScriptableObjectTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "ExampleScriptableObject");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ISymbol"/> from the "Assembly-Csharp" assembly for a multiple generic class.
+		/// </summary>
+		public static ISymbol GetCompilableStringGenericSymbol()
+		{
+			return GetAllFixtureTypeSymbols()
+				.First(x => x.Name == "ClassMembersExample")
+				.GetAllMembers()
+				.First(x => x.Name == "multipleGenerics");
 		}
 	}
 }

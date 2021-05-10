@@ -82,23 +82,19 @@ namespace Genesis.Unity.Factory.Plugin
 		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IReadOnlyList<INamedTypeSymbol> types)
 		{
 			return types
-				.Where(
-					x => x.GetAttributes()
-						.Any(y => y.AttributeClass != null && y.AttributeClass.Name == nameof(FactoryKeyForAttribute)))
+				.Select(x => new
+				{
+					type = x,
+					attributes = x.GetAttributes(nameof(FactoryKeyForAttribute))
+				})
 				.SelectMany(
 					z =>
 					{
-						var factoryKeyEnumNamedTypeSymbols = z.GetAttributes()
-							.Where(
-								attr =>
-									attr.AttributeClass != null &&
-									attr.AttributeClass.Name == nameof(FactoryKeyForAttribute));
-
-						return factoryKeyEnumNamedTypeSymbols.Select(
+						return z.attributes.Select(
 							factoryAttr =>
 							{
 								var value = factoryAttr.ConstructorArguments[0].Value;
-								var data = new FactoryKeyData(z, (ITypeSymbol)value);
+								var data = new FactoryKeyData(z.type, (ITypeSymbol)value);
 								return data;
 							});
 					});

@@ -33,21 +33,17 @@ namespace Genesis.Plugin
 	{
 		public static string ToCompilableString(this Type type)
 		{
-			if(SerializationTools.TryGetBuiltInTypeToString(type, out var str))
-			{
+			if (SerializationTools.TryGetBuiltInTypeToString(type, out var str))
 				return str;
-			}
-			else if (type.IsGenericType)
-			{
+			if (type.IsGenericType)
 				return type.FullName.Split('`')[0] +
 				       "<" +
-				       string.Join(", ", type.GetGenericArguments().Select(argType => argType.ToCompilableString()).ToArray()) +
+				       string.Join(", ",
+					       type.GetGenericArguments().Select(argType => argType.ToCompilableString()).ToArray()) +
 				       ">";
-			}
-			else if (type.IsArray)
-			{
-				return type.GetElementType().ToCompilableString() + "[" + new string(',', type.GetArrayRank() - 1) + "]";
-			}
+			if (type.IsArray)
+				return type.GetElementType().ToCompilableString() + "[" + new string(',', type.GetArrayRank() - 1) +
+				       "]";
 
 			return type.IsNested ? type.FullName.Replace('+', '.') : type.FullName;
 		}
@@ -56,18 +52,12 @@ namespace Genesis.Plugin
 		{
 			var typeString1 = GenerateTypeString(typeString);
 			var type1 = Type.GetType(typeString1);
-			if (type1 != null)
-			{
-				return type1;
-			}
+			if (type1 != null) return type1;
 
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				var type2 = assembly.GetType(typeString1);
-				if (type2 != null)
-				{
-					return type2;
-				}
+				if (type2 != null) return type2;
 			}
 
 			return null;
@@ -88,9 +78,7 @@ namespace Genesis.Plugin
 		{
 			if (SerializationTools.TryGetBuiltInTypeToString(typeString, out var str) ||
 			    SerializationTools.TryGetBuiltInTypeString(typeString, out str))
-			{
 				return str;
-			}
 
 			typeString = GenerateGenericArguments(typeString);
 			typeString = GenerateArray(typeString);
@@ -100,7 +88,7 @@ namespace Genesis.Plugin
 
 		private static string GenerateGenericArguments(string typeString)
 		{
-			var separator = new [] {", "};
+			var separator = new[] {", "};
 			typeString = Regex.Replace(
 				typeString,
 				"<(?<arg>.*)>",

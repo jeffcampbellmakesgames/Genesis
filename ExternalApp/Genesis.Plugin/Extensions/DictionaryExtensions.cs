@@ -31,7 +31,7 @@ namespace Genesis.Plugin
 	public static class DictionaryExtensions
 	{
 		/// <summary>
-		/// Merges two dictionaries into a new single instance; any duplicate KVPs are removed.
+		///     Merges two dictionaries into a new single instance; any duplicate KVPs are removed.
 		/// </summary>
 		/// <typeparam name="TKey"></typeparam>
 		/// <typeparam name="TValue"></typeparam>

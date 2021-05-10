@@ -25,40 +25,25 @@ THE SOFTWARE.
 
 using System.Collections.Generic;
 using System.Linq;
-using Genesis.Shared;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Genesis.Plugin
 {
-	/// <summary>
-	///     Helper methods for <see cref="AssembliesConfig" />
-	/// </summary>
-	internal static class AssembliesConfigExtensions
+	public static class ClassDeclarationSyntaxExtensions
 	{
-		/// <summary>
-		///     If <paramref name="config" /> is set to whitelist assemblies, it filters the superset of
-		///     <paramref name="namedTypeSymbols" /> to only those contained in assemblies
-		///     defined in this config.
-		/// </summary>
-		public static IReadOnlyList<INamedTypeSymbol> FilterTypeSymbols(
-			this AssembliesConfig config,
-			IReadOnlyList<INamedTypeSymbol> namedTypeSymbols)
+		public static IEnumerable<MemberDeclarationSyntax> GetMembersFromAllParts(this ClassDeclarationSyntax type,
+			SemanticModel model)
 		{
-			if (config.DoUseWhitelistOfAssemblies)
-			{
-				var whitelistedAssemblies = config.WhiteListedAssemblies.ToList();
-				var filteredList = new List<INamedTypeSymbol>();
-				for (var i = namedTypeSymbols.Count - 1; i >= 0; i--)
-				{
-					var namedTypeSymbol = namedTypeSymbols[i];
-					if (whitelistedAssemblies.Contains(namedTypeSymbol.ContainingAssembly.Name))
-						filteredList.Add(namedTypeSymbol);
-				}
-
-				return filteredList;
-			}
-
-			return namedTypeSymbols;
+			var typeSymbol = model.GetDeclaredSymbol(type);
+			if (typeSymbol.IsErrorType())
+				return null;
+			var allTypeDeclarations = typeSymbol.DeclaringSyntaxReferences
+				.Select(sr => sr.GetSyntax())
+				.OfType<ClassDeclarationSyntax>();
+			if (allTypeDeclarations.Any())
+				return allTypeDeclarations.SelectMany(t => t.Members);
+			return null;
 		}
 	}
 }

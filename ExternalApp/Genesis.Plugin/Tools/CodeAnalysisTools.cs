@@ -31,15 +31,15 @@ using Serilog;
 namespace Genesis.Plugin
 {
 	/// <summary>
-	/// Helper methods for code analysis.
+	///     Helper methods for code analysis.
 	/// </summary>
 	public static class CodeAnalysisTools
 	{
 		private static readonly ILogger LOGGER = Log.ForContext(typeof(CodeAnalysisTools));
 
 		/// <summary>
-		/// Returns a read-only collection of all <see cref="INamedTypeSymbol"/> instances from the
-		/// <paramref name="solution"/>.
+		///     Returns a read-only collection of all <see cref="INamedTypeSymbol" /> instances from the
+		///     <paramref name="solution" />.
 		/// </summary>
 		public static IReadOnlyList<INamedTypeSymbol> FindAllTypes(Solution solution)
 		{
@@ -64,7 +64,8 @@ namespace Genesis.Plugin
 						.OfType<INamedTypeSymbol>()
 						.ToArray();
 
-					LOGGER.Verbose("Found {ProjectTypeSymbolCount} in {ProjectName}.", namedTypeSymbols.Length, project.Name);
+					LOGGER.Verbose("Found {ProjectTypeSymbolCount} in {ProjectName}.", namedTypeSymbols.Length,
+						project.Name);
 
 					allTypeSymbols.AddRange(namedTypeSymbols);
 				}
