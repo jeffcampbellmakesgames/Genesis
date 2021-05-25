@@ -95,11 +95,32 @@ namespace Genesis.Plugin
 		}
 
 		/// <summary>
-		///     Returns true if this <see cref="ITypeSymbol" /> implements an interface matching <paramref name="typeName" />.
+		///     Returns true if this <see cref="ITypeSymbol" /> implements an interface matching
+		/// <paramref name="interfaceTypeName" />.
 		/// </summary>
-		public static bool ImplementsInterface(this ITypeSymbol typeSymbol, string typeName)
+		public static bool ImplementsInterface(this ITypeSymbol typeSymbol, string interfaceTypeName)
 		{
-			return typeSymbol.AllInterfaces.Any(x => x.Name == typeName);
+			return typeSymbol.Name != interfaceTypeName &&
+			       typeSymbol.AllInterfaces.Any(interfaceTypeSymbol => interfaceTypeSymbol.Name == interfaceTypeName);
+		}
+
+		/// <summary>
+		/// Returns true if this <paramref name="typeSymbol"/> is decorated with interface type
+		/// <typeparamref name="T"/>.
+		/// </summary>
+		/// <exception cref="ArgumentException">
+		///     <typeparamref name="T" /> must be an interface, otherwise an exception will be thrown.
+		/// </exception>
+		public static bool ImplementsInterface<T>(this ITypeSymbol typeSymbol)
+		{
+			if (!typeof(T).IsInterface)
+			{
+				throw new ArgumentException("T must be an Interface.");
+			}
+
+			var interfaceName = typeof(T).Name;
+
+			return typeSymbol.ImplementsInterface(interfaceName);
 		}
 
 		/// <summary>
@@ -279,6 +300,17 @@ namespace Genesis.Plugin
 		}
 
 		/// <summary>
+		///     Returns true if this <paramref name="typeSymbol" /> has <see cref="Attribute" /> with
+		/// <paramref name="attributeTypeName"/>.
+		/// </summary>
+		public static bool HasAttribute(this ITypeSymbol typeSymbol, string attributeTypeName)
+		{
+			return typeSymbol.GetAttributes().Any(attr =>
+				attr.AttributeClass != null &&
+				attr.AttributeClass.Name == attributeTypeName);
+		}
+
+		/// <summary>
 		///     Returns true if this <paramref name="typeSymbol" /> has <see cref="Attribute" />-derived type
 		///     <typeparamref name="T" />.
 		/// </summary>
@@ -288,11 +320,12 @@ namespace Genesis.Plugin
 		/// </exception>
 		public static bool HasAttribute<T>(this ITypeSymbol typeSymbol)
 		{
-			Debug.Assert(typeof(T).IsAssignableFrom(typeof(Attribute)));
+			if (!typeof(Attribute).IsAssignableFrom(typeof(T)))
+			{
+				throw new ArgumentException("T must be assignable to Attribute.");
+			}
 
-			return typeSymbol.GetAttributes().Any(attr =>
-				attr.AttributeClass != null &&
-				attr.AttributeClass.Name == nameof(T));
+			return typeSymbol.HasAttribute(typeof(T).Name);
 		}
 
 		/// <summary>
@@ -443,7 +476,7 @@ namespace Genesis.Plugin
 		/// </summary>
 		public static string GetFullTypeName(this ITypeSymbol typeSymbol)
 		{
-			return typeSymbol.ToString();
+			return typeSymbol.ToString().Replace("*", string.Empty);
 		}
 
 		/// <summary>

@@ -241,11 +241,14 @@ namespace Genesis.Plugin
 		/// </exception>
 		public static bool HasAttribute<T>(this ISymbol symbol)
 		{
-			Debug.Assert(typeof(T).IsAssignableFrom(typeof(Attribute)));
+			if (!typeof(Attribute).IsAssignableFrom(typeof(T)))
+			{
+				throw new ArgumentException("T must be assignable to Attribute.");
+			}
 
 			return symbol.GetAttributes().Any(attr =>
 				attr.AttributeClass != null &&
-				attr.AttributeClass.Name == nameof(T));
+				attr.AttributeClass.Name == typeof(T).Name);
 		}
 
 		/// <summary>

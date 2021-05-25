@@ -88,8 +88,10 @@ namespace Genesis.Plugin
 		public static bool ImplementsInterface<T>(this Type type)
 		{
 			var interfaceType = typeof(T);
-
-			Debug.Assert(interfaceType.IsInterface);
+			if (!interfaceType.IsInterface)
+			{
+				throw new ArgumentException("T must be an interface type.");
+			}
 
 			var interfaces = type.GetInterfaces();
 

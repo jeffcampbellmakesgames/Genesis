@@ -43,9 +43,6 @@ namespace Genesis.CLI
 		static VersionConstants()
 		{
 			var assembly = Assembly.GetAssembly(typeof(VersionConstants));
-
-			Debug.Assert(assembly != null);
-
 			var assemblyName = assembly.GetName();
 			var assemblySemVer = assemblyName.Version;
 			var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
