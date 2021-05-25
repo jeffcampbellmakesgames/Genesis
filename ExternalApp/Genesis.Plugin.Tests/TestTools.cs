@@ -153,6 +153,15 @@ namespace Genesis.Plugin.Tests
 		}
 
 		/// <summary>
+		/// Returns a C# <see cref="ITypeSymbol"/> that is contained in the global namespace.
+		/// </summary>
+		public static ITypeSymbol GetGlobalNamespaceTypeSymbol()
+		{
+			var globalTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CSharpAssemblyClass");
+			return globalTypeSymbol;
+		}
+
+		/// <summary>
 		/// Returns an array C# <see cref="ITypeSymbol"/>.
 		/// </summary>
 		public static ITypeSymbol GetArrayTypeSymbol()
@@ -160,6 +169,24 @@ namespace Genesis.Plugin.Tests
 			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
 			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
 				.First(x => x.ConstructorArguments[0].Value.ToString() == "UnityEngine.GameObject[]")
+				.ConstructorArguments[0]
+				.Value;
+
+			return arrayTypeSymbol;
+		}
+
+		/// <summary>
+		/// Returns an array C# <see cref="ITypeSymbol"/>.
+		/// </summary>
+		public static ITypeSymbol GetMultiDimArrayTypeSymbol()
+		{
+			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
+			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
+				.First(x =>
+				{
+					var strValue = x.ConstructorArguments[0].Value.ToString();
+					return strValue == "UnityEngine.GameObject[*,*]";
+				})
 				.ConstructorArguments[0]
 				.Value;
 

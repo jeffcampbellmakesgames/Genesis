@@ -38,14 +38,6 @@ namespace Genesis.Plugin
 	public static class INamedTypeSymbolExtensions
 	{
 		/// <summary>
-		///     Returns the full-type name of this <paramref name="namedTypeSymbol" />.
-		/// </summary>
-		public static string GetFullTypeName(this INamedTypeSymbol namedTypeSymbol)
-		{
-			return $"{namedTypeSymbol.ContainingNamespace}.{namedTypeSymbol.Name}";
-		}
-
-		/// <summary>
 		///     Returns true if this <paramref name="namedTypeSymbol" /> is an array, otherwise false.
 		/// </summary>
 		/// <param name="namedTypeSymbol"></param>
@@ -93,7 +85,10 @@ namespace Genesis.Plugin
 
 		public static INamedTypeSymbol GetElementType(this INamedTypeSymbol namedTypeSymbol)
 		{
-			Debug.Assert(namedTypeSymbol.IsArrayType());
+			if (!namedTypeSymbol.IsArrayType())
+			{
+				throw new ArgumentException("INamedTypeSymbol must be an array type.");
+			}
 
 			var arrayTypeSymbol = (IArrayTypeSymbol) namedTypeSymbol;
 			return (INamedTypeSymbol) arrayTypeSymbol.ElementType;
@@ -104,12 +99,15 @@ namespace Genesis.Plugin
 		///     <typeparamref name="T" />.
 		/// </summary>
 		/// <exception cref="Exception">
-		///     <typeparamref name="T" /> must be an attribute, otherwise an assertion
+		///     <typeparamref name="T" /> must be an attribute, otherwise an exception
 		///     will be thrown.
 		/// </exception>
 		public static bool HasAttribute<T>(this INamedTypeSymbol namedTypeSymbol)
 		{
-			Debug.Assert(typeof(T).IsAssignableFrom(typeof(Attribute)));
+			if (!typeof(Attribute).IsAssignableFrom(typeof(T)))
+			{
+				throw new ArgumentException("T must be assignable to Attribute.");
+			}
 
 			return namedTypeSymbol.GetAttributes().Any(attr =>
 				attr.AttributeClass != null &&
@@ -127,46 +125,16 @@ namespace Genesis.Plugin
 		public static IEnumerable<ImmutableArray<TypedConstant>> GetAttributeConstructorArguments<T>(
 			this INamedTypeSymbol namedTypeSymbol)
 		{
-			Debug.Assert(typeof(T).IsAssignableFrom(typeof(Attribute)));
+			if(!typeof(T).IsAssignableFrom(typeof(Attribute)))
+			{
+				throw new ArgumentException("T must be assignable to Attribute.");
+			}
 
 			return namedTypeSymbol.GetAttributes()
 				.Where(attr =>
 					attr.AttributeClass != null &&
-					attr.AttributeClass.Name == nameof(T))
+					attr.AttributeClass.Name == typeof(T).Name)
 				.Select(attr => attr.ConstructorArguments);
-		}
-
-		/// <summary>
-		/// </summary>
-		public static string ToCompilableString(this INamedTypeSymbol namedTypeSymbol)
-		{
-			// TODO Implement
-			var fullTypeName = namedTypeSymbol.GetFullTypeName();
-			if (SerializationTools.TryGetBuiltInTypeToString(fullTypeName, out var str)) return str;
-
-			if (namedTypeSymbol.IsGenericType)
-			{
-				return fullTypeName.Split('`')[0] +
-				       "<" +
-				       string.Join(", ",
-					       //fullTypeName
-					       namedTypeSymbol.TypeArguments
-						       .OfType<INamedTypeSymbol>()
-						       .Select(argType => argType.ToCompilableString())
-						       .ToArray()) +
-				       ">";
-			}
-
-			if (namedTypeSymbol.IsArrayType())
-			{
-				var arrayTypeSymbol = (IArrayTypeSymbol) namedTypeSymbol;
-				var elementType = namedTypeSymbol.GetArrayElementType();
-				return elementType.ToCompilableString() + "[" + new string(',', arrayTypeSymbol.Rank - 1) + "]";
-			}
-
-			return namedTypeSymbol.GetFullTypeName();
-			//var fullTypeName = namedTypeSymbol.GetFullTypeName();
-			//return namedTypeSymbol.IsNested ? fullTypeName.Replace('+', '.') : fullTypeName;
 		}
 	}
 }

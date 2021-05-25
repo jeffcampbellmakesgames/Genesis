@@ -33,7 +33,7 @@ namespace Genesis.Plugin
 	/// <summary>
 	///     Helper methods for <see cref="AssembliesConfig" />
 	/// </summary>
-	internal static class AssembliesConfigExtensions
+	public static class AssembliesConfigExtensions
 	{
 		/// <summary>
 		///     If <paramref name="config" /> is set to whitelist assemblies, it filters the superset of

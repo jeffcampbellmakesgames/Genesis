@@ -57,6 +57,30 @@ namespace Genesis.Plugin.Tests
 		}
 
 		[Test]
+		public void FullTypeNameCanBeFoundForGlobalNamespaceType()
+		{
+			var typeSymbol = TestTools.GetGlobalNamespaceTypeSymbol();
+
+			Assert.AreEqual("CSharpAssemblyClass", typeSymbol.GetFullTypeName());
+		}
+
+		[Test]
+		public void FullTypeNameCanBeFoundForArrayType()
+		{
+			var typeSymbol = TestTools.GetArrayTypeSymbol();
+
+			Assert.AreEqual("UnityEngine.GameObject[]", typeSymbol.GetFullTypeName());
+		}
+
+		[Test]
+		public void FullTypeNameCanBeFoundForMultiDimArrayType()
+		{
+			var typeSymbol = TestTools.GetMultiDimArrayTypeSymbol();
+
+			Assert.AreEqual("UnityEngine.GameObject[,]", typeSymbol.GetFullTypeName());
+		}
+
+		[Test]
 		public void FullTypeNameCanBeFoundForMultipleGenericType()
 		{
 			var typeSymbol = TestTools.GetCompilableStringGenericSymbol();
@@ -113,6 +137,25 @@ namespace Genesis.Plugin.Tests
 			var genericTypeSymbol = TestTools.GetOpenGenericTypeSymbol();
 
 			Assert.IsTrue(genericTypeSymbol.IsGenericType());
+		}
+
+		[Test]
+		public void ImplementsInterfaceCanDetectInterface()
+		{
+			var typeSymbol = TestTools.GetOpenGenericTypeSymbol();
+
+			Assert.IsTrue(typeSymbol.ImplementsInterface("IFooA"));
+			Assert.IsFalse(typeSymbol.ImplementsInterface("IFooB"));
+		}
+
+		[Test]
+		public void HasAttributeCanDetectAttribute()
+		{
+			var hasAttrTypeSymbol = TestTools.GetGlobalNamespaceTypeSymbol();
+			var hasNoAttrTypeSymbol = TestTools.GetOpenGenericTypeSymbol();
+
+			Assert.IsTrue(hasAttrTypeSymbol.HasAttribute("ExampleAttribute"));
+			Assert.IsFalse(hasNoAttrTypeSymbol.HasAttribute("ExampleAttribute"));
 		}
 
 		[Test]
