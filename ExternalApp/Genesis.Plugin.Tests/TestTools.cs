@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -125,15 +126,67 @@ namespace Genesis.Plugin.Tests
 		/// <summary>
 		/// Returns a generic C# <see cref="ITypeSymbol"/> for <see cref="List{T}"/>.
 		/// </summary>
+		public static ITypeSymbol GetGenericListTypeSymbol()
+		{
+			return GetGenericCollectionTypeSymbol();
+		}
+
+		/// <summary>
+		/// Returns a generic C# <see cref="ITypeSymbol"/> for <see cref="List{T}"/>.
+		/// </summary>
 		public static ITypeSymbol GetGenericCollectionTypeSymbol()
 		{
 			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
-			var arrayTypeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
+			var typeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
 				.First(x => x.ConstructorArguments[0].Value.ToString() == "System.Collections.Generic.List<UnityEngine.GameObject>")
 				.ConstructorArguments[0]
 				.Value;
 
-			return arrayTypeSymbol;
+			return typeSymbol;
+		}
+
+		/// <summary>
+		/// Returns a C# <see cref="ITypeSymbol"/> that for a <see cref="string"/>.
+		/// </summary>
+		public static ITypeSymbol GetStringTypeSymbol()
+		{
+			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
+			var typeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
+				.First(x => x.ConstructorArguments[0].Value.ToString() == "string")
+				.ConstructorArguments[0]
+				.Value;
+
+			return typeSymbol;
+		}
+
+		/// <summary>
+		/// Returns a C# <see cref="ITypeSymbol"/> that implements <see cref="ICloneable"/> and has a copy constructor.
+		/// </summary>
+		public static ITypeSymbol GetCloneableClassTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().Single(x => x.Name == "CloneableClass");
+		}
+
+		/// <summary>
+		/// Returns a C# <see cref="ITypeSymbol"/> that does not have a default constructor.
+		/// </summary>
+		public static ITypeSymbol GetClassTypeSymbolWithNoDefaultConstructor()
+		{
+			return GetAllFixtureTypeSymbols().Single(x => x.Name == "NoDefaultConstructorClass");
+		}
+
+		/// <summary>
+		/// Returns a generic C# <see cref="ITypeSymbol"/> for <see cref="Dictionary{TKey, TValue}"/>.
+		/// </summary>
+		public static ITypeSymbol GetGenericDictionaryTypeSymbol()
+		{
+			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
+			var typeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
+				.First(x => x.ConstructorArguments[0].Value.ToString() == "System.Collections.Generic.Dictionary<int, UnityEngine.GameObject>")
+				.ConstructorArguments[0]
+				.Value;
+
+			return typeSymbol;
 		}
 
 		/// <summary>
@@ -257,6 +310,21 @@ namespace Genesis.Plugin.Tests
 		public static ITypeSymbol GetUnityScriptableObjectTypeSymbol()
 		{
 			return GetAllFixtureTypeSymbols().First(x => x.Name == "ExampleScriptableObject");
+		}
+
+		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a Unity ScriptableObject derived
+		/// type.
+		/// </summary>
+		public static ITypeSymbol GetUnityGameObjectTypeSymbol()
+		{
+			var creatureTypeSymbol = GetAllFixtureTypeSymbols().First(x => x.Name == "CreatureType");
+			var typeSymbol = (ITypeSymbol)creatureTypeSymbol.GetAttributes(nameof(FactoryKeyEnumForAttribute))
+				.First(x => x.ConstructorArguments[0].Value.ToString() == "UnityEngine.GameObject")
+				.ConstructorArguments[0]
+				.Value;
+
+			return typeSymbol;
 		}
 
 		/// <summary>

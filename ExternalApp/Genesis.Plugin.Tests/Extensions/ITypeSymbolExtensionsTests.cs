@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -269,6 +270,99 @@ namespace Genesis.Plugin.Tests
 
 			Assert.IsTrue(containingTypesAndThis.Any(x => x.Name == "NestedClassType"));
 			Assert.IsTrue(containingTypesAndThis.Any(x => x.Name == "OuterClassType"));
+		}
+
+		[Test]
+		public static void CanDetectTypeInheritanceForGeneric()
+		{
+			var closedGenericTypeSymbol = TestTools.GetClosedGenericTypeSymbol();
+
+			Assert.IsTrue(closedGenericTypeSymbol.InheritsFrom("UnityEngine.MonoBehaviour"));
+			Assert.IsTrue(closedGenericTypeSymbol.InheritsFrom("Fixtures.GenericBehaviour<int>"));
+			Assert.IsFalse(closedGenericTypeSymbol.InheritsFrom("Fixtures.ClosedGenericBehaviour"));
+		}
+
+		[Test]
+		public static void CanDetectTypeInheritanceOsIsForGeneric()
+		{
+			var closedGenericTypeSymbol = TestTools.GetClosedGenericTypeSymbol();
+
+			Assert.IsTrue(closedGenericTypeSymbol.InheritsFromOrIs("UnityEngine.MonoBehaviour"));
+			Assert.IsTrue(closedGenericTypeSymbol.InheritsFromOrIs("Fixtures.GenericBehaviour<int>"));
+			Assert.IsTrue(closedGenericTypeSymbol.InheritsFromOrIs("Fixtures.ClosedGenericBehaviour"));
+		}
+
+		[Test]
+		public static void CanDetectListType()
+		{
+			var arrayTypeSymbol = TestTools.GetArrayTypeSymbol();
+			var listTypeSymbol = TestTools.GetGenericListTypeSymbol();
+
+			Assert.IsFalse(arrayTypeSymbol.IsList(out var nonListElementTypeSymbol));
+			Assert.IsTrue(listTypeSymbol.IsList(out var elementTypeSymbol));
+			Assert.AreEqual("UnityEngine.GameObject", elementTypeSymbol.GetFullTypeName());
+		}
+
+		[Test]
+		public static void CanDetectDictionaryType()
+		{
+			var arrayTypeSymbol = TestTools.GetArrayTypeSymbol();
+			var dictionaryTypeSymbol = TestTools.GetGenericDictionaryTypeSymbol();
+
+			Assert.IsFalse(arrayTypeSymbol.IsDictionary(out var nonKeyTypeSymbol, out var nonValueTypeSymbol));
+			Assert.IsTrue(dictionaryTypeSymbol.IsDictionary(out var keyTypeSymbol, out var valueTypeSymbol));
+			Assert.AreEqual("int", keyTypeSymbol.GetFullTypeName());
+			Assert.AreEqual("UnityEngine.GameObject", valueTypeSymbol.GetFullTypeName());
+		}
+
+		[Test]
+		public static void CanDetectArrayType()
+		{
+			var arrayTypeSymbol = TestTools.GetArrayTypeSymbol();
+			var dictionaryTypeSymbol = TestTools.GetGenericDictionaryTypeSymbol();
+			Assert.IsFalse(dictionaryTypeSymbol.IsArray(out var nonElementTypeSymbol));
+			Assert.IsTrue(arrayTypeSymbol.IsArray(out var elementTypeSymbol));
+			Assert.AreEqual("UnityEngine.GameObject", elementTypeSymbol.GetFullTypeName());
+		}
+
+		[Test]
+		public static void CanDetectCloneableImplementation()
+		{
+			var cloneableTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
+
+			Assert.IsTrue(cloneableTypeSymbol.IsCloneable());
+		}
+
+		[Test]
+		public static void CanDetectDefaultConstructor()
+		{
+			var defaultConstructorClassTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
+			var noDefaultConstructorClassTypeSymbol = TestTools.GetClassTypeSymbolWithNoDefaultConstructor();
+
+			Assert.IsTrue(defaultConstructorClassTypeSymbol.HasDefaultConstructor());
+			Assert.IsFalse(noDefaultConstructorClassTypeSymbol.HasDefaultConstructor());
+		}
+
+		[Test]
+		public static void CanDetectCopyConstructor()
+		{
+			var copyConstructorClassTypeSymbol = TestTools.GetClassTypeSymbolWithNoDefaultConstructor();
+			var defaultConstructorClassTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
+
+			Assert.IsTrue(copyConstructorClassTypeSymbol.HasCopyConstructor());
+			Assert.IsFalse(defaultConstructorClassTypeSymbol.HasCopyConstructor());
+		}
+
+		[Test]
+		public static void CanDetectMutableReferenceType()
+		{
+			var stringTypeSymbol = TestTools.GetStringTypeSymbol();
+			var arrayTypeSymbol = TestTools.GetArrayTypeSymbol();
+			var listTypeSymbol = TestTools.GetGenericListTypeSymbol();
+
+			Assert.IsFalse(stringTypeSymbol.IsMutableReferenceType());
+			Assert.IsTrue(arrayTypeSymbol.IsMutableReferenceType());
+			Assert.IsTrue(listTypeSymbol.IsMutableReferenceType());
 		}
 
 		[Test]
