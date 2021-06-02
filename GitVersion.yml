@@ -1,9 +1,11 @@
 mode: ContinuousDeployment
 tag-prefix: 'nuget[/]v'
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}'
 branches:
   release:
     regex: '^develop?[/-]'
-    increment: None
+    increment: Patch
     is-release-branch: true
     is-mainline: true
     tracks-release-branches: true

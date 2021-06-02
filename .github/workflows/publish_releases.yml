@@ -1,0 +1,162 @@
+name: Publish Nuget Package for Genesis Plugins
+
+on:
+  push:
+    # Attempt to create a new nuget package and Unity release anytime code changes.
+    branches: [ develop ]
+    paths:
+    - 'Unity/Assets/JCMG/Genesis/Scripts/**/*.cs'
+    - 'ExternalApp/**/*.cs'
+    - 'ExternalApp/**/*.cproj'
+    - '.github/workflows/publish_releases.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    ### Manage Dependencies
+
+    # Check out Develop and Release so we can build and perform unit tests on the external solution, Unity
+    # Always check out develop so our GitVersion task will complete when building the external solution
+    # and ensure fetch-depth is zero to avoid errors with GitVersion
+    - uses: actions/checkout@v2
+      with:
+        ref: 'develop'
+        path: './Genesis'
+    - uses: actions/checkout@v2
+      with:
+        ref: 'release/stable'
+        path: './Genesis-Release'
+
+    # Install the .Net Core dependency
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.*
+
+    # Install & Execute GitVersion
+    - name: Execute GitVersion on External App
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.9
+      with:
+        useConfigFile: true
+        configFilePath: '/Genesis/GitVersion.yml'
+        additionalArguments: '/targetpath ./Genesis/ExternalApp /output json /output buildserver /nonormalize /updateassemblyinfo /ensureassemblyinfo /diag /showConfig'
+        updateAssemblyInfo: true
+        updateAssemblyInfoFilename: true
+
+    - name: Execute GitVersion on External App
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.9
+      with:
+        useConfigFile: true
+        configFilePath: '/Genesis/GitVersion.yml'
+        additionalArguments: '/targetpath ./Genesis/Unity/Assets /output json /output buildserver /nonormalize /updateassemblyinfo /ensureassemblyinfo /diag /showConfig'
+        updateAssemblyInfo: true
+        updateAssemblyInfoFilename: true
+
+    ### Build solutions and run Unit Tests
+
+    # Build and Run Unit Tests for External App Solution
+    - name: Build Genesis.CLI solution
+      run: dotnet build './Genesis/ExternalApp/Genesis/Genesis.sln' -c Debug --nologo
+    - name: Run Genesis.CLI Unit Tests
+      run: dotnet test './Genesis/ExternalApp/Genesis/Genesis.sln' --no-build --filter "TestCategory!=CodeAnalysis" --verbosity normal
+
+    # Retrieve cache for Unity project
+      - name: Retrieve Unity Library Cache
+        uses: actions/cache@v1.1.0
+        with:
+          path: './Genesis/Unity/Library'
+          key: Library-Genesis-Windows
+          restore-keys: |
+            Library-Genesis
+
+    # Execute Unity Unit Tests and Upload results
+    - name: Run Unity Unit Tests
+      uses: game-ci/unity-test-runner@v2.0-alpha-3
+      env:
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+      with:
+        projectPath: './Genesis/Unity'
+        unityVersion: 2019.4.20f1
+
+    - name: Upload Unit Test Results
+      uses: actions/upload-artifact@v1
+      with:
+        name: Test results
+        path: artifacts
+
+    ### Upload or check in release content
+
+    # Zip published app and write zip to Unity project
+    - name: 'Create Zip for Genesis.CLI'
+      uses: vimtor/action-zip@v1
+      with:
+        files: './Genesis/Publish/'
+        dest: './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
+
+    # Build Unity Package on Develop branch
+    - name: Execute Unity Package Build
+      uses: game-ci/unity-builder@v2.0-alpha-6
+      env:
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+      with:
+        projectPath: './Genesis/Unity'
+        unityVersion: 2019.4.20f1
+        buildMethod: 'JCMG.PackageTools.Editor.PackageToolsCI.Generate'
+        allowDirtyBuild: true
+        customParameters: "version=${{ steps.gitversion.outputs.majorMinorPatch }} GenerateVersionConstants=true"
+
+    # Check build contents on develop branch
+    #- name: Add & Commit Release Changes
+    #  uses: EndBug/add-and-commit@v5.1.0
+    #  env:
+    #    # This is necessary in order to push a commit to the repo
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #  with:
+    #    cwd: './Genesis'
+    #    author_name: Github Action Bot
+    #    message: 'Auto-updated ExternalApp Zip contents'        
+
+    # Check in Unity Package on Release branch
+    #- name: Add & Commit Release Changes
+    #  uses: EndBug/add-and-commit@v5.1.0
+    #  env:
+    #    # This is necessary in order to push a commit to the repo
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #  with:
+    #    author_name: Github Action Bot
+    #    cwd: './Genesis-Release'
+    #    branch: 'release/stable'
+    #    message: "v${{ steps.gitversion.outputs.majorMinorPatch }}"    
+
+    # Create and Publish Nuget package for Genesis.Shared.Base
+    - name: Create Nuget Package for Genesis.Shared
+      run: dotnet pack ./Genesis/ExternalApp/Genesis.Shared/Genesis.Shared.csproj  -c Release --nologo -p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}
+    #- name: Publish Nuget Package for Genesis.Shared
+    #  run: dotnet nuget push ./Genesis/ExternalApp/Genesis.Shared/bin/Release/**/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+
+    # Create and Publish Nuget package for Genesis.Plugin.Base
+    - name: Create Nuget Package for Genesis.Plugin
+      run: dotnet pack ./Genesis/ExternalApp/Genesis.Plugin/Genesis.Plugin.csproj  -c Release --nologo -p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}
+    #- name: Publish Nuget Package for Genesis.Plugin
+    #  run: dotnet nuget push ./Genesis/ExternalApp/Genesis.Plugin/bin/Release/**/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+
+    # Tag commit just made with new Nuget package version
+    # TODO Add back git push origin --tags
+    - name: Create Tag
+      run: |
+        cd './Genesis'
+        git tag -a "nuget/${{ steps.gitversion.outputs.majorMinorPatch }}" -m "${{ steps.gitversion.outputs.majorMinorPatch }} Nuget Package"        
+
+    # Tag commit just made with new Unity package version
+    # TODO Add back git push origin --tags
+    - name: Create Tag
+      run: |
+        cd './Genesis-Release'
+        git tag -a "upm/v${{ steps.gitversion.outputs.majorMinorPatch }}" -m "v${{steps.version.outputs.prop}}"
