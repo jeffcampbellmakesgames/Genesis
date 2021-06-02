@@ -38,5 +38,5 @@ MonoBehaviour:
   - packageName: com.unity.settings-manager
     packageVersion: 1.0.3
   versionConstantsPath: Assets/JCMG/Genesis/Scripts/Editor
-  versionConstantsNamespace: JCMG.Genesis.Editor
+  versionTemplateGuid: 0dbce489d1018134d8c697cec7e267fe
   _id: 66f64dad-4bda-4f2e-b960-22b7974f8604
