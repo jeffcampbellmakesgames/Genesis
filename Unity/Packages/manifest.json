@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.jeffcampbellmakesgames.packagetools": "1.4.0",
+    "com.jeffcampbellmakesgames.packagetools": "1.5.1",
     "com.unity.ext.nunit": "1.0.6",
     "com.unity.ide.rider": "1.1.4",
     "com.unity.settings-manager": "1.0.3",

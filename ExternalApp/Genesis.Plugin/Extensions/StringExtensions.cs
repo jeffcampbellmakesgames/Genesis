@@ -129,35 +129,44 @@ namespace Genesis.Plugin
 		}
 
 		/// <summary>
+		///		Returns true if this represents a global namespace otherwise false.
+		/// </summary>
+		public static bool IsGlobalNamespace(this string fullNamespace)
+		{
+			return string.IsNullOrEmpty(fullNamespace) ||
+			       fullNamespace == CodeGenerationConstants.GLOBAL_NAMESPACE;
+		}
+
+		/// <summary>
 		///     Returns the short name of the type (type name without namespace
 		/// </summary>
 		public static string GetShortTypeName(this string fullTypeName)
 		{
 			var shortTypeName = fullTypeName.Split(".").Last();
-
 			if (shortTypeName.Contains(CodeGenerationConstants.LEFT_CHEVRON_CHAR))
+			{
 				shortTypeName = shortTypeName.Remove(CodeGenerationConstants.LEFT_CHEVRON_CHAR);
+			}
 
 			return shortTypeName;
 		}
 
 		public static int? GetFirstNonWhitespaceOffset(this string line)
 		{
-			// Contract.ThrowIfNull(line);
-
 			for (var i = 0; i < line.Length; i++)
+			{
 				if (!char.IsWhiteSpace(line[i]))
+				{
 					return i;
+				}
+			}
 
 			return null;
 		}
 
 		public static string GetLeadingWhitespace(this string lineText)
 		{
-			// Contract.ThrowIfNull(lineText);
-
 			var firstOffset = lineText.GetFirstNonWhitespaceOffset();
-
 			return firstOffset.HasValue
 				? lineText.Substring(0, firstOffset.Value)
 				: lineText;
@@ -166,8 +175,10 @@ namespace Genesis.Plugin
 		public static int GetTextColumn(this string text, int tabSize, int initialColumn)
 		{
 			var lineText = text.GetLastLineText();
-			if (text != lineText) return lineText.GetColumnFromLineOffset(lineText.Length, tabSize);
-
+			if (text != lineText)
+			{
+				return lineText.GetColumnFromLineOffset(lineText.Length, tabSize);
+			}
 			return text.ConvertTabToSpace(tabSize, initialColumn, text.Length) + initialColumn;
 		}
 
@@ -177,10 +188,16 @@ namespace Genesis.Plugin
 
 			// now this will calculate indentation regardless of actual content on the buffer except TAB
 			for (var i = 0; i < endPosition; i++)
+			{
 				if (textSnippet[i] == '\t')
+				{
 					column += tabSize - column % tabSize;
+				}
 				else
+				{
 					column++;
+				}
+			}
 
 			return column - initialColumn;
 		}
@@ -190,8 +207,12 @@ namespace Genesis.Plugin
 			if (text == null) return -1;
 
 			for (var i = 0; i < text.Length; i++)
+			{
 				if (predicate(text[i]))
+				{
 					return i;
+				}
+			}
 
 			return -1;
 		}
@@ -199,7 +220,10 @@ namespace Genesis.Plugin
 		public static string GetFirstLineText(this string text)
 		{
 			var lineBreak = text.IndexOf('\n');
-			if (lineBreak < 0) return text;
+			if (lineBreak < 0)
+			{
+				return text;
+			}
 
 			return text.Substring(0, lineBreak + 1);
 		}
@@ -207,7 +231,10 @@ namespace Genesis.Plugin
 		public static string GetLastLineText(this string text)
 		{
 			var lineBreak = text.LastIndexOf('\n');
-			if (lineBreak < 0) return text;
+			if (lineBreak < 0)
+			{
+				return text;
+			}
 
 			return text.Substring(lineBreak + 1);
 		}
@@ -215,8 +242,12 @@ namespace Genesis.Plugin
 		public static bool ContainsLineBreak(this string text)
 		{
 			foreach (var ch in text)
+			{
 				if (ch == '\n' || ch == '\r')
+				{
 					return true;
+				}
+			}
 
 			return false;
 		}
@@ -225,11 +256,19 @@ namespace Genesis.Plugin
 		{
 			var lineBreaks = 0;
 			for (var i = 0; i < text.Length; i++)
+			{
 				if (text[i] == '\n')
+				{
 					lineBreaks++;
+				}
 				else if (text[i] == '\r')
+				{
 					if (i + 1 == text.Length || text[i + 1] != '\n')
+					{
 						lineBreaks++;
+					}
+				}
+			}
 
 			return lineBreaks;
 		}
@@ -238,8 +277,12 @@ namespace Genesis.Plugin
 		{
 			// PERF: Tried replacing this with "text.IndexOf('\t')>=0", but that was actually slightly slower
 			foreach (var ch in text)
+			{
 				if (ch == '\t')
+				{
 					return true;
+				}
+			}
 
 			return false;
 		}
@@ -442,8 +485,7 @@ namespace Genesis.Plugin
 		/// </summary>
 		internal static string Unquote(this string arg)
 		{
-			bool quoted;
-			return Unquote(arg, out quoted);
+			return Unquote(arg, out var quoted);
 		}
 
 		internal static string Unquote(this string arg, out bool quoted)

@@ -7,19 +7,53 @@ namespace Genesis.Plugin.Tests
 	public static class UnityExtensionsTests
 	{
 		[Test]
-		public static void CanDetectUnityMonoBehaviour()
+		public static void CanDetectUnityObject()
 		{
-			var exampleMonoBehaviourTypeSymbol = TestTools.GetUnityMonoBehaviourTypeSymbol();
+			var scriptableObjectTypeSymbol = TestTools.GetUnityScriptableObjectTypeSymbol();
+			var monobehaviorObjectTypeSymbol = TestTools.GetUnityMonoBehaviourTypeSymbol();
+			var pocoTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
 
-			Assert.IsTrue(exampleMonoBehaviourTypeSymbol.IsMonoBehaviour());
+			Assert.IsTrue(scriptableObjectTypeSymbol.IsUnityObject());
+			Assert.IsTrue(monobehaviorObjectTypeSymbol.IsUnityObject());
+			Assert.IsFalse(pocoTypeSymbol.IsUnityObject());
 		}
 
 		[Test]
 		public static void CanDetectUnityScriptableObject()
 		{
-			var exampleScriptableObjectTypeSymbol = TestTools.GetUnityScriptableObjectTypeSymbol();
+			var scriptableObjectTypeSymbol = TestTools.GetUnityScriptableObjectTypeSymbol();
+			var monobehaviorObjectTypeSymbol = TestTools.GetUnityMonoBehaviourTypeSymbol();
+			var pocoTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
 
-			Assert.IsTrue(exampleScriptableObjectTypeSymbol.IsScriptableObject());
+			Assert.IsTrue(scriptableObjectTypeSymbol.IsUnityScriptableObject());
+			Assert.IsFalse(monobehaviorObjectTypeSymbol.IsUnityScriptableObject());
+			Assert.IsFalse(pocoTypeSymbol.IsUnityScriptableObject());
+		}
+
+		[Test]
+		public static void CanDetectUnityGameObject()
+		{
+			var gameObjectTypeSymbol = TestTools.GetUnityGameObjectTypeSymbol();
+			var scriptableObjectTypeSymbol = TestTools.GetUnityScriptableObjectTypeSymbol();
+			var monobehaviorObjectTypeSymbol = TestTools.GetUnityMonoBehaviourTypeSymbol();
+			var pocoTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
+
+			Assert.IsTrue(gameObjectTypeSymbol.IsUnityGameObject());
+			Assert.IsFalse(scriptableObjectTypeSymbol.IsUnityGameObject());
+			Assert.IsFalse(monobehaviorObjectTypeSymbol.IsUnityGameObject());
+			Assert.IsFalse(pocoTypeSymbol.IsUnityGameObject());
+		}
+
+		[Test]
+		public static void CanDetectUnityMonobehaviour()
+		{
+			var scriptableObjectTypeSymbol = TestTools.GetUnityScriptableObjectTypeSymbol();
+			var monobehaviorObjectTypeSymbol = TestTools.GetUnityMonoBehaviourTypeSymbol();
+			var pocoTypeSymbol = TestTools.GetCloneableClassTypeSymbol();
+
+			Assert.IsFalse(scriptableObjectTypeSymbol.IsUnityMonoBehaviour());
+			Assert.IsTrue(monobehaviorObjectTypeSymbol.IsUnityMonoBehaviour());
+			Assert.IsFalse(pocoTypeSymbol.IsUnityMonoBehaviour());
 		}
 	}
 }

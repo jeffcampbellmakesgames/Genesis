@@ -251,6 +251,68 @@ namespace Genesis.Plugin
 		}
 
 		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> inherits from a type whose fully-qualified name matches
+		/// the <typeparamref name="T"/> type.
+		/// </summary>
+		public static bool InheritsFrom<T>(this ITypeSymbol typeSymbol)
+		{
+			var type = typeof(T);
+			var fullTypeName = type.GetFullTypeName();
+
+			return typeSymbol.InheritsFrom(fullTypeName);
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> inherits from a type whose fully-qualified name matches
+		/// <paramref name="fullTypeName"/>.
+		/// </summary>
+		public static bool InheritsFrom(this ITypeSymbol typeSymbol, string fullTypeName)
+		{
+			var result = false;
+			foreach (var baseType in typeSymbol.GetBaseTypes())
+			{
+				if (fullTypeName == baseType.GetFullTypeName())
+				{
+					result = true;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> inherits from a type or is this type whose fully-qualified
+		/// name matches the <typeparamref name="T"/> type.
+		/// </summary>
+		public static bool InheritsFromOrIs<T>(this ITypeSymbol typeSymbol)
+		{
+			var type = typeof(T);
+			var fullTypeName = type.GetFullTypeName();
+
+			return typeSymbol.InheritsFromOrIs(fullTypeName);
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> inherits from a type or is this type whose fully-qualified
+		/// name matches <paramref name="fullTypeName"/>.
+		/// </summary>
+		public static bool InheritsFromOrIs(this ITypeSymbol typeSymbol, string fullTypeName)
+		{
+			var result = false;
+			foreach (var baseType in typeSymbol.GetBaseTypesAndThis())
+			{
+				if (fullTypeName == baseType.GetFullTypeName())
+				{
+					result = true;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Return all <see cref="ITypeSymbol"/> instances that contain this <see cref="ITypeSymbol"/> and this.
 		/// </summary>
 		public static IEnumerable<ITypeSymbol> GetContainingTypesAndThis(this ITypeSymbol typeSymbol)
@@ -274,6 +336,68 @@ namespace Genesis.Plugin
 				yield return current;
 				current = current.ContainingType;
 			}
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is a <see cref="List{T}"/>. If true,
+		/// <paramref name="genericElementTypeSymbol"/> will be initialized with the list's generic type value.
+		/// </summary>
+		public static bool IsList(this ITypeSymbol typeSymbol, out ITypeSymbol genericElementTypeSymbol)
+		{
+			genericElementTypeSymbol = null;
+
+			var isList = typeSymbol.Name == "List" &&
+			             typeSymbol.ContainingNamespace.ToString() == "System.Collections.Generic";
+
+			if (isList)
+			{
+				genericElementTypeSymbol = typeSymbol.GetTypeArguments()[0];
+			}
+
+			return isList;
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is a <see cref="Dictionary{TKey, TValue}"/>. If true,
+		/// <paramref name="keyTypeSymbol"/> and <paramref name="valueTypeSymbol"/> will be initialized with the
+		/// dictionary's generic key and type values.
+		/// </summary>
+		public static bool IsDictionary(
+			this ITypeSymbol typeSymbol,
+			out ITypeSymbol keyTypeSymbol,
+			out ITypeSymbol valueTypeSymbol)
+		{
+			keyTypeSymbol = null;
+			valueTypeSymbol = null;
+
+			var isDictionary = typeSymbol.Name == "Dictionary" &&
+			                   typeSymbol.ContainingNamespace.ToString() == "System.Collections.Generic";
+
+			if (isDictionary)
+			{
+				var typeParams = typeSymbol.GetTypeArguments();
+				keyTypeSymbol = typeParams[0];
+				valueTypeSymbol = typeParams[1];
+			}
+
+			return isDictionary;
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is a <see cref="Array"/>. If true,
+		/// <paramref name="elementTypeSymbol"/> will be initialized with the array's element type value.
+		/// </summary>
+		public static bool IsArray(this ITypeSymbol typeSymbol, out ITypeSymbol elementTypeSymbol)
+		{
+			elementTypeSymbol = null;
+
+			var isArray = typeSymbol.IsArrayType();
+			if (isArray)
+			{
+				elementTypeSymbol = typeSymbol.GetArrayElementType();
+			}
+
+			return isArray;
 		}
 
 		/// <summary>
@@ -480,13 +604,56 @@ namespace Genesis.Plugin
 		}
 
 		/// <summary>
-		///     Returns true if this <paramref name="typeSymbol" /> is an array, otherwise false.
+		///     Returns true if this <paramref name="typeSymbol" /> is a generic type, otherwise false.
 		/// </summary>
 		public static bool IsGenericType(this ITypeSymbol typeSymbol)
 		{
-			if (typeSymbol is INamedTypeSymbol namedTypeSymbol) return namedTypeSymbol.IsGenericType;
+			if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
+			{
+				return namedTypeSymbol.IsGenericType;
+			}
 
 			return typeSymbol.BaseType != null && typeSymbol.BaseType.IsGenericType;
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> has a default constructor, otherwise false.
+		/// </summary>
+		public static bool HasDefaultConstructor(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol
+				.GetMembers()
+				.Any(x => x.IsConstructor() && x.GetParameters().Length == 0);
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> has a constructor that accepts a single parameter of the
+		/// same type, otherwise false.
+		/// </summary>
+		public static bool HasCopyConstructor(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol
+				.GetMembers()
+				.Any(x =>
+					x.IsConstructor() &&
+					x.GetParameters().Length == 1 &&
+					SymbolEqualityComparer.Default.Equals(x.GetParameters()[0].Type, typeSymbol));
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> implements <see cref="ICloneable"/>, otherwise false.
+		/// </summary>
+		public static bool IsCloneable(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol.ImplementsInterface<ICloneable>();
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is a mutable reference type, otherwise false.
+		/// </summary>
+		public static bool IsMutableReferenceType(this ITypeSymbol typeSymbol)
+		{
+			return !typeSymbol.IsValueType && typeSymbol.GetFullTypeName() != "string";
 		}
 
 		/// <summary>

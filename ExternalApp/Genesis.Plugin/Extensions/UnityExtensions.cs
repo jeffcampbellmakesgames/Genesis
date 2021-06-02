@@ -34,23 +34,35 @@ namespace Genesis.Plugin
 	public static class UnityExtensions
 	{
 		/// <summary>
-		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity MonoBehaviour.
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity Object, otherwise false.
 		/// </summary>
-		public static bool IsMonoBehaviour(this ITypeSymbol typeSymbol)
+		public static bool IsUnityObject(this ITypeSymbol typeSymbol)
 		{
-			return typeSymbol
-				.GetBaseTypesAndThis()
-				.Any(x => x.GetFullTypeName() == UnityConstants.FULL_MONOBEHAVIOUR_TYPE_NAME);
+			return typeSymbol.InheritsFromOrIs("UnityEngine.Object");
 		}
 
 		/// <summary>
-		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity ScriptableObject.
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity ScriptableObject, otherwise false.
 		/// </summary>
-		public static bool IsScriptableObject(this ITypeSymbol typeSymbol)
+		public static bool IsUnityScriptableObject(this ITypeSymbol typeSymbol)
 		{
-			return typeSymbol
-				.GetBaseTypesAndThis()
-				.Any(x => x.GetFullTypeName() == UnityConstants.FULL_SCRIPTABLE_OBJECT_TYPE_NAME);
+			return typeSymbol.InheritsFromOrIs("UnityEngine.ScriptableObject");
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity MonoBehaviour, otherwise false.
+		/// </summary>
+		public static bool IsUnityMonoBehaviour(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol.InheritsFromOrIs("UnityEngine.MonoBehaviour");
+		}
+
+		/// <summary>
+		/// Returns true if this <see cref="ITypeSymbol"/> is or derives from a Unity GameObject, otherwise false.
+		/// </summary>
+		public static bool IsUnityGameObject(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol.InheritsFromOrIs("UnityEngine.GameObject");
 		}
 	}
 }
