@@ -3,6 +3,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Editor")]
 
-[assembly: AssemblyVersion("0.2.0.0")]
-[assembly: AssemblyFileVersion("0.2.0.0")]
-[assembly: AssemblyInformationalVersion("0.2.0-alpha.30+Branch.develop.Sha.619359c414c1550559e1f9c83db3a3ae6443de5a")]
+[assembly: AssemblyVersion("2.0.6.0")]
+[assembly: AssemblyFileVersion("2.0.6")]
+[assembly: AssemblyInformationalVersion("2.0.6-alpha.37+Branch.develop.Sha.c558a4635cffe9068e7c4319c1c15d3567298988")]
