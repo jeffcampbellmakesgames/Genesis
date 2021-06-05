@@ -44,15 +44,8 @@ namespace JCMG.Genesis.Editor
 		/// </summary>
 		public override int Order => 0;
 
-		private GenesisSettings _settings;
-
 		private const string TITLE = "General Code Generation";
 		private readonly CodeGeneratorConfig _codeGeneratorConfig;
-
-		//private string[] _availableDataProviderNames;
-		//private string[] _availableGeneratorNames;
-		//private string[] _availablePostProcessorNames;
-		//private string[] _availablePreProcessorNames;
 
 		public CodeGeneratorSettingsDrawer()
 		{
@@ -62,13 +55,7 @@ namespace JCMG.Genesis.Editor
 		public override void Initialize(GenesisSettings settings)
 		{
 			// Add default code gen preferences.
-			_settings = settings;
 			_codeGeneratorConfig.Configure(settings);
-
-		//	_availableDataProviderNames = _codeGeneratorConfig.AllDataProviders.Select(FormatTypeName).ToArray();
-		//	_availableGeneratorNames = _codeGeneratorConfig.AllCodeGenerators.Select(FormatTypeName).ToArray();
-		//	_availablePostProcessorNames = _codeGeneratorConfig.AllPostProcessors.Select(FormatTypeName).ToArray();
-		//	_availablePreProcessorNames = _codeGeneratorConfig.AllPreProcessors.Select(FormatTypeName).ToArray();
 		}
 
 		private static string FormatTypeName(string typeName)
@@ -90,7 +77,6 @@ namespace JCMG.Genesis.Editor
 
 			EditorGUILayout.EndHorizontal();
 
-			// TODO We need to have a seperate config field for all plugin types versus enabled ones now that we don't know directly which ones are available.
 			_codeGeneratorConfig.EnabledPreProcessors = DrawMaskField(
 				"Pre Processors",
 				_codeGeneratorConfig.AllPreProcessors,

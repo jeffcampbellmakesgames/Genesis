@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using UnityEditor;
+
 namespace JCMG.Genesis.Editor
 {
 	/// <summary>
@@ -33,23 +35,31 @@ namespace JCMG.Genesis.Editor
 		// Library Name
 		public const string SDK_NAME = "Genesis";
 
+		// Genesis CLI Zip
+		public const string APP_ZIP_GUID = "ed87908a8d9915e44bdb635e9ac30a90";
+
+		/// <summary>
+		/// The asset path to the Genesis.CLI app zip, if present.
+		/// </summary>
+		public static string AppZipAssetPath => AssetDatabase.GUIDToAssetPath(APP_ZIP_GUID);
+
 		// General Logging
 		public const string LOG_PREFIX = "[Genesis] ";
 		public const string CODE_GENERATION_UPDATE_ERROR = LOG_PREFIX + "An unexpected error occured. \n\n{0}";
 		public const string DOTNET_COMMAND_EXECUTION_FORMAT = LOG_PREFIX + "{0} {1}";
+		public const string GENESIS_CLI_ZIP_NOT_FOUND = LOG_PREFIX +
+			"Could not find Genesis.CLI.zip, please reimport or reinstall Genesis so that this " +
+			"file is present.";
 
 		// Code Generation Logging
 		public const string STARTED_CODE_GENERATION = LOG_PREFIX + "Code generation started.";
 		public const string CODE_GENERATION_SUCCESS = LOG_PREFIX + "Code generation successful!";
 		public const string CODE_GENERATION_FAILURE = LOG_PREFIX + "Code generation failed, process exited with code {0}.";
 		public const string CODE_GENERATION_UPDATE = LOG_PREFIX + "{0}";
-		public const string CODE_GENERATION_UPDATE_ERROR_FORMAT =
-			LOG_PREFIX + "An unexpected error occured during code generation for GenesisSettings asset [{0}].";
-
-		// Config Generation Logging
 		public const string STARTED_CONFIG_GENERATION = LOG_PREFIX + "Config generation started.";
 		public const string CONFIG_GENERATION_SUCCESS = LOG_PREFIX + "Config generation successful!";
-		public const string CONFIG_GENERATION_FAILURE = LOG_PREFIX + "Config generation failed, process exited with code {0}.";
+		public const string GENESIS_IS_UP_TO_DATE = "Genesis CLI is up-to-update.";
+		public const string GENESIS_FAILED_TO_UPDATE = "Genesis CLI failed to update.";
 
 		// Dotnet Core and Genesis Assemblies
 		public const string DOTNET_EXE = "dotnet";
@@ -72,6 +82,7 @@ namespace JCMG.Genesis.Editor
 
 		// General Dialog
 		public const string DIALOG_OK = "OK";
+		public const string DIALOG_CANCEL = "CANCEL";
 
 		// Solution Dialog
 		public const string SOLUTION_ISSUE_TITLE = "Visual Studio Solution Issue";
