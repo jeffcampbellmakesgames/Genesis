@@ -429,9 +429,7 @@ namespace Genesis.Plugin
 		/// </summary>
 		public static bool HasAttribute(this ITypeSymbol typeSymbol, string attributeTypeName)
 		{
-			return typeSymbol.GetAttributes().Any(attr =>
-				attr.AttributeClass != null &&
-				attr.AttributeClass.Name == attributeTypeName);
+			return typeSymbol.GetAttributes().HasAttribute(attributeTypeName);
 		}
 
 		/// <summary>
@@ -458,11 +456,7 @@ namespace Genesis.Plugin
 		/// </summary>
 		public static IEnumerable<AttributeData> GetAttributes(this ITypeSymbol typeSymbol, string attributeTypeName)
 		{
-			return typeSymbol.GetAttributes()
-				.Where(
-					attr =>
-						attr.AttributeClass != null &&
-						attr.AttributeClass.Name == attributeTypeName);
+			return typeSymbol.GetAttributes().GetAttributes(attributeTypeName);
 		}
 
 		/// <summary>

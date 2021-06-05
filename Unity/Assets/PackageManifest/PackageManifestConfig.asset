@@ -37,6 +37,8 @@ MonoBehaviour:
   dependencies:
   - packageName: com.unity.settings-manager
     packageVersion: 1.0.3
+  - packageName: com.unity.sharp-zip-lib
+    packageVersion: 1.2.2-preview.1
   versionConstantsPath: Assets/JCMG/Genesis/Scripts/Editor
   versionTemplateGuid: 0dbce489d1018134d8c697cec7e267fe
   _id: 66f64dad-4bda-4f2e-b960-22b7974f8604

@@ -29,4 +29,8 @@
 	  <ProjectReference Include="..\Genesis.Shared\Genesis.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Roslyn\" />
+	</ItemGroup>
+
 </Project>

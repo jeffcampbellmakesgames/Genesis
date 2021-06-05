@@ -79,9 +79,9 @@ namespace Genesis.Unity.Factory.Plugin
 			return codeGenData.ToArray();
 		}
 
-		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IReadOnlyList<INamedTypeSymbol> types)
+		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IReadOnlyList<NamedTypeSymbolInfo> typeSymbolInfo)
 		{
-			return types
+			return typeSymbolInfo
 				.Select(x => new
 				{
 					type = x,
@@ -94,32 +94,29 @@ namespace Genesis.Unity.Factory.Plugin
 							factoryAttr =>
 							{
 								var value = factoryAttr.ConstructorArguments[0].Value;
-								var data = new FactoryKeyData(z.type, (ITypeSymbol)value);
+								var data = new FactoryKeyData(z.type.NamedTypeSymbol, (ITypeSymbol)value);
 								return data;
 							});
 					});
 		}
 
-		private IEnumerable<CodeGeneratorData> GetFactoryEnumCodeGeneratorData(IReadOnlyList<INamedTypeSymbol> types)
+		private IEnumerable<CodeGeneratorData> GetFactoryEnumCodeGeneratorData(IReadOnlyList<NamedTypeSymbolInfo> types)
 		{
 			return types
-				.Where(
-					x => x.GetAttributes().Any(y => y.AttributeClass != null
-					                                && y.AttributeClass.Name == nameof(FactoryKeyEnumForAttribute)))
+				.Where(x => x.HasAttribute(nameof(FactoryKeyEnumForAttribute)))
 				.SelectMany(
 					z =>
 					{
-						var factoryKeyEnumNamedTypeSymbols = z.GetAttributes()
-							.Where(
-								attr =>
-									attr.AttributeClass != null &&
-									attr.AttributeClass.Name == nameof(FactoryKeyEnumForAttribute));
+						var factoryKeyEnumNamedTypeSymbols =
+							z.GetAttributes(nameof(FactoryKeyEnumForAttribute));
 
 						return
 							factoryKeyEnumNamedTypeSymbols.Select(
 							factoryAttr =>
 							{
-								var data = new FactoryKeyEnumData(z, (ITypeSymbol)factoryAttr.ConstructorArguments[0].Value);
+								var data = new FactoryKeyEnumData(
+									z.NamedTypeSymbol,
+									(ITypeSymbol)factoryAttr.ConstructorArguments[0].Value);
 								return data;
 							});
 					});

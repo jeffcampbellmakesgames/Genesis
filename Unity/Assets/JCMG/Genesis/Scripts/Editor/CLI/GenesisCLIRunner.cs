@@ -47,12 +47,19 @@ namespace JCMG.Genesis.Editor
 
 		// Logs
 		private const string WORKING_PATH_IS_UNASSIGNED =
-			"[Genesis] Please assign a valid path to Installation Path in the Genesis Project Settings.";
+			EditorConstants.LOG_PREFIX + "Please assign a valid path to Installation Path in the Genesis Project Settings.";
 		private const string CANNOT_FIND_WORKING_PATH =
-			"[Genesis] Please assign a valid Installation Path in the Genesis Project Settings.";
+			EditorConstants.LOG_PREFIX + "Please assign a valid Installation Path in the Genesis Project Settings.";
 		private const string CANNOT_FIND_CONTENTS_AT_WORKING_PATH_FORMAT =
-			"[Genesis] Could not find the Genesis Executable [{0}] at Installation Path [{1}], please assign a valid " +
+			EditorConstants.LOG_PREFIX +
+			"Could not find the Genesis Executable [{0}] at Installation Path [{1}], please assign a valid " +
 			"Installation Path in the Genesis Project Settings.";
+		private const string GENESIS_CLI_OUT_OF_DATE =
+			EditorConstants.LOG_PREFIX +
+			"Genesis CLI is out-of-date, please update before generating code.";
+		private const string NO_GENESIS_SETTINGS_INSTANCES_FOUND =
+			EditorConstants.LOG_PREFIX +
+			"No GenesisSettings instance found, please create an instance in the project first.";
 
 		static GenesisCLIRunner()
 		{
@@ -68,6 +75,13 @@ namespace JCMG.Genesis.Editor
 
 		public static void RunCodeGeneration(IEnumerable<GenesisSettings> settings)
 		{
+			// If there are not any GenesisSetting instances, don't run any code generation
+			if (!settings.Any())
+			{
+				Debug.LogWarning(NO_GENESIS_SETTINGS_INSTANCES_FOUND);
+				return;
+			}
+
 			// Ensure we have a single, unique solution file
 			if (!FileTools.HasSingleSolutionFile())
 			{
@@ -92,6 +106,13 @@ namespace JCMG.Genesis.Editor
 			{
 				Debug.LogWarning(CANNOT_FIND_WORKING_PATH);
 				GenesisPreferences.OpenProjectSettings();
+				return;
+			}
+
+			// If the latest version of Genesis CLI isn't installed and not able to auto-update, return.
+			if (!AutoUpdateDetector.TryUpdateGenesisCLI())
+			{
+				Debug.LogWarning(GENESIS_CLI_OUT_OF_DATE);
 				return;
 			}
 

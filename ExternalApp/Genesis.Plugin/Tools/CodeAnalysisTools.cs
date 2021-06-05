@@ -23,8 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Serilog;
 
@@ -43,7 +45,7 @@ namespace Genesis.Plugin
 		/// </summary>
 		public static IReadOnlyList<INamedTypeSymbol> FindAllTypes(Solution solution)
 		{
-			var allTypeSymbols = new List<INamedTypeSymbol>();
+			var allTypeSymbols = new ConcurrentBag<INamedTypeSymbol>();
 			if (solution == null)
 			{
 				LOGGER.Verbose("No solution found, skipping Roslyn parsing");
@@ -53,7 +55,7 @@ namespace Genesis.Plugin
 				LOGGER.Verbose("Roslyn solution found, beginning parsing.");
 
 				// Collect all type symbols from each project and set the resultant collection into the memory cache
-				foreach (var project in solution.Projects)
+				Parallel.ForEach(solution.Projects, project =>
 				{
 					LOGGER.Verbose("Inspecting project {ProjectName}.", project.Name);
 
@@ -67,13 +69,16 @@ namespace Genesis.Plugin
 					LOGGER.Verbose("Found {ProjectTypeSymbolCount} in {ProjectName}.", namedTypeSymbols.Length,
 						project.Name);
 
-					allTypeSymbols.AddRange(namedTypeSymbols);
-				}
+					foreach (var namedTypeSymbol in namedTypeSymbols)
+					{
+						allTypeSymbols.Add(namedTypeSymbol);
+					}
+				});
 
 				LOGGER.Verbose("Found a total of {TypeSymbolsCount}.", allTypeSymbols.Count);
 			}
 
-			return allTypeSymbols;
+			return allTypeSymbols.ToList();
 		}
 	}
 }
