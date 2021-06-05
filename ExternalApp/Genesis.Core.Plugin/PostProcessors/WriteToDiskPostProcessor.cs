@@ -24,6 +24,8 @@ THE SOFTWARE.
 */
 
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using Genesis.Plugin;
 using Genesis.Shared;
 
@@ -52,17 +54,26 @@ namespace Genesis.Core.Plugin
 
 		public CodeGenFile[] PostProcess(CodeGenFile[] files)
 		{
-			foreach (var file in files)
+			var basePath = _targetDirectoryConfig.TargetDirectory + Path.DirectorySeparatorChar;
+			Parallel.ForEach(files, (codeGenFile, state) =>
 			{
-				var path = _targetDirectoryConfig.TargetDirectory + Path.DirectorySeparatorChar + file.FileName;
+				var path = basePath + codeGenFile.FileName;
 				var directoryName = Path.GetDirectoryName(path);
 				if (!Directory.Exists(directoryName))
 				{
 					Directory.CreateDirectory(directoryName);
 				}
 
-				File.WriteAllText(path, file.FileContent);
-			}
+				using var stream = new FileStream(
+					path,
+					FileMode.Create,
+					FileAccess.Write,
+					FileShare.Write,
+					4096,
+					useAsync: true);
+				var bytes = Encoding.UTF8.GetBytes(codeGenFile.FileContent);
+				stream.Write(bytes, 0, bytes.Length);
+			});
 
 			return files;
 		}

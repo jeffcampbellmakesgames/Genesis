@@ -36,14 +36,14 @@ namespace Genesis.Plugin.Tests.DataProviders
 	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	internal class ScriptableFactoryDataProviderTests
 	{
-		private IReadOnlyList<INamedTypeSymbol> _typeSymbols;
+		private IReadOnlyList<NamedTypeSymbolInfo> _typeSymbols;
 		private IMemoryCache _memoryCache;
 		private List<CodeGeneratorData> _codeGeneratorData;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
 		{
-			_typeSymbols = TestTools.GetAllFixtureTypeSymbols();
+			_typeSymbols = TestTools.GetAllFixtureTypeSymbols().Select(NamedTypeSymbolInfo.Create).ToList();
 		}
 
 		[SetUp]

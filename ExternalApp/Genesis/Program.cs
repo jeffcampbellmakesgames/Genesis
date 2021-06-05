@@ -241,12 +241,12 @@ namespace Genesis.CLI
 		/// <param name="solutionPath">The absolute file path to the Visual Studio solution.</param>
 		/// <param name="solution">The Code Analysis Solution for the Visual Studio solution at
 		/// <paramref name="solutionPath"/>.</param>
-		/// <param name="allNamedTypeSymbols">A read-only collection of all <see cref="INamedTypeSymbol"/> instances
+		/// <param name="allNamedTypeSymbols">A read-only collection of all <see cref="NamedTypeSymbolInfo"/> instances
 		/// discovered in <paramref name="solution"/>.</param>
 		private static void ParseSolution(
 			string solutionPath,
 			out Solution solution,
-			out IReadOnlyList<INamedTypeSymbol> allNamedTypeSymbols)
+			out IReadOnlyList<NamedTypeSymbolInfo> allNamedTypeSymbols)
 		{
 			solution = null;
 
@@ -261,7 +261,8 @@ namespace Genesis.CLI
 
 					// Import solution for usage in code-generation
 					solution = workspace.OpenSolutionAsync(solutionPath).Result;
-					allNamedTypeSymbols = new List<INamedTypeSymbol>(CodeAnalysisTools.FindAllTypes(solution));
+					allNamedTypeSymbols = new List<NamedTypeSymbolInfo>(
+						CodeAnalysisTools.FindAllTypes(solution).Select(NamedTypeSymbolInfo.Create));
 
 					_LOGGER.Verbose(
 						"Solution loaded, {TypeSymbolsCount} TypeSymbols Discovered",
@@ -273,7 +274,7 @@ namespace Genesis.CLI
 						"Skipping loading solution as none can be found at {SolutionPath}.",
 						solutionPath);
 
-					allNamedTypeSymbols = new List<INamedTypeSymbol>();
+					allNamedTypeSymbols = new List<NamedTypeSymbolInfo>();
 				}
 			}
 		}
