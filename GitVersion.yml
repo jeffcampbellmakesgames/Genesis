@@ -1,21 +1,21 @@
 mode: ContinuousDeployment
-next-version: 2.0.6
+next-version: 2.1.0
+increment: Patch
 tag-prefix: 'nuget[/]v'
 assembly-file-versioning-scheme: MajorMinorPatch
-assembly-file-versioning-format: '{Major}.{Minor}.{Patch}'
 branches:
   release:
     regex: '^develop?[/-]'
-    increment: Patch
+    increment: Inherit
     is-release-branch: true
     is-mainline: true
     tracks-release-branches: true
     prevent-increment-of-merged-branch-version: true
-    tag: ''
+    tag: 'nuget[/]v'
     source-branches: []
   feature:
     regex: '^feat?[/-]'
-    increment: None
+    increment: Inherit
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
@@ -25,7 +25,7 @@ branches:
       - develop
   feature:
     regex: '^feat/v2'
-    increment: None
+    increment: Inherit
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
