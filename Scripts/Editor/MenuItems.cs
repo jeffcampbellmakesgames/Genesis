@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace JCMG.Genesis.Editor
 	{
 		// Menu item paths
 		private const string GENERATE_CODE_MENU_ITEM = "Tools/JCMG/Genesis/Generate CLI Code #%g";
-		private const string SELECT_EXTERNAL_APP_ZIP_MENU_ITEM = "Tools/JCMG/Genesis/Select Generate.CLI.zip";
+		private const string UPDATE_GENESIS_CLI_MENU_ITEM = "Tools/JCMG/Genesis/Update Genesis CLI";
 		private const string BUG_OR_FEATURE_REQUEST_MENU_ITEM = "Tools/JCMG/Genesis/Submit bug or feature request";
 		private const string CHECK_FOR_UPDATES_MENU_ITEM = "Tools/JCMG/Genesis/Check for Updates...";
 		private const string DOCUMENTATION_MENU_ITEM = "Tools/JCMG/Genesis/Documentation...";
@@ -66,6 +67,8 @@ namespace JCMG.Genesis.Editor
 		// KOFI URL
 		private const string KOFI_URL = "https://ko-fi.com/stampyturtle";
 
+
+
 		#region Window Menu Items
 
 		[MenuItem(GENERATE_CODE_MENU_ITEM, priority = GENERATE_CODE_PRIORITY)]
@@ -74,27 +77,40 @@ namespace JCMG.Genesis.Editor
 			GenesisCLIRunner.RunCodeGeneration();
 		}
 
-		[MenuItem(SELECT_EXTERNAL_APP_ZIP_MENU_ITEM, priority = SELECT_EXTERNAL_ZIP_PRIORITY)]
-		internal static void TrySelectExternalAppZip()
+		[MenuItem(UPDATE_GENESIS_CLI_MENU_ITEM, priority = SELECT_EXTERNAL_ZIP_PRIORITY)]
+		internal static void TryUpdateGenesisCLI()
 		{
-			const string APP_ZIP_GUID = "ed87908a8d9915e44bdb635e9ac30a90";
-
-			var assetPath = AssetDatabase.GUIDToAssetPath(APP_ZIP_GUID);
-			if (string.IsNullOrEmpty(assetPath))
+			if (AutoUpdateDetector.TryUpdateGenesisCLI(autoUpdateWithoutPrompt:true))
 			{
-				const string WARNING =
-					"[Genesis] Could not find Genesis.CLI.zip, please reimport or reinstall Genesis so that this " +
-					"file is present.";
-				Debug.LogWarning(WARNING);
+				Debug.Log(EditorConstants.GENESIS_IS_UP_TO_DATE);
 			}
 			else
 			{
-				var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
-
-				EditorGUIUtility.PingObject(asset);
-				Selection.SetActiveObjectWithContext(asset, null);
+				Debug.LogWarning(EditorConstants.GENESIS_FAILED_TO_UPDATE);
 			}
 		}
+
+		[MenuItem(
+			UPDATE_GENESIS_CLI_MENU_ITEM,
+			priority = SELECT_EXTERNAL_ZIP_PRIORITY,
+			validate = true)]
+		internal static bool ValidateTryUpdateGenesisCLI()
+		{
+			// Verify Installation Path and Genesis.CLI executable exists
+			var workingDirectory = GenesisPreferences.GetWorkingPath();
+			if (string.IsNullOrEmpty(workingDirectory))
+			{
+				return false;
+			}
+
+			if (!Directory.Exists(workingDirectory))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 
 		[MenuItem(BUG_OR_FEATURE_REQUEST_MENU_ITEM, priority = BUG_OR_FEATURE_REQUEST_PRIORITY)]
 		internal static void OpenURLToGitHubIssuesSection()
@@ -144,8 +160,7 @@ namespace JCMG.Genesis.Editor
 					})
 				.ToArray();
 
-			// TODO Rewrite to use external CLI
-			//UnityCodeGenerator.GenerateMultiple(settingsData);
+			GenesisCLIRunner.RunCodeGeneration(settingsData);
 		}
 
 		[MenuItem(GENESIS_SETTINGS_GENERATE_CODE_MENU_ITEM, isValidateFunction:true)]

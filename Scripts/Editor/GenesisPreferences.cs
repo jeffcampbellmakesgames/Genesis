@@ -281,6 +281,23 @@ namespace JCMG.Genesis.Editor
 					GenesisCLIInstallationFolder = currentFolder;
 				}
 			}
+
+			using (new EditorGUI.DisabledScope(string.IsNullOrEmpty(GenesisCLIInstallationFolder) ||
+			                                   !Directory.Exists(GenesisCLIInstallationFolder)))
+			{
+				const string UPDATE_GENESIS_CLI = "Update Genesis CLI";
+				if (GUILayout.Button(UPDATE_GENESIS_CLI))
+				{
+					if (AutoUpdateDetector.TryUpdateGenesisCLI(autoUpdateWithoutPrompt: true))
+					{
+						Debug.Log(EditorConstants.GENESIS_IS_UP_TO_DATE);
+					}
+					else
+					{
+						Debug.LogWarning(EditorConstants.GENESIS_FAILED_TO_UPDATE);
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -292,7 +309,14 @@ namespace JCMG.Genesis.Editor
 		/// </summary>
 		public static string GetExecutablePath()
 		{
-			return Path.Combine(Path.GetFullPath(GenesisCLIInstallationFolder), EditorConstants.GENESIS_EXECUTABLE);
+			if (string.IsNullOrEmpty(GenesisCLIInstallationFolder))
+			{
+				return string.Empty;
+			}
+			else
+			{
+				return Path.Combine(Path.GetFullPath(GenesisCLIInstallationFolder), EditorConstants.GENESIS_EXECUTABLE);
+			}
 		}
 
 		/// <summary>
