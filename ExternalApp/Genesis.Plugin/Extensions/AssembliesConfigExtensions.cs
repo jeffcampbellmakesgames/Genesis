@@ -52,13 +52,43 @@ namespace Genesis.Plugin
 				{
 					var namedTypeSymbol = namedTypeSymbols[i];
 					if (whitelistedAssemblies.Contains(namedTypeSymbol.ContainingAssembly.Name))
+					{
 						filteredList.Add(namedTypeSymbol);
+					}
 				}
 
 				return filteredList;
 			}
 
 			return namedTypeSymbols;
+		}
+
+		/// <summary>
+		///     If <paramref name="config" /> is set to whitelist assemblies, it filters the superset of
+		///     <paramref name="namedTypeSymbolInfo" /> to only those contained in assemblies
+		///     defined in this config.
+		/// </summary>
+		public static IReadOnlyList<NamedTypeSymbolInfo> FilterTypeSymbols(
+			this AssembliesConfig config,
+			IReadOnlyList<NamedTypeSymbolInfo> namedTypeSymbolInfo)
+		{
+			if (config.DoUseWhitelistOfAssemblies)
+			{
+				var whitelistedAssemblies = config.WhiteListedAssemblies.ToList();
+				var filteredList = new List<NamedTypeSymbolInfo>();
+				for (var i = namedTypeSymbolInfo.Count - 1; i >= 0; i--)
+				{
+					var symbolInfo = namedTypeSymbolInfo[i];
+					if (whitelistedAssemblies.Contains(symbolInfo.NamedTypeSymbol.ContainingAssembly.Name))
+					{
+						filteredList.Add(symbolInfo);
+					}
+				}
+
+				return filteredList;
+			}
+
+			return namedTypeSymbolInfo;
 		}
 	}
 }

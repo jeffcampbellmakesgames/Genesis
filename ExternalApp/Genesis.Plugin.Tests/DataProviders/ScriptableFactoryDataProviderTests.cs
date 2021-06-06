@@ -26,6 +26,7 @@ THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Genesis.Shared;
 using Genesis.Unity.Factory.Plugin;
 using Microsoft.CodeAnalysis;
 using NUnit.Framework;
@@ -64,6 +65,7 @@ namespace Genesis.Plugin.Tests.DataProviders
 		{
 			var factoryDataProvider = new ScriptableFactoryDataProvider();
 			factoryDataProvider.SetCache(_memoryCache);
+			factoryDataProvider.Configure(new GenesisConfig());
 
 			_codeGeneratorData = new List<CodeGeneratorData>(factoryDataProvider.GetData());
 
