@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+### [2.2.1] - 2021-06-06
+#### Added
+* Added additional helper methods and caching to NamedTypeSymbolInfo. All members are now lazily-loaded rather than initialized in constructor.
+
+#### Fixed
+* Modified AutoUpdate functionality so that the zip extraction only overwrites content from the zip file (does not disturb other existing custom plugins for example).
+
 ### [2.1.1] - 2021-06-05
 #### Added
 * Added new overload of `AssembliesConfig.FilterTypeSymbols` method that accepts a collection of `NamedTypeSymbolInfo`.
