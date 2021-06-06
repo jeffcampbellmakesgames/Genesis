@@ -1,38 +1,53 @@
-mode: ContinuousDeployment
+mode: MainLine
 next-version: 2.1.0
 increment: Patch
-tag-prefix: 'nuget[/]v'
+tag-prefix: '^nuget[/]v'
+assembly-versioning-scheme: MajorMinorPatch
+assembly-versioning-format: '{Major}.{Minor}.{Patch}'
 assembly-file-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}'
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
 branches:
-  release:
-    regex: '^develop?[/-]'
-    increment: Inherit
-    is-release-branch: true
-    is-mainline: true
-    tracks-release-branches: true
+  main:
+    regex: ^develop$
+    mode: ContinuousDelivery
+    increment: Patch
     prevent-increment-of-merged-branch-version: true
-    tag: 'nuget[/]v'
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+    is-mainline: true
     source-branches: []
   feature:
-    regex: '^feat?[/-]'
+    regex: ^feat?[/-]
+    mode: ContinuousDelivery
     increment: Inherit
+    prevent-increment-of-merged-branch-version: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
-    prevent-increment-of-merged-branch-version: true
-    tag: 'alpha'
-    source-branches:
-      - develop
-  feature:
-    regex: '^feat/v2'
-    increment: Inherit
+    source-branches: ['develop']
+  pull-request:
+    regex: ^DONOTUSE1[/-]
+  hotfix:
+    regex: ^fix?[/-]
+    mode: ContinuousDelivery
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
+    source-branches: ['develop']
+  support:
+    regex: ^support[/-]
+    mode: ContinuousDelivery
+    increment: Patch
     prevent-increment-of-merged-branch-version: true
-    tag: 'alpha'
-    source-branches:
-      - develop
-ignore:
-  sha: []
-merge-message-formats: {}
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+    source-branches: ['develop']
+  develop:
+    regex: ^DONOTUSE2[/-]
