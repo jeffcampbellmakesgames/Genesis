@@ -28,6 +28,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Genesis.Editor.Tests")]
 
-[assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyFileVersion("2.2.0.0")]
-[assembly: AssemblyInformationalVersion("2.2.0-alpha.5+Branch.develop.Sha.2623193aab6e875db00541e73ae6ea55823a631d")]
+[assembly: AssemblyVersion("2.2.1")]
+[assembly: AssemblyFileVersion("2.2.1")]
+[assembly: AssemblyInformationalVersion("2.2.1+6.Branch.develop.Sha.0055fb20e88ad3fc57f9deb3ebab60a731cefde7")]
