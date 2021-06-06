@@ -33,6 +33,9 @@ namespace JCMG.Genesis.Editor
 		public const string GENESIS_CLI_INSTALLATION_INSTRUCTIONS =
 			" Press OK to update or Cancel to continue. ";
 
+		// Zip Extraction
+		private const string TEMP_EXTRACT_PATH = "Temp/GenesisUpdate";
+
 		[DidReloadScripts]
 		private static void OnScriptsReloaded()
 		{
@@ -113,10 +116,21 @@ namespace JCMG.Genesis.Editor
 					{
 						Debug.Log(UPDATING_GENESIS);
 
+						var tempExtractPath =
+							Path.GetFullPath(Path.Combine(FileTools.GetProjectPath(), TEMP_EXTRACT_PATH));
+						var fullInstallationPath = Path.GetFullPath(GenesisPreferences.GenesisCLIInstallationFolder);
+
 						ZipUtility.UncompressFromZip(
 							fullAppZipPath,
 							string.Empty,
-							Path.GetFullPath(GenesisPreferences.GenesisCLIInstallationFolder));
+							tempExtractPath);
+
+						var sourceDirectory = new DirectoryInfo(tempExtractPath);
+						var targetDirectory = new DirectoryInfo(fullInstallationPath);
+
+						FileTools.CopyFilesRecursively(sourceDirectory, targetDirectory);
+
+						sourceDirectory.Delete(recursive:true);
 
 						isInstalledAndUpToDate = true;
 					}
