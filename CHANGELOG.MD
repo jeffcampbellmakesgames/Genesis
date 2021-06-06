@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+### [2.1.1] - 2021-06-05
+#### Added
+* Added new overload of `AssembliesConfig.FilterTypeSymbols` method that accepts a collection of `NamedTypeSymbolInfo`.
+
+#### Fixed
+* Fixed bug in `ITypeSymbol.GetArrayElementType` where the element type attempted to be returned would occasionally result in a cast exception from being cast to a `INamedTypeSymbol` when the return type is a `ITypeSymbol`.
+
 ### [2.1.0] - 2021-06-05
 #### Added
 * Created NamedTypeSymbolInfo as a wrapper for `INamedTypeSymbol` that caches commonly used member returns from the symbol. It's cached fields and helper methods can be used over directly accessing `INamedTypeSymbol` to improve CPU perf.

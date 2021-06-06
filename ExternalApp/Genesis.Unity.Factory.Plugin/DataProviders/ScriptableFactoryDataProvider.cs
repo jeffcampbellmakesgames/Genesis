@@ -26,6 +26,7 @@ THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
 using Genesis.Plugin;
+using Genesis.Shared;
 using Microsoft.CodeAnalysis;
 
 namespace Genesis.Unity.Factory.Plugin
@@ -34,6 +35,7 @@ namespace Genesis.Unity.Factory.Plugin
 	/// A <see cref="IDataProvider"/> that finds all type symbols decorated with factory attributes.
 	/// </summary>
 	internal sealed class ScriptableFactoryDataProvider : IDataProvider,
+														  IConfigurable,
 														  ICacheable
 	{
 		/// <summary>
@@ -53,28 +55,30 @@ namespace Genesis.Unity.Factory.Plugin
 		public bool RunInDryMode => true;
 
 		private IMemoryCache _memoryCache;
+		private AssembliesConfig _assembliesConfig;
 
 		private const string NAME = "Scriptable Factory Data";
 
-		/// <summary>
-		/// Assigns the shared memory cache to this plugin.
-		/// </summary>
+		/// <inheritdoc />
 		public void SetCache(IMemoryCache memoryCache)
 		{
 			_memoryCache = memoryCache;
 		}
 
-		/// <summary>
-		/// Creates zero or more <see cref="CodeGeneratorData"/> derived instances for code generation to execute upon.
-		/// </summary>
-		/// <returns></returns>
+		/// <inheritdoc />
+		public void Configure(IGenesisConfig genesisConfig)
+		{
+			_assembliesConfig = genesisConfig.CreateAndConfigure<AssembliesConfig>();
+		}
+
+		/// <inheritdoc />
 		public CodeGeneratorData[] GetData()
 		{
-			var namedTypeSymbols = _memoryCache.GetNamedTypeSymbols();
-
 			var codeGenData = new List<CodeGeneratorData>();
-			codeGenData.AddRange(GetFactoryCodeGeneratorData(namedTypeSymbols));
-			codeGenData.AddRange(GetFactoryEnumCodeGeneratorData(namedTypeSymbols));
+			var filteredTypeSymbols =
+				_assembliesConfig.FilterTypeSymbols(_memoryCache.GetNamedTypeSymbols());
+			codeGenData.AddRange(GetFactoryCodeGeneratorData(filteredTypeSymbols));
+			codeGenData.AddRange(GetFactoryEnumCodeGeneratorData(filteredTypeSymbols));
 
 			return codeGenData.ToArray();
 		}
@@ -109,7 +113,6 @@ namespace Genesis.Unity.Factory.Plugin
 					{
 						var factoryKeyEnumNamedTypeSymbols =
 							z.GetAttributes(nameof(FactoryKeyEnumForAttribute));
-
 						return
 							factoryKeyEnumNamedTypeSymbols.Select(
 							factoryAttr =>

@@ -82,8 +82,8 @@ namespace Genesis.Plugin
 		public static IList<INamedTypeSymbol> GetAllInterfacesIncludingThis(this ITypeSymbol typeSymbol)
 		{
 			var allInterfaces = typeSymbol.AllInterfaces;
-			var namedType = typeSymbol as INamedTypeSymbol;
-			if (namedType != null && namedType.TypeKind == TypeKind.Interface && !allInterfaces.Contains(namedType))
+			if (typeSymbol is INamedTypeSymbol namedType &&
+			    namedType.TypeKind == TypeKind.Interface && !allInterfaces.Contains(namedType))
 			{
 				var result = new List<INamedTypeSymbol>(allInterfaces.Length + 1);
 				result.Add(namedType);
@@ -680,14 +680,14 @@ namespace Genesis.Plugin
 		/// </summary>
 		public static string GetTypeNameOrAlias(this ITypeSymbol typeSymbol)
 		{
-			return typeSymbol.GetFullTypeName().GetTypeNameOrAlias();
+			return typeSymbol.Name.GetTypeNameOrAlias();
 		}
 
 		/// <summary>
 		///     Returns the array element <see cref="ITypeSymbol" /> for this instance. If not an array type, an exception
 		///     will be thrown.
 		/// </summary>
-		public static INamedTypeSymbol GetArrayElementType(this ITypeSymbol typeSymbol)
+		public static ITypeSymbol GetArrayElementType(this ITypeSymbol typeSymbol)
 		{
 			if (!typeSymbol.IsArrayType())
 			{
@@ -700,7 +700,7 @@ namespace Genesis.Plugin
 			}
 
 			var arrayTypeSymbol = (IArrayTypeSymbol) typeSymbol;
-			return (INamedTypeSymbol) arrayTypeSymbol.ElementType;
+			return arrayTypeSymbol.ElementType;
 		}
 
 		/// <summary>
