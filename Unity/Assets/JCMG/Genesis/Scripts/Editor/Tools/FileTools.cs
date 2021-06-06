@@ -132,5 +132,22 @@ namespace JCMG.Genesis.Editor
 		{
 			return Directory.GetFiles(rootPath, EditorConstants.WILDCARD_ALL_DLLS, SearchOption.AllDirectories);
 		}
+
+		/// <summary>
+		/// Copies directory/file contents recursively from <paramref name="source"/> to <paramref name="target"/>.
+		/// </summary>
+		public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+		{
+			// Recursively copy all directories first, then copy all files.
+			foreach (DirectoryInfo dir in source.GetDirectories())
+			{
+				CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+			}
+
+			foreach (FileInfo file in source.GetFiles())
+			{
+				file.CopyTo(Path.Combine(target.FullName, file.Name), overwrite:true);
+			}
+		}
 	}
 }
