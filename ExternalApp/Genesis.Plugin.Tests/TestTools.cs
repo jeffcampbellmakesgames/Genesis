@@ -68,7 +68,7 @@ namespace Genesis.Plugin.Tests
 				var path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), SOLUTION_PATH));
 				var solution = workspace.OpenSolutionAsync(path).Result;
 
-				_ALL_NAMED_TYPE_SYMBOLS = CodeAnalysisTools.FindAllTypes(solution);
+				_ALL_NAMED_TYPE_SYMBOLS = CodeAnalysisTools.FindAllTypes(solution).Result;
 			}
 
 			return _ALL_NAMED_TYPE_SYMBOLS;

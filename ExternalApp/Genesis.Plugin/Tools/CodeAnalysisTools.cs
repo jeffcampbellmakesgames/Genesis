@@ -23,10 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Microsoft.CodeAnalysis;
 using Serilog;
 
@@ -43,7 +45,7 @@ namespace Genesis.Plugin
 		///     Returns a read-only collection of all <see cref="INamedTypeSymbol" /> instances from the
 		///     <paramref name="solution" />.
 		/// </summary>
-		public static IReadOnlyList<INamedTypeSymbol> FindAllTypes(Solution solution)
+		public static async Task<IReadOnlyList<INamedTypeSymbol>> FindAllTypes(Solution solution)
 		{
 			var allTypeSymbols = new ConcurrentBag<INamedTypeSymbol>();
 			if (solution == null)
@@ -55,25 +57,36 @@ namespace Genesis.Plugin
 				LOGGER.Verbose("Roslyn solution found, beginning parsing.");
 
 				// Collect all type symbols from each project and set the resultant collection into the memory cache
-				Parallel.ForEach(solution.Projects, project =>
-				{
-					LOGGER.Verbose("Inspecting project {ProjectName}.", project.Name);
-
-					var compilation = project.GetCompilationAsync().Result;
-					var namedTypeSymbols = compilation
-						.GetSymbolsWithName(x => true, SymbolFilter.Type)
-						.OfType<ITypeSymbol>()
-						.OfType<INamedTypeSymbol>()
-						.ToArray();
-
-					LOGGER.Verbose("Found {ProjectTypeSymbolCount} in {ProjectName}.", namedTypeSymbols.Length,
-						project.Name);
-
-					foreach (var namedTypeSymbol in namedTypeSymbols)
+				// Process each project in the solution
+				var processProjectBlock = new ActionBlock<Project>(
+					async project =>
 					{
-						allTypeSymbols.Add(namedTypeSymbol);
-					}
-				});
+						LOGGER.Verbose("Inspecting project {ProjectName}.", project.Name);
+
+						var compilation = await project.GetCompilationAsync();
+						var namedTypeSymbols = compilation
+							.GetSymbolsWithName(x => true, SymbolFilter.Type)
+							.OfType<ITypeSymbol>()
+							.OfType<INamedTypeSymbol>();
+
+						foreach (var namedTypeSymbol in namedTypeSymbols)
+						{
+							allTypeSymbols.Add(namedTypeSymbol);
+						}
+					},
+					new ExecutionDataflowBlockOptions
+					{
+						BoundedCapacity = 10000,
+						MaxDegreeOfParallelism = Environment.ProcessorCount
+					});
+
+				foreach (var project in solution.Projects)
+				{
+					await processProjectBlock.SendAsync(project);
+				}
+
+				processProjectBlock.Complete();
+				await processProjectBlock.Completion;
 
 				LOGGER.Verbose("Found a total of {TypeSymbolsCount}.", allTypeSymbols.Count);
 			}
