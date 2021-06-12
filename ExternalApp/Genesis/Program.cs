@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -68,6 +69,14 @@ namespace Genesis.CLI
 
 					using (var assemblyLoader = new AssemblyLoader(configOptions.PluginPath))
 					{
+						// Load all assemblies that meet plugin constraints (unless forced)
+						if (configOptions.DoLoadUnsafe)
+						{
+							assemblyLoader.ForceUnsafeAssemblyLoad();
+						}
+
+						assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(ICodeGenerationPlugin)).GetName());
+						assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(IGenesisConfig)).GetName());
 						assemblyLoader.LoadAll(configOptions.PluginPath);
 
 						_LOGGER.Verbose("Loaded {AssemblyCount} plugins assemblies.", assemblyLoader.Count);
@@ -130,6 +139,13 @@ namespace Genesis.CLI
 				// Load all plugin assemblies
 				using (var assemblyLoader = new AssemblyLoader(generateOptions.PluginPath))
 				{
+					// Load all assemblies that meet plugin constraints (unless forced)
+					if (generateOptions.DoLoadUnsafe)
+					{
+						assemblyLoader.ForceUnsafeAssemblyLoad();
+					}
+					assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(ICodeGenerationPlugin)).GetName());
+					assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(IGenesisConfig)).GetName());
 					assemblyLoader.LoadAll(generateOptions.PluginPath);
 
 					_LOGGER.Verbose("Loaded {PluginAssemblyCount} plugins assemblies.", assemblyLoader.Count);

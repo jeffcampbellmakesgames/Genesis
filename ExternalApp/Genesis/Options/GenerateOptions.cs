@@ -76,6 +76,12 @@ namespace Genesis.CLI
 		public bool IsVerbose { get; set; }
 
 		[Option(
+			"load-unsafe",
+			HelpText = "Forces out-of-date plugins to be loaded",
+			Default = false)]
+		public bool DoLoadUnsafe { get; set; }
+
+		[Option(
 			"dryrun",
 			HelpText = "Performs a dry run of code-generation process, but does not output files.",
 			Default = false)]

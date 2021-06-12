@@ -58,5 +58,11 @@ namespace Genesis.CLI
 			HelpText = "Sets the logging to be verbose if true, errors only if false.",
 			Default = false)]
 		public bool IsVerbose { get; set; }
+
+		[Option(
+			"load-unsafe",
+			HelpText = "Forces out-of-date plugins to be loaded",
+			Default = false)]
+		public bool DoLoadUnsafe { get; set; }
 	}
 }
