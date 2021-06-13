@@ -82,7 +82,7 @@ namespace JCMG.Genesis.Editor
 		/// Draw a file picker button in <see cref="Rect"/> <paramref name="rect"/> that allows setting a
 		/// relative file path value on <see cref="SerializedProperty"/> <paramref name="property"/>.
 		/// </summary>
-		public static void DrawFilePicker(Rect rect, SerializedProperty property, string title)
+		public static void DrawFilePicker(Rect rect, SerializedProperty property, string title, string fileExtension = "")
 		{
 			if (GUI.Button(
 				rect,
@@ -95,12 +95,40 @@ namespace JCMG.Genesis.Editor
 				var path = EditorUtility.OpenFilePanel(
 					title,
 					currentFile,
-					string.Empty);
+					fileExtension);
 
 				if (!string.IsNullOrEmpty(path))
 				{
 					var relativePath = FileTools.ConvertToRelativePath(path, Application.dataPath);
 					property.stringValue = relativePath;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Draw a file picker button in <see cref="Rect"/> <paramref name="rect"/> that allows assigning a
+		/// Unity file GUID value on <paramref name="fileGUID"/>.
+		/// </summary>
+		public static void DrawGUIDFilePicker(Rect rect, ref string fileGUID, string title, string fileExtension = "")
+		{
+			if (GUI.Button(
+				rect,
+				EditorGUIUtility.IconContent(EDITOR_FILE_ICON)))
+			{
+				var assetPath = AssetDatabase.GUIDToAssetPath(fileGUID);
+				var currentFile = string.IsNullOrEmpty(assetPath)
+					? FileTools.GetProjectPath()
+					: assetPath;
+
+				var path = EditorUtility.OpenFilePanel(
+					title,
+					currentFile,
+					fileExtension);
+
+				if (!string.IsNullOrEmpty(path))
+				{
+					var relativePath = FileTools.ConvertToRelativePath(path, Application.dataPath);
+					fileGUID = AssetDatabase.AssetPathToGUID(relativePath);
 				}
 			}
 		}

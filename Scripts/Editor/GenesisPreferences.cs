@@ -24,6 +24,7 @@ THE SOFTWARE.
 */
 
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SettingsManagement;
 using UnityEngine;
@@ -103,6 +104,28 @@ namespace JCMG.Genesis.Editor
 		}
 
 		/// <summary>
+		/// Returns true if code generation should force loading of unsafe plugins (out of date plugins), otherwise
+		/// false.
+		/// </summary>
+		public static bool LoadUnsafePlugins
+		{
+			get
+			{
+				if (!_loadUnsafePlugins.HasValue)
+				{
+					_loadUnsafePlugins = ProjectSettings.Get<bool>(LOAD_UNSAFE_PLUGINS_PREF);
+				}
+
+				return _loadUnsafePlugins.Value;
+			}
+			set
+			{
+				_loadUnsafePlugins = value;
+				ProjectSettings.Set(LOAD_UNSAFE_PLUGINS_PREF, value);
+			}
+		}
+
+		/// <summary>
 		/// The project <see cref="Settings"/> instance for Genesis for this project.
 		/// </summary>
 		private static Settings ProjectSettings
@@ -130,6 +153,7 @@ namespace JCMG.Genesis.Editor
 
 		private const string USER_PREFERENCES_HEADER = "User Preferences";
 		private const string PROJECT_REFERENCES_HEADER = "Project Preferences";
+		private const string PLUGIN_INSTALLERS_HEADER = "Plugin Installers";
 
 		// Labels
 		private const string ENABLE_DRY_RUN_LABEL = "Enable Dry Run";
@@ -146,6 +170,8 @@ namespace JCMG.Genesis.Editor
 		private const string GENESIS_CLI_DIRECTORY_DESCRIPTION
 			= "The location of the Genesis.CLI command-line executable and related files. These should be extracted " +
 			  "from the \"Genesis.CLI.zip\" included with this framework to a folder outside of the Assets folder.";
+
+		private const string NONE_FOUND_DESCRIPTION = "None Found";
 
 		// Warnings
 		private const string DIRECTORY_DOES_NOT_EXIST_WARNING =
@@ -177,13 +203,16 @@ namespace JCMG.Genesis.Editor
 		// User Editor Preferences
 		private const string ENABLE_DRY_RUN_PREF = "Genesis.DryRun";
 		private const string ENABLE_VERBOSE_LOGGING_PREF = "Genesis.IsVerbose";
+		private const string LOAD_UNSAFE_PLUGINS_PREF = "Genesis.LoadUnsafePlugins";
 
 		private const bool ENABLE_DRY_RUN_DEFAULT = false;
 		private const bool ENABLE_VERBOSE_LOGGING_DEFAULT = true;
+		private const bool LOAD_UNSAFE_PLUGINS_DEFAULT = false;
 
 		// Cacheable Prefs
 		private static bool? _executeDryRun;
 		private static bool? _enableVerboseLogging;
+		private static bool? _loadUnsafePlugins;
 		private static string _genesisCLIInstallationFolder;
 
 		#region SettingsProvider and EditorGUI
@@ -225,7 +254,6 @@ namespace JCMG.Genesis.Editor
 			using(var scope = new EditorGUI.ChangeCheckScope())
 			{
 				var newValue = EditorGUILayout.Toggle(ENABLE_DRY_RUN_LABEL, ExecuteDryRun);
-
 				if(scope.changed)
 				{
 					ExecuteDryRun = newValue;
@@ -237,7 +265,6 @@ namespace JCMG.Genesis.Editor
 			using (var scope = new EditorGUI.ChangeCheckScope())
 			{
 				var newValue = EditorGUILayout.Toggle(ENABLE_VERBOSE_LOGGING_LABEL, EnableVerboseLogging);
-
 				if (scope.changed)
 				{
 					EnableVerboseLogging = newValue;
@@ -282,6 +309,7 @@ namespace JCMG.Genesis.Editor
 				}
 			}
 
+			// Update Genesis CLI button
 			using (new EditorGUI.DisabledScope(string.IsNullOrEmpty(GenesisCLIInstallationFolder) ||
 			                                   !Directory.Exists(GenesisCLIInstallationFolder)))
 			{
@@ -296,6 +324,84 @@ namespace JCMG.Genesis.Editor
 					{
 						Debug.LogWarning(EditorConstants.GENESIS_FAILED_TO_UPDATE);
 					}
+				}
+			}
+
+			// Plugins Section
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField(PLUGIN_INSTALLERS_HEADER, EditorStyles.boldLabel);
+			EditorGUILayout.HelpBox(EditorConstants.LOAD_UNSAFE_PLUGINS_DESCRIPTION, MessageType.Info);
+			using (var scope = new EditorGUI.ChangeCheckScope())
+			{
+				var newValue = EditorGUILayout.Toggle(
+					EditorConstants.LOAD_UNSAFE_PLUGINS_TOGGLE_TEXT,
+					LoadUnsafePlugins);
+				if (scope.changed)
+				{
+					LoadUnsafePlugins = newValue;
+				}
+			}
+
+			// Plugin Installers Section
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField(PLUGIN_INSTALLERS_HEADER, EditorStyles.boldLabel);
+			EditorGUILayout.HelpBox(EditorConstants.INSTALL_ALL_PLUGINS_BUTTON_DESCRIPTION, MessageType.Info);
+
+			var pluginInstallerConfigs =
+				AssetDatabaseTools.GetAssets<PluginInstallerConfig>()
+					.OrderBy(x => x.DisplayName);
+
+			var anyPluginInstallers = !pluginInstallerConfigs.Any();
+
+			// Install all plugins button
+			using (new EditorGUI.DisabledScope(anyPluginInstallers))
+			{
+				if (GUILayout.Button(EditorConstants.INSTALL_ALL_PLUGINS_BUTTON_TEXT))
+				{
+					foreach (var pluginInstallerConfig in pluginInstallerConfigs)
+					{
+						if (!pluginInstallerConfig.CanAttemptPluginInstall)
+						{
+							continue;
+						}
+
+						pluginInstallerConfig.InstallPlugins();
+					}
+				}
+			}
+
+			// If there are none, show label that there are none
+			if (anyPluginInstallers)
+			{
+				EditorGUILayout.LabelField(NONE_FOUND_DESCRIPTION);
+			}
+			// Otherwise show elements for all plugin installers
+			else
+			{
+				foreach (var pluginInstallerConfig in pluginInstallerConfigs)
+				{
+					using (new EditorGUILayout.HorizontalScope())
+					{
+						const string DISPLAY_NAME_PREFIX = "Name: ";
+
+						EditorGUILayout.LabelField(
+							DISPLAY_NAME_PREFIX,
+							EditorStyles.boldLabel,
+							GUILayout.Width(50f));
+						EditorGUILayout.LabelField(pluginInstallerConfig.DisplayName);
+						GUILayout.FlexibleSpace();
+
+						using (new EditorGUI.DisabledScope(!pluginInstallerConfig.CanAttemptPluginInstall))
+						{
+							if (GUILayout.Button(EditorConstants.INSTALL_PLUGIN_BUTTON_TEXT))
+							{
+								pluginInstallerConfig.InstallPlugins();
+							}
+						}
+					}
+
+					var rect = GUILayoutUtility.GetLastRect();
+					GUI.Box(rect, string.Empty);
 				}
 			}
 		}
