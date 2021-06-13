@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+### [2.2.2] - 2021-06-13
+#### Changed
+* Modified internal parallelization for Roslyn Project parsing to use async correctly.
+* Modified plugin loading so that by default plugin assemblies that are not in-sync with the nuget package assemblies in use by Genesis.CLI will issue a warning and:
+    * If on the same major and minor version will still be loaded.
+    * If on an older major or minor version will not be loaded. These can still be force-loaded if a user passed the `load-unsafe` argument.
+
+#### Added
+* The `CHANGELOG.MD` file containing release notes is now included with the Unity package.
+* Created Unity flow for third-party developers to easily expose their plugins for other users and easily install or update them in their Genesis.CLI configuration.
+* Added new Genesis.CLI argument for `load-unsafe` to force load any out-of-date plugins, if any.
+
 ### [2.2.1] - 2021-06-06
 #### Added
 * Added additional helper methods and caching to NamedTypeSymbolInfo. All members are now lazily-loaded rather than initialized in constructor.

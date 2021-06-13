@@ -227,6 +227,8 @@ namespace JCMG.Genesis.Editor
 			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(GenesisPreferences.EnableVerboseLogging ? CommandLineConstants.VERBOSE_PARAM : string.Empty);
 			SB.Append(EditorConstants.SPACE_STR);
+			SB.Append(GenesisPreferences.LoadUnsafePlugins ? CommandLineConstants.LOAD_UNSAFE_PARAM : string.Empty);
+			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(GenesisPreferences.ExecuteDryRun ? CommandLineConstants.DRY_RUN_PARAM : string.Empty);
 			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(CommandLineConstants.SOLUTION_PATH_PARAM);

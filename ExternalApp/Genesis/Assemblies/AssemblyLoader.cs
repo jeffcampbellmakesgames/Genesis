@@ -41,10 +41,61 @@ namespace Genesis.CLI
 	public sealed class AssemblyLoader : IReadOnlyCollection<Assembly>,
 	                                     IDisposable
 	{
+		/// <summary>
+		/// Defines a plugin constraint that should determine whether or not another assembly should be loaded.
+		/// </summary>
+		private class PluginConstraint
+		{
+			public AssemblyName AssemblyName { get; }
+
+			public PluginConstraint(AssemblyName assemblyName)
+			{
+				AssemblyName = assemblyName;
+			}
+
+			/// <summary>
+			/// Returns true if <paramref name="otherAssemblyName"/> matches the assembly this constraint is
+			/// regarding, otherwise false.
+			/// </summary>
+			public bool AppliesTo(AssemblyName otherAssemblyName)
+			{
+				return AssemblyName.Name != null && AssemblyName.Name.Equals(otherAssemblyName.Name);
+			}
+
+			/// <summary>
+			/// Returns true if the version of <paramref name="otherAssemblyName"/> is out of date with this plugin
+			/// constraint based on matching major and minor versions, otherwise false.
+			/// </summary>
+			public bool WithinVersionConstraint(AssemblyName otherAssemblyName)
+			{
+				if (otherAssemblyName.Version == null || AssemblyName.Version == null)
+				{
+					return true;
+				}
+
+				var pluginVersion = AssemblyName.Version;
+				var otherVersion = otherAssemblyName.Version;
+				return otherVersion.Major == pluginVersion.Major &&
+				       otherVersion.Minor == pluginVersion.Minor;
+			}
+
+			/// <summary>
+			/// Returns true if the version of <paramref name="otherAssemblyName"/> matches the version of this
+			/// constraint exactly.
+			/// </summary>
+			public bool HasSameVersion(AssemblyName otherAssemblyName)
+			{
+				return otherAssemblyName.Version == AssemblyName.Version;
+			}
+		}
+
+		private bool _forceLoadAllUnsafePlugins;
+
 		private readonly ILogger _logger;
 		private readonly IEnumerable<string> _basePaths;
 		private readonly HashSet<Assembly> _assemblies;
 		private readonly AppDomain _appDomain;
+		private readonly List<PluginConstraint> _pluginConstraints;
 
 		public AssemblyLoader(string basePath) : this(new []{basePath})
 		{
@@ -56,7 +107,29 @@ namespace Genesis.CLI
 			_assemblies = new HashSet<Assembly>();
 			_appDomain = AppDomain.CurrentDomain;
 			_basePaths = basePaths;
+			_pluginConstraints = new List<PluginConstraint>();
 			_appDomain.AssemblyResolve += OnAssemblyResolve;
+		}
+
+		/// <summary>
+		/// Adds a plugin constraint for Assembly with <paramref name="assemblyName"/>.
+		/// </summary>
+		public void AddPluginConstraint(AssemblyName assemblyName)
+		{
+			if (_pluginConstraints.Any(x => x.AssemblyName == assemblyName))
+			{
+				return;
+			}
+
+			_pluginConstraints.Add(new PluginConstraint(assemblyName));
+		}
+
+		/// <summary>
+		/// Sets a flag to attempt to load all unsafe plugins regardless of whether or not plugin constraints are met.
+		/// </summary>
+		public void ForceUnsafeAssemblyLoad()
+		{
+			_forceLoadAllUnsafePlugins = true;
 		}
 
 		/// <summary>
@@ -85,7 +158,7 @@ namespace Genesis.CLI
 					var searchAssemblyPaths = Directory.GetFiles(
 						fullPath,
 						FileConstants.WILDCARD_DLL_SEARCH_FILTER,
-						SearchOption.TopDirectoryOnly);
+						SearchOption.AllDirectories);
 
 					foreach (var matchingPluginPath in searchAssemblyPaths)
 					{
@@ -102,15 +175,82 @@ namespace Genesis.CLI
 
 				try
 				{
+					// Get assembly
 					var assembly = ResolveAndLoad(fullPath, false);
+					var assemblyName = assembly.GetName();
 
-					AddAssembly(assembly);
+					// Get all assembly names for referenced assemblies and itself.
+					var referenceAssemblyNames = assembly.GetReferencedAssemblies()
+						.Concat(new []{assembly.GetName()});
+
+					var meetsAllPluginConstraints = true;
+					foreach (var referencedAssemblyName in referenceAssemblyNames)
+					{
+						foreach (var pluginConstraint in _pluginConstraints)
+						{
+							if (pluginConstraint.AppliesTo(referencedAssemblyName) &&
+							    !pluginConstraint.HasSameVersion(referencedAssemblyName))
+							{
+								if (pluginConstraint.WithinVersionConstraint(referencedAssemblyName))
+								{
+									const string WITH_VERSION_CONSTRAINT_LOG =
+										"Assembly {AssemblyName} at v{AssemblyVersion} references an older version " +
+										"of {ReferenceAssemblyName} at v{ReferenceAssemblyVersion}, but can still be " +
+										"loaded.";
+
+									_logger.Warning(WITH_VERSION_CONSTRAINT_LOG,
+										assemblyName.Name,
+										assemblyName.Version,
+										referencedAssemblyName.Name,
+										referencedAssemblyName.Version);
+								}
+								else if(_forceLoadAllUnsafePlugins)
+								{
+									const string OUT_OF_DATE_CONSTRAINT_LOG =
+										"Assembly {AssemblyName} at v{AssemblyVersion} references an out-of-date " +
+										"version of {ReferenceAssemblyName} at v{ReferenceAssemblyVersion}, but will be " +
+										"loaded anyways as \"Load-Unsafe\" is set to true.";
+
+									_logger.Warning(OUT_OF_DATE_CONSTRAINT_LOG,
+										assemblyName.Name,
+										assemblyName.Version,
+										referencedAssemblyName.Name,
+										referencedAssemblyName.Version);
+								}
+								else
+								{
+
+									const string OUT_OF_DATE_CONSTRAINT_LOG =
+										"Assembly {AssemblyName} at v{AssemblyVersion} references an out-of-date " +
+										"version of {ReferenceAssemblyName} at v{ReferenceAssemblyVersion} and won't " +
+										"be loaded.";
+
+									_logger.Warning(OUT_OF_DATE_CONSTRAINT_LOG,
+										assemblyName.Name,
+										assemblyName.Version,
+										referencedAssemblyName.Name,
+										referencedAssemblyName.Version);
+									meetsAllPluginConstraints = false;
+								}
+							}
+						}
+					}
+
+					// If the assembly we're trying to load meets all plugin constraints
+					if (meetsAllPluginConstraints)
+					{
+						AddAssembly(assembly);
+					}
 				}
 				catch (Exception ex)
 				{
+					const string FAILED_TO_LOAD_ASSEMBLY_LOG =
+						"Failed to load assembly [{AssemblyPath}], unexpected error occurred. See exception for more " +
+						"details.";
+
 					_logger.Error(
 						ex,
-						"Failed to load assembly [{AssemblyPath}], unexpected error occurred. See exception for more details.",
+						FAILED_TO_LOAD_ASSEMBLY_LOG,
 						fullPath);
 				}
 			}
@@ -140,7 +280,8 @@ namespace Genesis.CLI
 				{
 					try
 					{
-						_logger.Verbose("Attempting to resolve Assembly [{Assembly}] at path [{AssemblyResolvedPath}]",
+						_logger.Verbose(
+							"Attempting to resolve Assembly [{Assembly}] at path [{AssemblyResolvedPath}]",
 							name,
 							resolvedPath);
 
@@ -148,10 +289,12 @@ namespace Genesis.CLI
 					}
 					catch (BadImageFormatException ex2)
 					{
+						const string BAD_IMAGE_LOG =
+							"Failed to load Assembly [{Assembly}], the file format doesn't conform to the expected " +
+							"language/runtime.";
 						_logger.Error(
 							ex2,
-							"Failed to load Assembly [{Assembly}], the file format doesn't conform to the expected " +
-							"language/runtime.",
+							BAD_IMAGE_LOG,
 							name);
 					}
 					catch (Exception ex3)

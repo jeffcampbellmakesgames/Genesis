@@ -34,6 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace Genesis.CLI
 {
@@ -41,18 +44,18 @@ namespace Genesis.CLI
 	{
 		private static ILogger _LOGGER;
 
-		public static int Main(string[] args)
+		public static Task<int> Main(string[] args)
 		{
 			ConfigureLogger(isVerbose: true);
 
 			return Parser.Default.ParseArguments<GenerateOptions, ConfigOptions>(args: args)
 				.MapResult(
-					(ConfigOptions configOptions) => HandleConfigOptions(configOptions),
-					(GenerateOptions generateOptions) => ExecuteCodeGeneration(generateOptions),
-					notParsedFunc: HandleErrors);
+					async (ConfigOptions configOptions) => await HandleConfigOptions(configOptions),
+					async (GenerateOptions generateOptions) => await ExecuteCodeGeneration(generateOptions),
+			notParsedFunc: HandleErrors);
 		}
 
-		private static int HandleConfigOptions(ConfigOptions configOptions)
+		private static async Task<int> HandleConfigOptions(ConfigOptions configOptions)
 		{
 			var result = 0;
 			try
@@ -66,6 +69,14 @@ namespace Genesis.CLI
 
 					using (var assemblyLoader = new AssemblyLoader(configOptions.PluginPath))
 					{
+						// Load all assemblies that meet plugin constraints (unless forced)
+						if (configOptions.DoLoadUnsafe)
+						{
+							assemblyLoader.ForceUnsafeAssemblyLoad();
+						}
+
+						assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(ICodeGenerationPlugin)).GetName());
+						assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(IGenesisConfig)).GetName());
 						assemblyLoader.LoadAll(configOptions.PluginPath);
 
 						_LOGGER.Verbose("Loaded {AssemblyCount} plugins assemblies.", assemblyLoader.Count);
@@ -100,7 +111,7 @@ namespace Genesis.CLI
 
 					// Write config to file.
 					var jsonContents = genesisConfig.ConvertToJson();
-					File.WriteAllText(configOptions.CreatePath, jsonContents);
+					await File.WriteAllTextAsync(configOptions.CreatePath, jsonContents);
 
 					_LOGGER.Verbose("Config is written to {CreatePath}.", configOptions.CreatePath);
 				}
@@ -115,17 +126,26 @@ namespace Genesis.CLI
 			return result;
 		}
 
-		private static int ExecuteCodeGeneration(GenerateOptions generateOptions)
+		private static async Task<int> ExecuteCodeGeneration(GenerateOptions generateOptions)
 		{
 			var result = 0;
 			try
 			{
 				ConfigureLogger(isVerbose: generateOptions.IsVerbose);
-				ParseSolution(generateOptions.SolutionPath, out var solution, out var allNamedTypeSymbols);
+				var resultTuple = await ParseSolution(generateOptions.SolutionPath);
+				var solution = resultTuple.Item1;
+				var allNamedTypeSymbols = resultTuple.Item2;
 
 				// Load all plugin assemblies
 				using (var assemblyLoader = new AssemblyLoader(generateOptions.PluginPath))
 				{
+					// Load all assemblies that meet plugin constraints (unless forced)
+					if (generateOptions.DoLoadUnsafe)
+					{
+						assemblyLoader.ForceUnsafeAssemblyLoad();
+					}
+					assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(ICodeGenerationPlugin)).GetName());
+					assemblyLoader.AddPluginConstraint(Assembly.GetAssembly(typeof(IGenesisConfig)).GetName());
 					assemblyLoader.LoadAll(generateOptions.PluginPath);
 
 					_LOGGER.Verbose("Loaded {PluginAssemblyCount} plugins assemblies.", assemblyLoader.Count);
@@ -235,20 +255,14 @@ namespace Genesis.CLI
 		}
 
 		/// <summary>
-		/// Attempts to parse the VS solution at <paramref name="solutionPath"/>; if present,
-		/// <paramref name="solution"/> and <paramref name="allNamedTypeSymbols"/> will be initialized.
-		/// </summary>
+		/// Attempts to parse the VS solution at <paramref name="solutionPath"/>; if present, the <see cref="Solution"/>
+		/// and a read-only collection of <see cref="NamedTypeSymbolInfo"/> instances.
 		/// <param name="solutionPath">The absolute file path to the Visual Studio solution.</param>
-		/// <param name="solution">The Code Analysis Solution for the Visual Studio solution at
-		/// <paramref name="solutionPath"/>.</param>
-		/// <param name="allNamedTypeSymbols">A read-only collection of all <see cref="NamedTypeSymbolInfo"/> instances
-		/// discovered in <paramref name="solution"/>.</param>
-		private static void ParseSolution(
-			string solutionPath,
-			out Solution solution,
-			out IReadOnlyList<NamedTypeSymbolInfo> allNamedTypeSymbols)
+		/// </summary>
+		private static async Task<Tuple<Solution, IReadOnlyList<NamedTypeSymbolInfo>>> ParseSolution(string solutionPath)
 		{
-			solution = null;
+			Solution solution = null;
+			List<NamedTypeSymbolInfo> allNamedTypeSymbolInfo;
 
 			// Create Roslyn workspace to parse solution, if present
 			MSBuildLocator.RegisterDefaults();
@@ -260,9 +274,10 @@ namespace Genesis.CLI
 					_LOGGER.Verbose("Solution found at {SolutionPath}, attempting to load.", solutionPath);
 
 					// Import solution for usage in code-generation
-					solution = workspace.OpenSolutionAsync(solutionPath).Result;
-					allNamedTypeSymbols = new List<NamedTypeSymbolInfo>(
-						CodeAnalysisTools.FindAllTypes(solution).Select(NamedTypeSymbolInfo.Create));
+					solution = await workspace.OpenSolutionAsync(solutionPath);
+
+					var allNamedTypeSymbols = await CodeAnalysisTools.FindAllTypes(solution);
+					allNamedTypeSymbolInfo = allNamedTypeSymbols.Select(NamedTypeSymbolInfo.Create).ToList();
 
 					_LOGGER.Verbose(
 						"Solution loaded, {TypeSymbolsCount} TypeSymbols Discovered",
@@ -274,12 +289,15 @@ namespace Genesis.CLI
 						"Skipping loading solution as none can be found at {SolutionPath}.",
 						solutionPath);
 
-					allNamedTypeSymbols = new List<NamedTypeSymbolInfo>();
+					allNamedTypeSymbolInfo = new List<NamedTypeSymbolInfo>();
 				}
 			}
+
+			return new Tuple<Solution, IReadOnlyList<NamedTypeSymbolInfo>>(solution, allNamedTypeSymbolInfo);
 		}
 
-		private static int HandleErrors(IEnumerable<Error> errors)
+		#pragma warning disable CS1998
+		private static async Task<int> HandleErrors(IEnumerable<Error> errors)
 		{
 			foreach (var error in errors)
 			{
@@ -300,6 +318,7 @@ namespace Genesis.CLI
 
 			return 1;
 		}
+		#pragma warning restore CS1998
 
 		private static void ConfigureLogger(bool isVerbose)
 		{

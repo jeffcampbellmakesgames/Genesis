@@ -67,6 +67,7 @@ namespace JCMG.Genesis.Editor
 
 		// General file and path
 		public const string DLL_EXTENSION = ".dll";
+		public const string ZIP_EXTENSION = ".zip";
 		public const string BACKSLASH_STR = "\"";
 		public const string SPACE_STR = " ";
 		public const string QUOTE_STR = "\"";
@@ -75,6 +76,9 @@ namespace JCMG.Genesis.Editor
 
 		// Config files
 		public const string TEMP_CONFIG_FILE_PATH = "./unity_temp_config.json";
+
+		// Default Plugin Path
+		public const string DEFAULT_PLUGIN_PATH = "Plugins";
 
 		// Search filters
 		public const string WILDCARD_ALL_DLLS = "*.dll";
@@ -88,5 +92,22 @@ namespace JCMG.Genesis.Editor
 		public const string SOLUTION_ISSUE_TITLE = "Visual Studio Solution Issue";
 		public const string SOLUTION_MESSAGE = "A single Visual Studio solution cannot be found in the project folder " +
 		                                       "[{0}]. Please ensure that Unity has generated this solution.";
+
+		// Plugins
+		public const string LOAD_UNSAFE_PLUGINS_TOGGLE_TEXT = "Do Load Unsafe Plugins";
+		public const string LOAD_UNSAFE_PLUGINS_DESCRIPTION =
+			"Setting this to true will force loading any unsafe Genesis plugins (those out of date with Genesis major " +
+			"or minor versions). This does not garauntee they will work.";
+
+		// Plugin Install
+		public const string INSTALL_ALL_PLUGINS_BUTTON_TEXT = "Install or Update All Plugins";
+		public const string INSTALL_ALL_PLUGINS_BUTTON_DESCRIPTION
+			= "Installing or updating from a plugin installer will extract it's referenced ZIP files to the Genesis CLI " +
+			  "installation folder, overwriting any files with the same name.";
+
+		public const string INSTALL_PLUGIN_BUTTON_TEXT = "Install or Update Plugin";
+
+		// Create Asset Menu Item
+		public const string CREATE_ASSET_MENU_ITEM_PREFIX = "JCMG/Genesis/";
 	}
 }

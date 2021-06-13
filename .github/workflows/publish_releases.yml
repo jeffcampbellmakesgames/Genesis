@@ -91,6 +91,11 @@ jobs:
         files: './Genesis/Publish/'
         dest: './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
 
+    # Copy changelog file to Unity package contents
+    - name: Copy Changelog to Unity Package
+      run: |
+        cp ./Genesis/CHANGELOG.MD ./Genesis/Unity/Assets/JCMG/Genesis/CHANGELOG.MD
+
     # Build Unity Package on Develop branch
     - name: Execute Unity Package Build
       uses: game-ci/unity-builder@v2.0-alpha-6
