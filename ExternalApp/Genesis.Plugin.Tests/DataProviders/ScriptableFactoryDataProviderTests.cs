@@ -23,13 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using Genesis.Shared;
+using Genesis.Unity.Factory.Plugin;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Genesis.Shared;
-using Genesis.Unity.Factory.Plugin;
-using Microsoft.CodeAnalysis;
-using NUnit.Framework;
 
 namespace Genesis.Plugin.Tests.DataProviders
 {
@@ -37,14 +36,14 @@ namespace Genesis.Plugin.Tests.DataProviders
 	[Category(TestConstants.CATEGORY_CODE_ANALYSIS)]
 	internal class ScriptableFactoryDataProviderTests
 	{
-		private IReadOnlyList<NamedTypeSymbolInfo> _typeSymbols;
+		private IReadOnlyList<ICachedNamedTypeSymbol> _typeSymbols;
 		private IMemoryCache _memoryCache;
 		private List<CodeGeneratorData> _codeGeneratorData;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
 		{
-			_typeSymbols = TestTools.GetAllFixtureTypeSymbols().Select(NamedTypeSymbolInfo.Create).ToList();
+			_typeSymbols = TestTools.GetAllFixtureTypeSymbols().Select(CachedNamedTypeSymbol.Create).ToList();
 		}
 
 		[SetUp]

@@ -256,13 +256,13 @@ namespace Genesis.CLI
 
 		/// <summary>
 		/// Attempts to parse the VS solution at <paramref name="solutionPath"/>; if present, the <see cref="Solution"/>
-		/// and a read-only collection of <see cref="NamedTypeSymbolInfo"/> instances.
+		/// and a read-only collection of <see cref="ICachedNamedTypeSymbol"/> instances.
 		/// <param name="solutionPath">The absolute file path to the Visual Studio solution.</param>
 		/// </summary>
-		private static async Task<Tuple<Solution, IReadOnlyList<NamedTypeSymbolInfo>>> ParseSolution(string solutionPath)
+		private static async Task<Tuple<Solution, IReadOnlyList<ICachedNamedTypeSymbol>>> ParseSolution(string solutionPath)
 		{
 			Solution solution = null;
-			List<NamedTypeSymbolInfo> allNamedTypeSymbolInfo;
+			List<CachedNamedTypeSymbol> allNamedTypeSymbolInfo;
 
 			// Create Roslyn workspace to parse solution, if present
 			MSBuildLocator.RegisterDefaults();
@@ -277,7 +277,7 @@ namespace Genesis.CLI
 					solution = await workspace.OpenSolutionAsync(solutionPath);
 
 					var allNamedTypeSymbols = await CodeAnalysisTools.FindAllTypes(solution);
-					allNamedTypeSymbolInfo = allNamedTypeSymbols.Select(NamedTypeSymbolInfo.Create).ToList();
+					allNamedTypeSymbolInfo = allNamedTypeSymbols.Select(CachedNamedTypeSymbol.Create).ToList();
 
 					_LOGGER.Verbose(
 						"Solution loaded, {TypeSymbolsCount} TypeSymbols Discovered",
@@ -289,11 +289,11 @@ namespace Genesis.CLI
 						"Skipping loading solution as none can be found at {SolutionPath}.",
 						solutionPath);
 
-					allNamedTypeSymbolInfo = new List<NamedTypeSymbolInfo>();
+					allNamedTypeSymbolInfo = new List<CachedNamedTypeSymbol>();
 				}
 			}
 
-			return new Tuple<Solution, IReadOnlyList<NamedTypeSymbolInfo>>(solution, allNamedTypeSymbolInfo);
+			return new Tuple<Solution, IReadOnlyList<ICachedNamedTypeSymbol>>(solution, allNamedTypeSymbolInfo);
 		}
 
 		#pragma warning disable CS1998

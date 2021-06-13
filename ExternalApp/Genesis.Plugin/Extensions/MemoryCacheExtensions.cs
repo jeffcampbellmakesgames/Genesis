@@ -54,7 +54,7 @@ namespace Genesis.Plugin
 		///     Adds the read-only collection of <paramref name="typeSymbols" /> to the memory cache.
 		/// </summary>
 		public static void AddNamedTypeSymbols(this IMemoryCache memoryCache,
-			IReadOnlyList<NamedTypeSymbolInfo> typeSymbols)
+			IReadOnlyList<ICachedNamedTypeSymbol> typeSymbols)
 		{
 			memoryCache.Add(MemoryCacheConstants.CODE_ANALYSIS_TYPE_SYMBOLS_KEY, typeSymbols);
 		}
@@ -62,9 +62,9 @@ namespace Genesis.Plugin
 		/// <summary>
 		///     Returns the read-only collection of <see cref="INamedTypeSymbol" /> instances from the memory cache.
 		/// </summary>
-		public static IReadOnlyList<NamedTypeSymbolInfo> GetNamedTypeSymbols(this IMemoryCache memoryCache)
+		public static IReadOnlyList<ICachedNamedTypeSymbol> GetNamedTypeSymbols(this IMemoryCache memoryCache)
 		{
-			return memoryCache.Get<IReadOnlyList<NamedTypeSymbolInfo>>(MemoryCacheConstants
+			return memoryCache.Get<IReadOnlyList<ICachedNamedTypeSymbol>>(MemoryCacheConstants
 				.CODE_ANALYSIS_TYPE_SYMBOLS_KEY);
 		}
 	}
