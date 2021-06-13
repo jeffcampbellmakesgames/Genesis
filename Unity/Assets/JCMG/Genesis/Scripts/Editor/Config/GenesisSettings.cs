@@ -35,7 +35,9 @@ namespace JCMG.Genesis.Editor
 	/// <summary>
 	/// Contains a serialized settings lookup for Genesis Code Generation.
 	/// </summary>
-	[CreateAssetMenu(fileName = "NewGenesisSettings", menuName = "JCMG/Genesis/GenesisSettings")]
+	[CreateAssetMenu(
+		fileName = "NewGenesisSettings",
+		menuName = EditorConstants.CREATE_ASSET_MENU_ITEM_PREFIX + "GenesisSettings")]
 	public sealed class GenesisSettings : ScriptableObject,
 										  IGenesisConfig
 	{

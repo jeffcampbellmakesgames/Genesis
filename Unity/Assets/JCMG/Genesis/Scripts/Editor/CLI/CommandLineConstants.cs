@@ -36,6 +36,7 @@ namespace JCMG.Genesis.Editor
 
 		// General Options
 		public const string VERBOSE_PARAM = "--verbose";
+		public const string LOAD_UNSAFE_PARAM = "--load-unsafe";
 
 		// Code Generation Options
 		public const string DRY_RUN_PARAM = "--dryRun";

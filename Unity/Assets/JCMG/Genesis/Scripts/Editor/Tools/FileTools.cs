@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.SharpZipLib.Utils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -148,6 +149,33 @@ namespace JCMG.Genesis.Editor
 			{
 				file.CopyTo(Path.Combine(target.FullName, file.Name), overwrite:true);
 			}
+		}
+
+		/// <summary>
+		/// Extracts the contents of the zip file at <paramref name="fullZipPath"/> to the
+		/// <paramref name="destinationPath"/>.
+		/// </summary>
+		public static void ExtractZipContents(string fullZipPath, string destinationPath)
+		{
+			Assert.IsTrue(File.Exists(fullZipPath));
+			Assert.IsTrue(Directory.Exists(destinationPath));
+
+			// Zip Extraction
+			const string TEMP_EXTRACT_PATH = "Temp/GenesisZipExtraction";
+
+			var tempExtractPath = Path.GetFullPath(Path.Combine(GetProjectPath(), TEMP_EXTRACT_PATH));
+
+			ZipUtility.UncompressFromZip(
+				fullZipPath,
+				string.Empty,
+				tempExtractPath);
+
+			var sourceDirectory = new DirectoryInfo(tempExtractPath);
+			var targetDirectory = new DirectoryInfo(destinationPath);
+
+			CopyFilesRecursively(sourceDirectory, targetDirectory);
+
+			sourceDirectory.Delete(recursive: true);
 		}
 	}
 }

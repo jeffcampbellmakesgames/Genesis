@@ -7,6 +7,11 @@
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "Genesis.InstallationFolder",
                 "value": "{\"m_Value\":\"../Publish\"}"
+            },
+            {
+                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+                "key": "Genesis.LoadUnsafePlugins",
+                "value": "{\"m_Value\":false}"
             }
         ]
     }
