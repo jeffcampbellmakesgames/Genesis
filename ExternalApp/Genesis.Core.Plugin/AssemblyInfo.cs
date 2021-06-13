@@ -30,6 +30,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Genesis.Plugin.Tests")]
 
 // Assembly Info
-[assembly: AssemblyVersion("2.2.1")]
-[assembly: AssemblyFileVersion("2.2.1")]
-[assembly: AssemblyInformationalVersion("2.2.1+6.Branch.develop.Sha.0055fb20e88ad3fc57f9deb3ebab60a731cefde7")]
+[assembly: AssemblyVersion("2.2.2")]
+[assembly: AssemblyFileVersion("2.2.2")]
+[assembly: AssemblyInformationalVersion("2.2.2+7.Branch.develop.Sha.e2d751e7dd7b4149bbc6d38dca1fe465101dd3eb")]
