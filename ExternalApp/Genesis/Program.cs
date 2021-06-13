@@ -304,8 +304,8 @@ namespace Genesis.CLI
 				switch (error)
 				{
 					// Do nothing if these are the errors
-					case HelpRequestedError helpRequestedError:
-					case VersionRequestedError versionRequestedError:
+					case HelpRequestedError _:
+					case VersionRequestedError _:
 						// No-op
 						break;
 

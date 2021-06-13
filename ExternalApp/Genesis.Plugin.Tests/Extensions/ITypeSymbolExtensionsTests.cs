@@ -23,9 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using System;
 using System.Linq;
 using NUnit.Framework;
+// ReSharper disable All
+#pragma warning disable
 
 namespace Genesis.Plugin.Tests
 {
@@ -406,3 +407,4 @@ namespace Genesis.Plugin.Tests
 		}
 	}
 }
+#pragma warning restore

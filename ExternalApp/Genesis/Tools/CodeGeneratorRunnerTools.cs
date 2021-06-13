@@ -111,19 +111,6 @@ namespace Genesis.CLI
 			return searchPaths.Concat(additionalSearchPaths).Where(Directory.Exists).ToArray();
 		}
 
-		internal static void AutoImport(CodeGeneratorConfig config, params string[] searchPaths)
-		{
-			var assemblyPaths = ReflectionTools.GetAllImplementingTypesOfInterface<ICodeGenerationPlugin>()
-				.Select(type => type.Assembly)
-				.Distinct()
-				.Select(assembly => assembly.CodeBase.MakePathRelativeTo(Directory.GetCurrentDirectory()))
-				.ToArray();
-			var currentFullPaths = new HashSet<string>(config.SearchPaths.Select(Path.GetFullPath));
-			var second = assemblyPaths.Select(Path.GetDirectoryName).Where(path => !currentFullPaths.Contains(path));
-			config.SearchPaths = config.SearchPaths.Concat(second).Distinct().OrderBy(path => path).ToArray();
-			config.Plugins = assemblyPaths.Select(Path.GetFileNameWithoutExtension).Distinct().OrderBy(plugin => plugin).ToArray();
-		}
-
 		public static void SetTypes<T>(
 			ICodeGenerationPlugin[] instances,
 			out string[] availableTypes)
