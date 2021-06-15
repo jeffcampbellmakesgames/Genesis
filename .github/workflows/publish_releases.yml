@@ -166,13 +166,13 @@ jobs:
 
     # Create release
     - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: 'v${{ env.GitVersion_MajorMinorPatch }}'
-          draft: false
-          prerelease: false
-          files: |
-            './Genesis/Builds/JCMG_Genesis_v${{ env.GitVersion_MajorMinorPatch }}.unityPackage'
-            './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: 'v${{ env.GitVersion_MajorMinorPatch }}'
+        draft: false
+        prerelease: false
+        files: |
+          './Genesis/Builds/JCMG_Genesis_v${{ env.GitVersion_MajorMinorPatch }}.unityPackage'
+          './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
