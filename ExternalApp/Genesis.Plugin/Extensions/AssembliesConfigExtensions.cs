@@ -68,14 +68,14 @@ namespace Genesis.Plugin
 		///     <paramref name="namedTypeSymbolInfo" /> to only those contained in assemblies
 		///     defined in this config.
 		/// </summary>
-		public static IReadOnlyList<NamedTypeSymbolInfo> FilterTypeSymbols(
+		public static IReadOnlyList<ICachedNamedTypeSymbol> FilterTypeSymbols(
 			this AssembliesConfig config,
-			IReadOnlyList<NamedTypeSymbolInfo> namedTypeSymbolInfo)
+			IReadOnlyList<ICachedNamedTypeSymbol> namedTypeSymbolInfo)
 		{
 			if (config.DoUseWhitelistOfAssemblies)
 			{
 				var whitelistedAssemblies = config.WhiteListedAssemblies.ToList();
-				var filteredList = new List<NamedTypeSymbolInfo>();
+				var filteredList = new List<ICachedNamedTypeSymbol>();
 				for (var i = namedTypeSymbolInfo.Count - 1; i >= 0; i--)
 				{
 					var symbolInfo = namedTypeSymbolInfo[i];

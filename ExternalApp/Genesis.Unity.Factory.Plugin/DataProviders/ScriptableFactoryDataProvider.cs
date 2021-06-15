@@ -83,7 +83,7 @@ namespace Genesis.Unity.Factory.Plugin
 			return codeGenData.ToArray();
 		}
 
-		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IReadOnlyList<NamedTypeSymbolInfo> typeSymbolInfo)
+		private IEnumerable<CodeGeneratorData> GetFactoryCodeGeneratorData(IReadOnlyList<ICachedNamedTypeSymbol> typeSymbolInfo)
 		{
 			return typeSymbolInfo
 				.Select(x => new
@@ -104,7 +104,7 @@ namespace Genesis.Unity.Factory.Plugin
 					});
 		}
 
-		private IEnumerable<CodeGeneratorData> GetFactoryEnumCodeGeneratorData(IReadOnlyList<NamedTypeSymbolInfo> types)
+		private IEnumerable<CodeGeneratorData> GetFactoryEnumCodeGeneratorData(IReadOnlyList<ICachedNamedTypeSymbol> types)
 		{
 			return types
 				.Where(x => x.HasAttribute(nameof(FactoryKeyEnumForAttribute)))

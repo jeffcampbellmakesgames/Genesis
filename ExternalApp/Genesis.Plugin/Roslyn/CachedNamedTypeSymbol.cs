@@ -8,7 +8,7 @@ namespace Genesis.Plugin
 	/// <summary>
 	/// A wrapper for <see cref="INamedTypeSymbol"/> that caches it's commonly used members that load frequently.
 	/// </summary>
-	public class NamedTypeSymbolInfo
+	internal class CachedNamedTypeSymbol : ICachedNamedTypeSymbol
 	{
 		/// <summary>
 		/// The raw <see cref="INamedTypeSymbol"/>.
@@ -89,9 +89,9 @@ namespace Genesis.Plugin
 		private string _typeName;
 
 		/// <summary>
-		/// Constructor for <see cref="NamedTypeSymbolInfo"/>.
+		/// Constructor for <see cref="CachedNamedTypeSymbol"/>.
 		/// </summary>
-		public NamedTypeSymbolInfo(INamedTypeSymbol namedTypeSymbol)
+		public CachedNamedTypeSymbol(INamedTypeSymbol namedTypeSymbol)
 		{
 			NamedTypeSymbol = namedTypeSymbol;
 		}
@@ -164,12 +164,12 @@ namespace Genesis.Plugin
 		#region Static Helpers
 
 		/// <summary>
-		/// Factory method for creating a <see cref="NamedTypeSymbolInfo"/> instance.
+		/// Factory method for creating a <see cref="CachedNamedTypeSymbol"/> instance.
 		/// </summary>
 		/// <param name="namedTypeSymbol"></param>
 		/// <returns></returns>
-		public static NamedTypeSymbolInfo Create(INamedTypeSymbol namedTypeSymbol) =>
-			new NamedTypeSymbolInfo(namedTypeSymbol);
+		public static CachedNamedTypeSymbol Create(INamedTypeSymbol namedTypeSymbol) =>
+			new CachedNamedTypeSymbol(namedTypeSymbol);
 
 		#endregion
 	}

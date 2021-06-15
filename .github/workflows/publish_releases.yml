@@ -152,6 +152,7 @@ jobs:
         git config --global user.email "mirraraenn@gmail.com"
         git config --global user.name "Github Action Bot"
         git tag -a "nuget/v${{ env.GitVersion_MajorMinorPatch }}" -m "v${{ env.GitVersion_MajorMinorPatch }} Nuget Package"        
+        git tag -a "v${{ env.GitVersion_MajorMinorPatch }}" -m "v${{ env.GitVersion_MajorMinorPatch }}"
         git push origin --tags
 
     # Tag commit just made with new Unity package version and push it to remote
@@ -162,3 +163,16 @@ jobs:
         git config --global user.name "Github Action Bot"
         git tag -a "upm/v${{ env.GitVersion_MajorMinorPatch }}" -m "v${{ env.GitVersion_MajorMinorPatch }}"
         git push origin --tags
+
+    # Create release
+    - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: 'v${{ env.GitVersion_MajorMinorPatch }}'
+          draft: false
+          prerelease: false
+          files: |
+            './Genesis/Builds/JCMG_Genesis_v${{ env.GitVersion_MajorMinorPatch }}.unityPackage'
+            './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
