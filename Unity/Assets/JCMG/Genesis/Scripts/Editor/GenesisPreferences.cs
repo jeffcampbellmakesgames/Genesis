@@ -153,6 +153,7 @@ namespace JCMG.Genesis.Editor
 
 		private const string USER_PREFERENCES_HEADER = "User Preferences";
 		private const string PROJECT_REFERENCES_HEADER = "Project Preferences";
+		private const string PLUGIN_SETTINGS_HEADER = "Genesis Plugin Settings";
 		private const string PLUGIN_INSTALLERS_HEADER = "Plugin Installers";
 
 		// Labels
@@ -329,7 +330,7 @@ namespace JCMG.Genesis.Editor
 
 			// Plugins Section
 			EditorGUILayout.Space();
-			EditorGUILayout.LabelField(PLUGIN_INSTALLERS_HEADER, EditorStyles.boldLabel);
+			EditorGUILayout.LabelField(PLUGIN_SETTINGS_HEADER, EditorStyles.boldLabel);
 			EditorGUILayout.HelpBox(EditorConstants.LOAD_UNSAFE_PLUGINS_DESCRIPTION, MessageType.Info);
 			using (var scope = new EditorGUI.ChangeCheckScope())
 			{
