@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+### [2.3.0] - 2021-06-15
+#### Changed
+* Renamed `NamedTypeSymbolInfo` to `CachedNamedTypeSymbol` and modified access to be internal. This is now exposed to users as the `ICachedNamedTypeSymbol` interface so that it can be easily changed in the future without breaking user-code.
+
+#### Fixed
+* Fixed a duplicate header on the GenesisPreferences UI.
+
 ### [2.2.2] - 2021-06-13
 #### Changed
 * Modified internal parallelization for Roslyn Project parsing to use async correctly.
