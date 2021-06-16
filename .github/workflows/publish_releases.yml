@@ -8,7 +8,6 @@ on:
     - 'Unity/Assets/JCMG/Genesis/Scripts/**/*.cs'
     - 'ExternalApp/**/*.cs'
     - 'ExternalApp/**/*.cproj'
-    - '.github/workflows/publish_releases.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -172,7 +171,7 @@ jobs:
         draft: false
         prerelease: false
         files: |
-          './Genesis/Builds/JCMG_Genesis_v${{ env.GitVersion_MajorMinorPatch }}.unityPackage'
-          './Genesis/Unity/Assets/JCMG/Genesis/External/Genesis.CLI.zip'
+          /Genesis/Builds/*.unityPackage
+          /Genesis/Unity/Assets/JCMG/Genesis/External/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
