@@ -96,13 +96,7 @@ namespace Genesis.Plugin
 			NamedTypeSymbol = namedTypeSymbol;
 		}
 
-		/// <summary>
-		/// Returns true if this <see cref="NamedTypeSymbol"/> is decorated with interface type
-		/// <typeparamref name="T"/>.
-		/// </summary>
-		/// <exception cref="ArgumentException">
-		///     <typeparamref name="T" /> must be an interface, otherwise an exception will be thrown.
-		/// </exception>
+		/// <inheritdoc />
 		public bool ImplementsInterface<T>()
 		{
 			if (!typeof(T).IsInterface)
@@ -115,50 +109,34 @@ namespace Genesis.Plugin
 			return ImplementsInterface(interfaceName);
 		}
 
-		/// <summary>
-		///     Returns true if <see cref="NamedTypeSymbol" /> implements an interface matching
-		/// <paramref name="interfaceTypeName" />.
-		/// </summary>
+		/// <inheritdoc />
 		public bool ImplementsInterface(string interfaceTypeName)
 		{
 			return NamedTypeSymbol.Name != interfaceTypeName &&
 			       InterfaceTypeSymbols.Any(interfaceTypeSymbol => interfaceTypeSymbol.Name == interfaceTypeName);
 		}
 
-		/// <summary>
-		/// Returns all <see cref="Microsoft.CodeAnalysis.AttributeData"/> for <see cref="NamedTypeSymbol"/> where
-		/// the attribute class's name matches <paramref name="attributeTypeName"/>.
-		/// </summary>
-		public IEnumerable<AttributeData> GetAttributes(string attributeTypeName)
+		/// <inheritdoc />
+		public IEnumerable<AttributeData> GetAttributes(string attributeTypeName, bool canInherit = false)
 		{
-			return AttributeData.GetAttributes(attributeTypeName);
+			return AttributeData.GetAttributes(attributeTypeName, canInherit);
 		}
 
-		/// <summary>
-		///     Returns true if <see cref="NamedTypeSymbol"/> has <see cref="Attribute" />-derived type
-		///     <typeparamref name="T" />.
-		/// </summary>
-		/// <exception cref="Exception">
-		///     <typeparamref name="T" /> must be an attribute, otherwise an assertion
-		///     will be thrown.
-		/// </exception>
-		public bool HasAttribute<T>()
+		/// <inheritdoc />
+		public bool HasAttribute<T>(bool canInherit = false)
 		{
 			if (!typeof(Attribute).IsAssignableFrom(typeof(T)))
 			{
 				throw new ArgumentException("T must be assignable to Attribute.");
 			}
 
-			return HasAttribute(typeof(T).Name);
+			return HasAttribute(typeof(T).Name, canInherit);
 		}
 
-		/// <summary>
-		///     Returns true if <see cref="NamedTypeSymbol" /> has an
-		/// <see cref="Microsoft.CodeAnalysis.AttributeData" /> with <paramref name="attributeTypeName"/>.
-		/// </summary>
-		public bool HasAttribute(string attributeTypeName)
+		/// <inheritdoc />
+		public bool HasAttribute(string attributeTypeName, bool canInherit = false)
 		{
-			return AttributeData.HasAttribute(attributeTypeName);
+			return AttributeData.HasAttribute(attributeTypeName, canInherit);
 		}
 
 		#region Static Helpers

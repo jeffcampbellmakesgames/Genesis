@@ -427,9 +427,15 @@ namespace Genesis.Plugin
 		///     Returns true if this <paramref name="typeSymbol" /> has <see cref="Attribute" /> with
 		/// <paramref name="attributeTypeName"/>.
 		/// </summary>
-		public static bool HasAttribute(this ITypeSymbol typeSymbol, string attributeTypeName)
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="attributeTypeName"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		public static bool HasAttribute(
+			this ITypeSymbol typeSymbol,
+			string attributeTypeName,
+			bool canInherit = false)
 		{
-			return typeSymbol.GetAttributes().HasAttribute(attributeTypeName);
+			return typeSymbol.GetAttributes().HasAttribute(attributeTypeName, canInherit);
 		}
 
 		/// <summary>
@@ -440,23 +446,32 @@ namespace Genesis.Plugin
 		///     <typeparamref name="T" /> must be an attribute, otherwise an assertion
 		///     will be thrown.
 		/// </exception>
-		public static bool HasAttribute<T>(this ITypeSymbol typeSymbol)
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="typeSymbol"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		public static bool HasAttribute<T>(this ITypeSymbol typeSymbol, bool canInherit = false)
 		{
 			if (!typeof(Attribute).IsAssignableFrom(typeof(T)))
 			{
 				throw new ArgumentException("T must be assignable to Attribute.");
 			}
 
-			return typeSymbol.HasAttribute(typeof(T).Name);
+			return typeSymbol.HasAttribute(typeof(T).Name, canInherit);
 		}
 
 		/// <summary>
 		/// Returns all <see cref="AttributeData"/> decorated on this <see cref="ITypeSymbol"/> where the
 		/// attribute class's name matches <paramref name="attributeTypeName"/>.
 		/// </summary>
-		public static IEnumerable<AttributeData> GetAttributes(this ITypeSymbol typeSymbol, string attributeTypeName)
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="attributeTypeName"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		public static IEnumerable<AttributeData> GetAttributes(
+			this ITypeSymbol typeSymbol,
+			string attributeTypeName,
+			bool canInherit = false)
 		{
-			return typeSymbol.GetAttributes().GetAttributes(attributeTypeName);
+			return typeSymbol.GetAttributes().GetAttributes(attributeTypeName, canInherit);
 		}
 
 		/// <summary>

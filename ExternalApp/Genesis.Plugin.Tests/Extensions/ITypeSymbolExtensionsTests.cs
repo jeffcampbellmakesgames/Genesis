@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 // ReSharper disable All
@@ -382,6 +383,30 @@ namespace Genesis.Plugin.Tests
 			var nestedTypeSymbol = TestTools.GetAttributeTypeSymbol();
 
 			Assert.IsTrue(nestedTypeSymbol.IsAttribute());
+		}
+
+		[Test]
+		public static void CanDetectAttributeTypeThatIsInherited()
+		{
+			var typeSymbol = TestTools.GetDerivedAttributeClassTypeSymbol();
+
+			Assert.IsFalse(typeSymbol.HasAttribute("BaseAttribute"));
+			Assert.IsTrue(typeSymbol.HasAttribute("BaseAttribute", canInherit:true));
+		}
+
+		[Test]
+		public static void CanGetAttributeTypeThatIsInherited()
+		{
+			var typeSymbol = TestTools.GetDerivedAttributeClassTypeSymbol();
+
+			Assert.IsEmpty(typeSymbol.GetAttributes("BaseAttribute"));
+
+			var attrData = typeSymbol.GetAttributes("BaseAttribute", canInherit: true);
+			Assert.IsNotEmpty(attrData);
+
+			var firstAttr = attrData.Single();
+
+			Assert.AreEqual("FooDerivedAttribute", firstAttr.AttributeClass.Name);
 		}
 
 		[Test]
