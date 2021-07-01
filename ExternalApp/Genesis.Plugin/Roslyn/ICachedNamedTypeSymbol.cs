@@ -65,7 +65,10 @@ namespace Genesis.Plugin
 		/// Returns all <see cref="Microsoft.CodeAnalysis.AttributeData"/> for <see cref="NamedTypeSymbol"/> where
 		/// the attribute class's name matches <paramref name="attributeTypeName"/>.
 		/// </summary>
-		IEnumerable<AttributeData> GetAttributes(string attributeTypeName);
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="attributeTypeName"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		IEnumerable<AttributeData> GetAttributes(string attributeTypeName, bool canInherit = false);
 
 		/// <summary>
 		///     Returns true if <see cref="NamedTypeSymbol"/> has <see cref="Attribute" />-derived type
@@ -75,12 +78,18 @@ namespace Genesis.Plugin
 		///     <typeparamref name="T" /> must be an attribute, otherwise an assertion
 		///     will be thrown.
 		/// </exception>
-		bool HasAttribute<T>();
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="attributeTypeName"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		bool HasAttribute<T>(bool canInherit = false);
 
 		/// <summary>
 		///     Returns true if <see cref="NamedTypeSymbol" /> has an
 		/// <see cref="Microsoft.CodeAnalysis.AttributeData" /> with <paramref name="attributeTypeName"/>.
 		/// </summary>
-		bool HasAttribute(string attributeTypeName);
+		/// <param name="canInherit">If true, all base classes of any attributes will be checked and compared for
+		/// equality against <paramref name="attributeTypeName"/>, otherwise only the current attribute type will be
+		/// checked.</param>
+		bool HasAttribute(string attributeTypeName, bool canInherit = false);
 	}
 }

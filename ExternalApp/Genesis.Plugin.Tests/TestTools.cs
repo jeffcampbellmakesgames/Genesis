@@ -295,6 +295,14 @@ namespace Genesis.Plugin.Tests
 		}
 
 		/// <summary>
+		/// Returns a <see cref="ITypeSymbol"/> from the "Runtime" assembly.
+		/// </summary>
+		public static ITypeSymbol GetDerivedAttributeClassTypeSymbol()
+		{
+			return GetAllFixtureTypeSymbols().First(x => x.Name == "FooDerivedClassExample");
+		}
+
+		/// <summary>
 		/// Returns a <see cref="ITypeSymbol"/> from the "Assembly-Csharp" assembly for a Unity MonoBehaviour derived
 		/// type.
 		/// </summary>
