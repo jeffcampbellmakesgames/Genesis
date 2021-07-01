@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Releases]
+### [2.3.1] - 2021-07-01
+#### Changed
+* Modified `GetAttributes` and `HasAttributes` extension methods with optional bool parameter `canInherit` so that a user can check to see if a `ITypeSymbol` is decorated with an matching attribute or base type name.
+* Adjusted interface for `ICachedNamedTypeSymbol` for `GetAttributes` and `HasAttributes` to include new optional parameter `canInherit`.
 
 ### [2.3.0] - 2021-06-15
 #### Changed
