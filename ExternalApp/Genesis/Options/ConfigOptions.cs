@@ -37,20 +37,20 @@ namespace Genesis.CLI
 			longName:"create",
 			SetName = "create",
 			HelpText = "Specifies that a config file should be created and populated with all settings from " +
-			           "availables plugins.")]
+			           "available plugins.")]
 		public bool DoCreate { get; set; }
 
 		[Option(
 			longName: "output-path",
 			SetName = "create",
 			HelpText = "The output file path where this config should be written",
-			Default = "./new_config.json")]
+			Default = "new_config.json")]
 		public string CreatePath { get; set; }
 
 		[Option(
 			"plugin-path",
 			HelpText = "The path to the plugin folder.",
-			Default = "./plugins")]
+			Default = "Plugins")]
 		public string PluginPath { get; set; }
 
 		[Option(

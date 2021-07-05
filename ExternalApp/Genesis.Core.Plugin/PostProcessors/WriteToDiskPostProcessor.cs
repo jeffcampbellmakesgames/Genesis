@@ -23,11 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Genesis.Plugin;
 using Genesis.Shared;
+using Serilog;
+using Serilog.Core;
+using OperatingSystem = Genesis.Plugin.OperatingSystem;
 
 namespace Genesis.Core.Plugin
 {
@@ -54,10 +59,23 @@ namespace Genesis.Core.Plugin
 
 		public CodeGenFile[] PostProcess(CodeGenFile[] files)
 		{
+			var logger = Log.Logger.ForContext<WriteToDiskPostProcessor>();
 			var basePath = _targetDirectoryConfig.TargetDirectory + Path.DirectorySeparatorChar;
+
+			// Get the path-specific slash characters that should be replaced if encountered.
+			var replaceSlash = OperatingSystemTools.GetOperatingSystem() switch
+			{
+				OperatingSystem.macOS => "\\",
+				OperatingSystem.Linux => "\\",
+				OperatingSystem.Windows => "/",
+				_ => throw new ArgumentException(nameof(OSPlatform))
+			};
+			var pathDirectorySeparatorStr = Path.DirectorySeparatorChar.ToString();
+
 			Parallel.ForEach(files, (codeGenFile, state) =>
 			{
-				var path = basePath + codeGenFile.FileName;
+				var path = Path.GetFullPath(Path.Combine(basePath, codeGenFile.FileName))
+					.Replace(replaceSlash, pathDirectorySeparatorStr);
 				var directoryName = Path.GetDirectoryName(path);
 				if (!Directory.Exists(directoryName))
 				{
