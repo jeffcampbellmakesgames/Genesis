@@ -66,7 +66,7 @@ namespace Genesis.CLI
 		[Option(
 			"plugin-path",
 			HelpText = "The path to the plugin folder.",
-			Default = "./plugins")]
+			Default = "Plugins")]
 		public string PluginPath { get; set; }
 
 		[Option(
