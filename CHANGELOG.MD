@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Releases]
+### [2.3.2] - 2021-07-04
+#### Fixed
+These issues should help resolve any operating system path issues that caused either plugins to fail to be discovered or files to be written incorrectly.
+* Modified `WriteToDiskPostProcessor` so that it will replace any inapropriate path characters per-platform with the correct ones.
+* Modified `GenerateOptions` and `ConfigOptions` for the Genesis.CLI so that the case-sensitive "plugins" folder name is used and removed any platform-specific path characters.
+* Added `OperatingSystemTools` helper methods for determining current operating system
+
 ### [2.3.1] - 2021-07-01
 #### Changed
 * Modified `GetAttributes` and `HasAttributes` extension methods with optional bool parameter `canInherit` so that a user can check to see if a `ITypeSymbol` is decorated with an matching attribute or base type name.
