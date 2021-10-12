@@ -36,6 +36,30 @@ namespace Genesis.Shared
 	/// </summary>
 	public static class ReflectionTools
 	{
+		private static readonly Type[] _EMPTY_TYPE_ARRAY = new Type[0];
+
+		/// <summary>
+		/// Return an array of types defined in the <see cref="Assembly"/>.
+		/// Returns an empty array if the assembly contains one or more types that cannot be loaded.
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <returns></returns>
+		public static Type[] GetTypesOrEmpty(this Assembly assembly)
+		{
+			Type[] types;
+
+			try
+			{
+				types = assembly.GetTypes();
+			}
+			catch
+			{
+				types = _EMPTY_TYPE_ARRAY;
+			}
+
+			return types;
+		}
+
 		/// <summary>
 		/// Returns an IEnumerable of class instances of Types derived from T
 		/// </summary>
@@ -46,7 +70,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -72,7 +96,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -98,7 +122,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -126,7 +150,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -153,7 +177,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -181,7 +205,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -208,7 +232,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -236,7 +260,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -263,7 +287,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -291,7 +315,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -316,7 +340,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -341,7 +365,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -407,7 +431,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -431,7 +455,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -457,7 +481,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -484,7 +508,7 @@ namespace Genesis.Shared
 			var objects = new List<T>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
@@ -509,7 +533,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  myType.IsSubclassOf(typeof(T))))
@@ -533,7 +557,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          myType.IsSubclassOf(typeof(T))))
@@ -587,8 +611,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly
-					.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          myType.IsSubclassOf(typeof(T)) &&
@@ -613,7 +636,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies())
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 								  !myType.IsAbstract &&
@@ -641,7 +664,7 @@ namespace Genesis.Shared
 			var objects = new List<Type>();
 			foreach (var assembly in GetAvailableAssemblies(whitelistOfAssemblies))
 			{
-				foreach (var type in assembly.GetTypes()
+				foreach (var type in assembly.GetTypesOrEmpty()
 					.Where(
 						myType => myType.IsClass &&
 						          !myType.IsAbstract &&
