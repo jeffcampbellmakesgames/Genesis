@@ -20,10 +20,14 @@ MonoBehaviour:
   legacyPackageDestinationPath: ../Builds
   packageName: com.jeffcampbellmakesgames.genesis
   displayName: JCMG Genesis
-  packageVersion: 1.3.0
+  packageVersion: 1.3.1
   unityVersion: 2019.1
   description: A general purpose code generation library for Unity
   category: Editor
+  author:
+    name: 
+    email: 
+    url: 
   keywords:
   - JCMG
   - Code Generation
@@ -32,5 +36,5 @@ MonoBehaviour:
   - Gen
   dependencies: []
   versionConstantsPath: Assets/JCMG/Genesis/Scripts/Editor
-  versionConstantsNamespace: JCMG.Genesis.Editor
+  versionTemplateGuid: 
   _id: 66f64dad-4bda-4f2e-b960-22b7974f8604
