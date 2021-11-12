@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 MIT License
 
@@ -33,26 +33,26 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The semantic version
 		/// </summary>
-		public const string VERSION = "1.3.1";
+		public const string VERSION = "${version}";
 
 		/// <summary>
 		/// The branch of GIT this package was published from.
 		/// </summary>
-		public const string GIT_BRANCH = "v1/legacy_develop";
+		public const string GIT_BRANCH = "${git_branch}";
 
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "bcc089d645069e48d07b7fea1e0a7f78b1002002";
+		public const string GIT_COMMIT = "${git_commit}";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Friday, November 12, 2021";
+		public const string PUBLISH_DATE = "${publish_date}";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "11/12/2021 23:09:57";
+		public const string PUBLISH_TIME = "${publish_utc_time}";
 	}
 }
