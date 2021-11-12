@@ -33,26 +33,26 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The semantic version
 		/// </summary>
-		public const string VERSION = "1.3.0";
+		public const string VERSION = "1.3.1";
 
 		/// <summary>
 		/// The branch of GIT this package was published from.
 		/// </summary>
-		public const string GIT_BRANCH = "develop";
+		public const string GIT_BRANCH = "v1/legacy_develop";
 
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "9856855de862b790448b18ec400d71ca09d7c809";
+		public const string GIT_COMMIT = "b553b2fb8252c8139d11707f1ff551d534f79b7a";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Saturday, September 5, 2020";
+		public const string PUBLISH_DATE = "Friday, November 12, 2021";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "09/05/2020 11:50:36";
+		public const string PUBLISH_TIME = "11/12/2021 23:11:42";
 	}
 }

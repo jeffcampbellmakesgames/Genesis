@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+using System;
 using System.IO;
 
 namespace JCMG.Genesis.Editor.Plugins
@@ -47,9 +48,27 @@ namespace JCMG.Genesis.Editor.Plugins
 
 		public CodeGenFile[] PostProcess(CodeGenFile[] files)
 		{
+			string replaceSlash;
+			switch (OperatingSystemTools.GetOperatingSystem())
+			{
+				case OperatingSystem.macOS:
+				case OperatingSystem.Linux:
+					replaceSlash = "\\";
+					break;
+				case OperatingSystem.Windows:
+					replaceSlash = "/";
+					break;
+				default:
+					throw new ArgumentException(nameof(OperatingSystem));
+			}
+
+			var pathDirectorySeparatorStr = Path.DirectorySeparatorChar.ToString();
+
 			foreach (var file in files)
 			{
-				var path = _targetDirectoryConfig.TargetDirectory + Path.DirectorySeparatorChar + file.FileName;
+				var path = Path.Combine(_targetDirectoryConfig.TargetDirectory, file.FileName);
+				path = path.Replace(replaceSlash, pathDirectorySeparatorStr);
+
 				var directoryName = Path.GetDirectoryName(path);
 				if (!Directory.Exists(directoryName))
 				{
