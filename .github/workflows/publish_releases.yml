@@ -5,6 +5,7 @@ on:
     # Attempt to create a new nuget package and Unity release anytime code changes.
     branches: [ develop ]
     paths:
+    - '.github/workflows/publish_releases.yml'
     - 'Unity/Assets/JCMG/Genesis/Scripts/**/*.cs'
     - 'ExternalApp/**/*.cs'
     - 'ExternalApp/**/*.cproj'
@@ -68,9 +69,7 @@ jobs:
     - name: Run Unity Unit Tests
       uses: game-ci/unity-test-runner@v2.0-alpha-3
       env:
-        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
         projectPath: './Genesis/Unity'
         unityVersion: 2019.4.20f1
@@ -99,9 +98,7 @@ jobs:
     - name: Execute Unity Package Build
       uses: game-ci/unity-builder@v2.0-alpha-6
       env:
-        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
         projectPath: './Genesis/Unity'
         unityVersion: 2019.4.20f1
