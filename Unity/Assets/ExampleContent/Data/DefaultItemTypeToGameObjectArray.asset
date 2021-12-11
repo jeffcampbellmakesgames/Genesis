@@ -9,23 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 719518c738891514e9bff06599c06c68, type: 3}
+  m_Script: {fileID: 11500000, guid: 6dfe3f2cd5cc93848b792cdd9babd426, type: 3}
   m_Name: DefaultItemTypeToGameObjectArray
   m_EditorClassIdentifier: 
   _mappings:
-  - key: 0
-    value:
-    - {fileID: 0}
-    - {fileID: 0}
   - key: 1
-    value:
-    - {fileID: 0}
-    - {fileID: 0}
-  - key: 2
-    value:
-    - {fileID: 0}
-    - {fileID: 0}
+    value: []
   - key: 3
-    value:
-    - {fileID: 0}
-    - {fileID: 0}
+    value: []
+  - key: 2
+    value: []
+  - key: 0
+    value: []

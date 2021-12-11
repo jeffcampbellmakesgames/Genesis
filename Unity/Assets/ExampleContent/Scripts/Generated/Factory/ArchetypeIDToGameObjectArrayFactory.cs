@@ -1,35 +1,44 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultItemTypeToGameObjectArray", menuName = "Genesis/Factory/ItemTypeToGameObjectArray")]
-	public sealed partial class ItemTypeToGameObjectArray : ScriptableObject
+	[CreateAssetMenu(fileName = "DefaultArchetypeIDToGameObjectArrayFactory", menuName = "Genesis/Factory/ArchetypeIDToGameObjectArrayFactory")]
+	public sealed partial class ArchetypeIDToGameObjectArrayFactory : ScriptableObject
 	{
 		[Serializable]
 		private class Mapping
 		{
 			#pragma warning disable 0649
-			public ExampleContent.ItemType key;
+			public ExampleContent.ArchetypeID key;
 
 			public UnityEngine.GameObject[] value;
 			#pragma warning restore 0649
 		}
 
+		#if ODIN_INSPECTOR
+		[ListDrawerSettings(
+			Expanded = true,
+			ShowIndexLabels = false
+			)]
+		#endif
 		#pragma warning disable 0649
 		[SerializeField]
 		private List<Mapping> _mappings;
 		#pragma warning restore 0649
 
-		private Dictionary<ExampleContent.ItemType, Mapping> MappingLookup
+		private Dictionary<ExampleContent.ArchetypeID, Mapping> MappingLookup
 		{
 			get
 			{
 				if(_mappingLookup == null)
 				{
-					_mappingLookup = new Dictionary<ExampleContent.ItemType, Mapping>();
+					_mappingLookup = new Dictionary<ExampleContent.ArchetypeID, Mapping>();
 					for (var i = 0; i < _mappings.Count; i++)
 					{
 						if(_mappingLookup.ContainsKey(_mappings[i].key))
@@ -45,33 +54,21 @@ namespace Genesis
 			}
 		}
 
-		private Dictionary<ExampleContent.ItemType, Mapping> _mappingLookup;
+		private Dictionary<ExampleContent.ArchetypeID, Mapping> _mappingLookup;
 
 		private void OnEnable()
 		{
 			if(_mappings == null)
 			{
 				_mappings = new List<Mapping>();
-
-				var values = (ExampleContent.ItemType[])Enum.GetValues(typeof(ExampleContent.ItemType));
-				for (var i = 0; i < values.Length; i++)
-				{
-					_mappings.Add(new Mapping
-					{
-						key = values[i]
-					});
-				}
 			}
 		}
 
 		/// <summary>
-		/// Returns true if a mapping is found for <see cref="ExampleContent.ItemType"/> <paramref name="key"/> to a
+		/// Returns true if a mapping is found for <see cref="ExampleContent.ArchetypeID"/> <paramref name="key"/> to a
 		/// <see cref="UnityEngine.GameObject[]"/>, otherwise false.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public bool TryGetValue(ExampleContent.ItemType key, out UnityEngine.GameObject[] value)
+		public bool TryGetValue(ExampleContent.ArchetypeID key, out UnityEngine.GameObject[] value)
 		{
 			value = null;
 

@@ -31,14 +31,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.sharp-zip-lib": {
-      "version": "1.2.2-preview.1",
+      "version": "1.2.2-preview.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.26",
+      "version": "1.1.30",
       "depth": 0,
       "source": "registry",
       "dependencies": {
