@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Releases]
+### [2.4.0] - 2021-11-12
+#### Added
+* A new factory option is available via new types `ISymbolObject` and `GenerateSymbolFactoryAttribute`. `ISymbolObject` represents a uniquely identified object by way of a `string` `Symbol` field. Any types implementing this interface that are also decorated with `GenerateSymbolFactoryAttribute` will have factory types generated for them to enable retrieving the implementing type by it's `Symbol` value.
+
+#### Changed
+* All factory classes and assets generated from `ScriptableFactoryProvider` now have `Factory` suffixed to the end of the name to make it clearer what the type is supposed to reflect. They now also have optional Odin markup that will enhance their utility, usability, and readability; this is compiled out when Odin is not available (by way of the scriptable define Odin adds to the project settings).
+
 ### [2.3.2] - 2021-07-04
 #### Fixed
 These issues should help resolve any operating system path issues that caused either plugins to fail to be discovered or files to be written incorrectly.
