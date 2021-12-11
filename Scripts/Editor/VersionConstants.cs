@@ -52,6 +52,6 @@ namespace JCMG.Genesis.Editor
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "12/11/2021 23:42:38";
+		public const string PUBLISH_TIME = "12/11/2021 23:52:19";
 	}
 }
