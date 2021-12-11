@@ -37,7 +37,7 @@ namespace Genesis.Unity.Factory.Plugin
 
 		// Format
 		private const string OUTPUT_FILE_PATH_FORMAT = @"Factory\{0}.cs";
-		private const string FINAL_TYPE_NAME_FORMAT = @"{0}To{1}";
+		private const string FINAL_TYPE_NAME_FORMAT = @"{0}To{1}Factory";
 
 		// Template Tokens
 		private const string TYPE_NAME_TOKEN = "${TypeName}";

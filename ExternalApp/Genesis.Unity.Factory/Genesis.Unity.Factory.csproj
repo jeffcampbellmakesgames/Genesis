@@ -8,11 +8,7 @@
 		<ItemGroup>
 			<DataFiles Include="$(ProjectDir)$(OutDir)*.dll;$(ProjectDir)$(OutDir)*.pdb" />
 		</ItemGroup>
-		<Copy SourceFiles="@(DataFiles)"
-		      DestinationFolder="$(ProjectDir)..\..\Unity\Assets\JCMG\Genesis\Plugins\"
-		      SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(DataFiles)"
-		      DestinationFolder="$(ProjectDir)..\UnityProjectFixtures\Assets\JCMG\Genesis\Plugins\"
-		      SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(DataFiles)" DestinationFolder="$(ProjectDir)..\..\Unity\Assets\JCMG\Genesis\Plugins\" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(DataFiles)" DestinationFolder="$(ProjectDir)..\UnityProjectFixtures\Assets\JCMG\Genesis\Plugins\" SkipUnchangedFiles="true" />
 	</Target>
 </Project>

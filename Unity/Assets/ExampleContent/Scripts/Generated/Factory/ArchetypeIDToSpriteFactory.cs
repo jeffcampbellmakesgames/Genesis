@@ -1,12 +1,15 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultArchetypeIDToSprite", menuName = "Genesis/Factory/ArchetypeIDToSprite")]
-	public sealed partial class ArchetypeIDToSprite : ScriptableObject
+	[CreateAssetMenu(fileName = "DefaultArchetypeIDToSpriteFactory", menuName = "Genesis/Factory/ArchetypeIDToSpriteFactory")]
+	public sealed partial class ArchetypeIDToSpriteFactory : ScriptableObject
 	{
 		[Serializable]
 		private class Mapping
@@ -18,6 +21,12 @@ namespace Genesis
 			#pragma warning restore 0649
 		}
 
+		#if ODIN_INSPECTOR
+		[ListDrawerSettings(
+			Expanded = true,
+			ShowIndexLabels = false
+			)]
+		#endif
 		#pragma warning disable 0649
 		[SerializeField]
 		private List<Mapping> _mappings;
@@ -59,9 +68,6 @@ namespace Genesis
 		/// Returns true if a mapping is found for <see cref="ExampleContent.ArchetypeID"/> <paramref name="key"/> to a
 		/// <see cref="UnityEngine.Sprite"/>, otherwise false.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public bool TryGetValue(ExampleContent.ArchetypeID key, out UnityEngine.Sprite value)
 		{
 			value = null;

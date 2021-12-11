@@ -28,6 +28,7 @@ using System.Linq;
 using Genesis.Plugin;
 using Genesis.Shared;
 using Microsoft.CodeAnalysis;
+using Serilog;
 
 namespace Genesis.Unity.Factory.Plugin
 {
@@ -56,8 +57,14 @@ namespace Genesis.Unity.Factory.Plugin
 
 		private IMemoryCache _memoryCache;
 		private AssembliesConfig _assembliesConfig;
+		private readonly ILogger _logger;
 
 		private const string NAME = "Scriptable Factory Data";
+
+		public ScriptableFactoryDataProvider()
+		{
+			_logger = Log.Logger.ForContext<ScriptableFactoryDataProvider>();
+		}
 
 		/// <inheritdoc />
 		public void SetCache(IMemoryCache memoryCache)
@@ -79,7 +86,7 @@ namespace Genesis.Unity.Factory.Plugin
 				_assembliesConfig.FilterTypeSymbols(_memoryCache.GetNamedTypeSymbols());
 			codeGenData.AddRange(GetFactoryCodeGeneratorData(filteredTypeSymbols));
 			codeGenData.AddRange(GetFactoryEnumCodeGeneratorData(filteredTypeSymbols));
-
+			codeGenData.AddRange(GetSymbolFactoryCodeGeneratorData(filteredTypeSymbols));
 			return codeGenData.ToArray();
 		}
 
@@ -123,6 +130,27 @@ namespace Genesis.Unity.Factory.Plugin
 								return data;
 							});
 					});
+		}
+
+		private IEnumerable<CodeGeneratorData> GetSymbolFactoryCodeGeneratorData(IReadOnlyList<ICachedNamedTypeSymbol> types)
+		{
+			var list = new List<CodeGeneratorData>();
+			var decoratedTypes = types
+				.Where(x => x.HasAttribute(nameof(GenerateSymbolFactoryAttribute)));
+			foreach (var cachedNamedTypeSymbol in decoratedTypes)
+			{
+				if (cachedNamedTypeSymbol.ImplementsInterface<ISymbolObject>())
+				{
+					list.Add(new SymbolFactoryData(cachedNamedTypeSymbol.NamedTypeSymbol));
+				}
+				else
+				{
+					_logger.Warning($"Cannot create SymbolFactory for {cachedNamedTypeSymbol.FullTypeName} " +
+					                $"as it does not implement {nameof(ISymbolObject)}. Skipping....");
+				}
+			}
+
+			return list;
 		}
 	}
 }

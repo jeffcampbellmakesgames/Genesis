@@ -1,12 +1,15 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultArchetypeIDToGameObjectArray", menuName = "Genesis/Factory/ArchetypeIDToGameObjectArray")]
-	public sealed partial class ArchetypeIDToGameObjectArray : ScriptableObject
+	[CreateAssetMenu(fileName = "DefaultArchetypeIDToListGameObjectFactory", menuName = "Genesis/Factory/ArchetypeIDToListGameObjectFactory")]
+	public sealed partial class ArchetypeIDToListGameObjectFactory : ScriptableObject
 	{
 		[Serializable]
 		private class Mapping
@@ -14,10 +17,16 @@ namespace Genesis
 			#pragma warning disable 0649
 			public ExampleContent.ArchetypeID key;
 
-			public UnityEngine.GameObject[] value;
+			public System.Collections.Generic.List<UnityEngine.GameObject> value;
 			#pragma warning restore 0649
 		}
 
+		#if ODIN_INSPECTOR
+		[ListDrawerSettings(
+			Expanded = true,
+			ShowIndexLabels = false
+			)]
+		#endif
 		#pragma warning disable 0649
 		[SerializeField]
 		private List<Mapping> _mappings;
@@ -57,12 +66,9 @@ namespace Genesis
 
 		/// <summary>
 		/// Returns true if a mapping is found for <see cref="ExampleContent.ArchetypeID"/> <paramref name="key"/> to a
-		/// <see cref="UnityEngine.GameObject[]"/>, otherwise false.
+		/// <see cref="System.Collections.Generic.List<UnityEngine.GameObject>"/>, otherwise false.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public bool TryGetValue(ExampleContent.ArchetypeID key, out UnityEngine.GameObject[] value)
+		public bool TryGetValue(ExampleContent.ArchetypeID key, out System.Collections.Generic.List<UnityEngine.GameObject> value)
 		{
 			value = null;
 

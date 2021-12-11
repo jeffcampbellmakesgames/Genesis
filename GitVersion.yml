@@ -1,5 +1,5 @@
 mode: MainLine
-next-version: 2.3.0
+next-version: 2.4.0
 increment: Patch
 tag-prefix: '^nuget[/]v'
 assembly-versioning-scheme: MajorMinorPatch

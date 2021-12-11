@@ -9,15 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbfa8e48bfe092042be5570606aa10be, type: 3}
-  m_Name: DefaultItemTypeToSprite
+  m_Script: {fileID: 11500000, guid: 7cf6bc0bd3bc504469e02e8dfe49f9b3, type: 3}
+  m_Name: DefaultBehaviourSymbolObjectSymbolFactory
   m_EditorClassIdentifier: 
   _mappings:
-  - key: 1
-    value: {fileID: 0}
-  - key: 3
-    value: {fileID: 0}
-  - key: 2
-    value: {fileID: 0}
-  - key: 0
-    value: {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
