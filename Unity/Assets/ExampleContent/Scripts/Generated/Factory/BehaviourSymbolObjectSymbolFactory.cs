@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultBehaviourSymbolObjectSymbolFactory", menuName = "Genesis/Factory/BehaviourSymbolObjectSymbolFactory")]
+	[CreateAssetMenu(fileName = "NewBehaviourSymbolObjectSymbolFactory", menuName = "Genesis/Factory/BehaviourSymbolObjectSymbolFactory")]
 	public sealed partial class BehaviourSymbolObjectSymbolFactory : ScriptableObject
 	{
 		#if ODIN_INSPECTOR
@@ -67,7 +67,7 @@ namespace Genesis
 		{
 			value = null;
 
-			return MappingLookup.TryGetValue(symbol, out var mapping);
+			return MappingLookup.TryGetValue(symbol, out value);
 		}
 
 		#if ODIN_INSPECTOR
