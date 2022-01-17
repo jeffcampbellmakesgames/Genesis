@@ -433,7 +433,7 @@ namespace Genesis
 		{
 			value = null;
 
-			return MappingLookup.TryGetValue(symbol, out var mapping);
+			return MappingLookup.TryGetValue(symbol, out value);
 		}
 
 		#if ODIN_INSPECTOR

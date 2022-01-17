@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultPOCOSymbolObjectSymbolFactory", menuName = "Genesis/Factory/POCOSymbolObjectSymbolFactory")]
+	[CreateAssetMenu(fileName = "NewPOCOSymbolObjectSymbolFactory", menuName = "Genesis/Factory/POCOSymbolObjectSymbolFactory")]
 	public sealed partial class POCOSymbolObjectSymbolFactory : ScriptableObject
 	{
 		#if ODIN_INSPECTOR
@@ -67,7 +67,7 @@ namespace Genesis
 		{
 			value = null;
 
-			return MappingLookup.TryGetValue(symbol, out var mapping);
+			return MappingLookup.TryGetValue(symbol, out value);
 		}
 
 		#if ODIN_INSPECTOR

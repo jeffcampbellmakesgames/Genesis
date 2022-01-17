@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultArchetypeIDToGameObjectFactory", menuName = "Genesis/Factory/ArchetypeIDToGameObjectFactory")]
+	[CreateAssetMenu(fileName = "NewArchetypeIDToGameObjectFactory", menuName = "Genesis/Factory/ArchetypeIDToGameObjectFactory")]
 	public sealed partial class ArchetypeIDToGameObjectFactory : ScriptableObject
 	{
 		[Serializable]

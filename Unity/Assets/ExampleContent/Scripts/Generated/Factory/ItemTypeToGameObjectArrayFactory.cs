@@ -10,7 +10,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "DefaultItemTypeToGameObjectArrayFactory", menuName = "Genesis/Factory/ItemTypeToGameObjectArrayFactory")]
+	[CreateAssetMenu(fileName = "NewItemTypeToGameObjectArrayFactory", menuName = "Genesis/Factory/ItemTypeToGameObjectArrayFactory")]
 	public sealed partial class ItemTypeToGameObjectArrayFactory : ScriptableObject
 	{
 		[Serializable]
