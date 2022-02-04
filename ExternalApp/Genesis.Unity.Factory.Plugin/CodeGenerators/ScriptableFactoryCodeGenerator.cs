@@ -113,7 +113,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""Genesis/Factory/${TypeName}"")]
+	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""JCMG/Genesis/Factory/${TypeName}"")]
 	public sealed partial class ${TypeName} : ScriptableObject
 	{
 		[Serializable]
@@ -285,7 +285,7 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""Genesis/Factory/${TypeName}"")]
+	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""JCMG/Genesis/Factory/${TypeName}"")]
 	public sealed partial class ${TypeName} : ScriptableObject
 	{
 		[Serializable]
@@ -365,6 +365,7 @@ namespace Genesis
 
 		private const string SYMBOL_FACTORY_TEMPLATE =
 @"using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -375,8 +376,9 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""Genesis/Factory/${TypeName}"")]
-	public sealed partial class ${TypeName} : ScriptableObject
+	[CreateAssetMenu(fileName = ""New${TypeName}"", menuName = ""JCMG/Genesis/Factory/${TypeName}"")]
+	public sealed partial class ${TypeName} : ScriptableObject,
+		IReadOnlyList<${ValueFullType}>
 	{
 		#if ODIN_INSPECTOR
 		[ValidateInput(nameof(EnsureAllSymbolValuesAreUnique),
@@ -385,8 +387,7 @@ namespace Genesis
 			""At least one Symbol value is null or empty, please ensure none are null or empty."")]
 		[ListDrawerSettings(
 			Expanded = true,
-			ShowIndexLabels = false
-			)]
+			ShowIndexLabels = false)]
 		#endif
 		#pragma warning disable 0649
 		[SerializeField]
@@ -435,6 +436,26 @@ namespace Genesis
 
 			return MappingLookup.TryGetValue(symbol, out value);
 		}
+
+		#region IReadonlyList
+		/// <inheritdoc />
+		public IEnumerator<${ValueFullType}> GetEnumerator()
+		{
+			return _mappings.GetEnumerator();
+		}
+
+		/// <inheritdoc />
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		/// <inheritdoc />
+		public int Count => _mappings.Count;
+
+		/// <inheritdoc />
+		public ${ValueFullType} this[int index] => _mappings[index];
+		#endregion
 
 		#if ODIN_INSPECTOR
 		private bool EnsureAllSymbolValuesAreUnique(List<${ValueFullType}> values)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +10,9 @@ using Sirenix.OdinInspector;
 
 namespace Genesis
 {
-	[CreateAssetMenu(fileName = "NewBehaviourSymbolObjectSymbolFactory", menuName = "Genesis/Factory/BehaviourSymbolObjectSymbolFactory")]
-	public sealed partial class BehaviourSymbolObjectSymbolFactory : ScriptableObject
+	[CreateAssetMenu(fileName = "NewBehaviourSymbolObjectSymbolFactory", menuName = "JCMG/Genesis/Factory/BehaviourSymbolObjectSymbolFactory")]
+	public sealed partial class BehaviourSymbolObjectSymbolFactory : ScriptableObject,
+		IReadOnlyList<ExampleContent.BehaviourSymbolObject>
 	{
 		#if ODIN_INSPECTOR
 		[ValidateInput(nameof(EnsureAllSymbolValuesAreUnique),
@@ -19,8 +21,7 @@ namespace Genesis
 			"At least one Symbol value is null or empty, please ensure none are null or empty.")]
 		[ListDrawerSettings(
 			Expanded = true,
-			ShowIndexLabels = false
-			)]
+			ShowIndexLabels = false)]
 		#endif
 		#pragma warning disable 0649
 		[SerializeField]
@@ -69,6 +70,26 @@ namespace Genesis
 
 			return MappingLookup.TryGetValue(symbol, out value);
 		}
+
+		#region IReadonlyList
+		/// <inheritdoc />
+		public IEnumerator<ExampleContent.BehaviourSymbolObject> GetEnumerator()
+		{
+			return _mappings.GetEnumerator();
+		}
+
+		/// <inheritdoc />
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		/// <inheritdoc />
+		public int Count => _mappings.Count;
+
+		/// <inheritdoc />
+		public ExampleContent.BehaviourSymbolObject this[int index] => _mappings[index];
+		#endregion
 
 		#if ODIN_INSPECTOR
 		private bool EnsureAllSymbolValuesAreUnique(List<ExampleContent.BehaviourSymbolObject> values)
