@@ -33,6 +33,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Genesis.Editor")]
 
 // Assembly Info
-[assembly: AssemblyVersion("2.4.3")]
-[assembly: AssemblyFileVersion("2.4.3")]
-[assembly: AssemblyInformationalVersion("2.4.3+1.Branch.develop.Sha.17832ea3a674057fe83801b9d640494d07d68392")]
+[assembly: AssemblyVersion("2.4.4")]
+[assembly: AssemblyFileVersion("2.4.4")]
+[assembly: AssemblyInformationalVersion("2.4.4+3.Branch.develop.Sha.bd6eed43db3609d78bcb61727b38263d723dc8fd")]
