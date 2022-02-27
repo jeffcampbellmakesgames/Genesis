@@ -420,10 +420,8 @@ namespace JCMG.Genesis.Editor
 			{
 				return string.Empty;
 			}
-			else
-			{
-				return Path.Combine(Path.GetFullPath(GenesisCLIInstallationFolder), EditorConstants.GENESIS_EXECUTABLE);
-			}
+
+			return Path.Combine(Path.GetFullPath(GenesisCLIInstallationFolder), EditorConstants.GENESIS_EXECUTABLE);
 		}
 
 		/// <summary>
