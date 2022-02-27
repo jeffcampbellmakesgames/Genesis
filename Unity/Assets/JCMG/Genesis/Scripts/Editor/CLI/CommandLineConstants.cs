@@ -39,7 +39,7 @@ namespace JCMG.Genesis.Editor
 		public const string LOAD_UNSAFE_PARAM = "--load-unsafe";
 
 		// Code Generation Options
-		public const string DRY_RUN_PARAM = "--dryRun";
+		public const string DRY_RUN_PARAM = "--dryrun";
 		public const string CONFIG_BASE64_PARAM = "--config-base64";
 		public const string CONFIG_FILE_PARAM = "--config-file";
 
@@ -48,5 +48,8 @@ namespace JCMG.Genesis.Editor
 		public const string OUTPUT_PATH_PARAM = "--output-path";
 		public const string PROJECT_PATH_PARAM = "--project-path";
 		public const string SOLUTION_PATH_PARAM = "--solution-path";
+
+		// Formatting
+		public const string QUOTATION_SURROUNDS_FORMAT = @"""{0}""";
 	}
 }

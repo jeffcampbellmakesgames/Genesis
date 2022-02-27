@@ -219,9 +219,12 @@ namespace JCMG.Genesis.Editor
 				.Select(x => x.ConvertToJson().ConvertToBase64())
 				.ToArray();
 			var jsonConfigsArrayArgs = FormatAsArrayArguments(jsonConfigs);
+			var cliInstallationPath = string.Format(
+				CommandLineConstants.QUOTATION_SURROUNDS_FORMAT,
+				GenesisPreferences.GetExecutablePath());
 
 			SB.Clear();
-			SB.Append(GenesisPreferences.GetExecutablePath());
+			SB.Append(cliInstallationPath);
 			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(CommandLineConstants.GENERATE_VERB_PARAM);
 			SB.Append(EditorConstants.SPACE_STR);
