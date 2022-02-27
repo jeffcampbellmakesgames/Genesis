@@ -15,6 +15,12 @@ Genesis is architected as a .Net Core console application that leverages Roslyn 
 
 ## Minimum Requirements
 * Unity 2019.4.X
+* **Scripting Runtime**: .Net 4.X
+* **.Net Core Runtime**: 3.1.X
+* **MSBuild**: MSBuild is required for the Roslyn parsing Genesis Requires. There are a few ways to ensure this is installed and I would recommend restarting your PC after performing any of these steps (see [here](https://docs.microsoft.com/en-us/visualstudio/msbuild/walkthrough-using-msbuild?view=vs-2022) for MS docs on installation).
+	* MSBuild is installed along with Visual Studio, so having VS installed accomplishes this requirement.
+	* Installing the .Net Core SDK v3.1 will ensure MSBuild is installed.
+	* Installing the Visual Studio Build Tools [here](https://docs.microsoft.com/en-us/visualstudio/msbuild/walkthrough-using-msbuild?view=vs-2022) will ensure MSBuild is available.
 
 ## Installing Genesis
 Using this library in your project can be done in three ways:
