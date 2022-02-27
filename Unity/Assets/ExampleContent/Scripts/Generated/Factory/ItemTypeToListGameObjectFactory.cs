@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if ODIN_INSPECTOR
+#if ODIN_INSPECTOR && UNITY_EDITOR
 using System.Linq;
 using Sirenix.Utilities.Editor;
 using Sirenix.OdinInspector;
@@ -16,20 +16,20 @@ namespace Genesis
 		[Serializable]
 		private class Mapping
 		{
-			#if ODIN_INSPECTOR
+			#if ODIN_INSPECTOR && UNITY_EDITOR
 			[FoldoutGroup("@key")]
 			#endif
 			#pragma warning disable 0649
 			public ExampleContent.ItemType key;
 
-			#if ODIN_INSPECTOR
+			#if ODIN_INSPECTOR && UNITY_EDITOR
 			[FoldoutGroup("@key")]
 			#endif
 			public System.Collections.Generic.List<UnityEngine.GameObject> value;
 			#pragma warning restore 0649
 		}
 
-		#if ODIN_INSPECTOR
+		#if ODIN_INSPECTOR && UNITY_EDITOR
 		[ValidateInput(nameof(EnsureAllKeyValuesAreUnique),
 			"Not all Key values are unique, please ensure each one is unique.")]
 		[ListDrawerSettings(
@@ -103,7 +103,7 @@ namespace Genesis
 			return true;
 		}
 
-		#if ODIN_INSPECTOR
+		#if ODIN_INSPECTOR && UNITY_EDITOR
 		private bool EnsureAllKeyValuesAreUnique(List<Mapping> values)
 		{
 			return values.GroupBy(x => x.key).All(x => x.Count() < 2);

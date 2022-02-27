@@ -24,8 +24,7 @@ namespace Genesis
 		#if ODIN_INSPECTOR
 		[ListDrawerSettings(
 			Expanded = true,
-			ShowIndexLabels = false
-			)]
+			ShowIndexLabels = false)]
 		#endif
 		#pragma warning disable 0649
 		[SerializeField]
