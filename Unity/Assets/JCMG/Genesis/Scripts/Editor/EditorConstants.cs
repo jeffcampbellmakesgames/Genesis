@@ -62,7 +62,11 @@ namespace JCMG.Genesis.Editor
 		public const string GENESIS_FAILED_TO_UPDATE = "Genesis CLI failed to update.";
 
 		// Dotnet Core and Genesis Assemblies
+#if UNITY_EDITOR_OSX
+		public const string DOTNET_EXE = "/usr/local/share/dotnet/dotnet";
+#else // UNITY_EDITOR_OSX
 		public const string DOTNET_EXE = "dotnet";
+#endif // UNITY_EDITOR_OSX
 		public const string GENESIS_EXECUTABLE = "Genesis.CLI.dll";
 
 		// General file and path
