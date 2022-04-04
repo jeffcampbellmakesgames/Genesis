@@ -257,7 +257,9 @@ namespace JCMG.Genesis.Editor
 		private static string GetConfigGenerationCLIArguments()
 		{
 			SB.Clear();
+			SB.Append(EditorConstants.QUOTE_STR);
 			SB.Append(GenesisPreferences.GetExecutablePath());
+			SB.Append(EditorConstants.QUOTE_STR);
 			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(CommandLineConstants.CONFIG_VERB_PARAM);
 			SB.Append(EditorConstants.SPACE_STR);
