@@ -25,7 +25,10 @@ THE SOFTWARE.
 
 using Newtonsoft.Json;
 using System.IO;
+using System.Linq;
 using Genesis.Shared;
+using JavaPropertiesParser;
+using JavaPropertiesParser.Expressions;
 
 namespace Genesis.CLI
 {
@@ -51,11 +54,37 @@ namespace Genesis.CLI
 		}
 
 		/// <summary>
-		/// Returns a <see cref="IGenesisConfig"/> instance from a Json file at <paramref name="filePath"/>.
+		/// Returns a <see cref="IGenesisConfig"/> instance from a Java-styled properties file <see cref="string"/>.
+		/// </summary>
+		public static IGenesisConfig LoadGenesisConfigFromProperties(this string propertiesConfig)
+		{
+			var properties = Parser.Parse(propertiesConfig);
+			var config = new GenesisConfig();
+
+			foreach (var expression in properties.Expressions.OfType<KeyValuePairExpression>())
+			{
+				var key = expression.Key.Text.LogicalValue;
+				var value = expression.Value.Text.LogicalValue;
+
+				config.SetValue(key, value);
+			}
+
+			return config;
+		}
+
+		/// <summary>
+		/// Returns a <see cref="IGenesisConfig"/> instance from a file at <paramref name="filePath"/>. Loads the file
+		/// as a .properties file if <paramref name="filePath"/> ends in ".properties", otherwise loads it as JSON.
 		/// </summary>
 		public static IGenesisConfig LoadGenesisConfigFromFile(this string filePath)
 		{
 			var fileContents = File.ReadAllText(filePath);
+
+			if (filePath.EndsWith(".properties"))
+			{
+				return fileContents.LoadGenesisConfigFromProperties();
+			}
+
 			return fileContents.LoadGenesisConfigFromJson();
 		}
 
