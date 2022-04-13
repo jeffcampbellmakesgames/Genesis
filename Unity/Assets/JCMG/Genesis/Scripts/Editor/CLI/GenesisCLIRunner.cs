@@ -256,8 +256,12 @@ namespace JCMG.Genesis.Editor
 
 		private static string GetConfigGenerationCLIArguments()
 		{
+			var cliInstallationPath = string.Format(
+				CommandLineConstants.QUOTATION_SURROUNDS_FORMAT,
+				GenesisPreferences.GetExecutablePath());
+
 			SB.Clear();
-			SB.Append(GenesisPreferences.GetExecutablePath());
+			SB.Append(cliInstallationPath);
 			SB.Append(EditorConstants.SPACE_STR);
 			SB.Append(CommandLineConstants.CONFIG_VERB_PARAM);
 			SB.Append(EditorConstants.SPACE_STR);
