@@ -63,8 +63,8 @@ namespace Genesis.CLI
 
 			foreach (var expression in properties.Expressions.OfType<KeyValuePairExpression>())
 			{
-				var key = expression.Key.Text.LogicalValue;
-				var value = expression.Value.Text.LogicalValue;
+				var key = expression.Key?.Text?.LogicalValue ?? string.Empty;
+				var value = expression.Value?.Text?.LogicalValue ?? string.Empty;
 
 				config.SetValue(key, value);
 			}
