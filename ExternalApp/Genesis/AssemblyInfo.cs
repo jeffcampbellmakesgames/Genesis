@@ -26,6 +26,6 @@ THE SOFTWARE.
 using System.Reflection;
 
 // Assembly Info
-[assembly: AssemblyVersion("2.4.4")]
-[assembly: AssemblyFileVersion("2.4.4")]
-[assembly: AssemblyInformationalVersion("2.4.4+3.Branch.develop.Sha.bd6eed43db3609d78bcb61727b38263d723dc8fd")]
+[assembly: AssemblyVersion("2.4.5")]
+[assembly: AssemblyFileVersion("2.4.5")]
+[assembly: AssemblyInformationalVersion("2.4.5+7.Branch.develop.Sha.3878401dabdbe4b600304a257e19ead9b8594bb2")]
