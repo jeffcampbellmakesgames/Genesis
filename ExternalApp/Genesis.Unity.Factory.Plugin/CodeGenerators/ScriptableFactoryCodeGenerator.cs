@@ -203,7 +203,7 @@ namespace Genesis
 
 			value = mapping.value;
 
-			return true;
+			return value != null;
 		}
 
 		#if ODIN_INSPECTOR && UNITY_EDITOR
@@ -356,7 +356,7 @@ namespace Genesis
 
 			value = mapping.value;
 
-			return true;
+			return value != null;
 		}
 	}
 }
