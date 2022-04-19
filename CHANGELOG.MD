@@ -5,6 +5,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Releases]
+### [2.4.6] - 2022-19-04
+#### Added
+* Added ability to load and create java ".properties" style configs
+
+#### Changed
+* Added additional logging for code-generation when loading configs
+
+## [Releases]
+### [2.4.5] - 2022-18-04
+#### Fixed
+* Fixed bug where the Unity project path could not include spaces when generating config contents
+
+## [Releases]
+### [2.4.4] - 2022-27-02
+#### Fixed
+* Fixed bug where the Unity project path could not include spaces when generating code
+
+## [Releases]
+### [2.4.3] - 2022-06-02
+#### Fixed
+* Fixed build compilation failure with scriptable factory class and odin integration
+
+## [Releases]
+### [2.4.2] - 2022-04-02
+#### Changed
+* Updated build pipeline to include dependency updates
+
+#### Changed
+* Updated factory output classes to include helper methods 
+
+## [Releases]
+### [2.4.1] - 2022-17-01
+#### Fixed
+* Fixed bug with factory TryGet method
+
+## [Releases]
 ### [2.4.0] - 2021-11-12
 #### Added
 * A new factory option is available via new types `ISymbolObject` and `GenerateSymbolFactoryAttribute`. `ISymbolObject` represents a uniquely identified object by way of a `string` `Symbol` field. Any types implementing this interface that are also decorated with `GenerateSymbolFactoryAttribute` will have factory types generated for them to enable retrieving the implementing type by it's `Symbol` value.
