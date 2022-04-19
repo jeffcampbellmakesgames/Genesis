@@ -23,9 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-using Newtonsoft.Json;
-using System.IO;
+using Genesis.Plugin;
 using Genesis.Shared;
+using JavaPropertiesParser;
+using JavaPropertiesParser.Expressions;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using static JavaPropertiesParser.Build;
 
 namespace Genesis.CLI
 {
@@ -51,11 +58,37 @@ namespace Genesis.CLI
 		}
 
 		/// <summary>
-		/// Returns a <see cref="IGenesisConfig"/> instance from a Json file at <paramref name="filePath"/>.
+		/// Returns a <see cref="IGenesisConfig"/> instance from a Java-styled properties file <see cref="string"/>.
+		/// </summary>
+		public static IGenesisConfig LoadGenesisConfigFromProperties(this string propertiesConfig)
+		{
+			var properties = Parser.Parse(propertiesConfig);
+			var config = new GenesisConfig();
+
+			foreach (var expression in properties.Expressions.OfType<KeyValuePairExpression>())
+			{
+				var key = expression.Key?.Text?.LogicalValue ?? string.Empty;
+				var value = expression.Value?.Text?.LogicalValue ?? string.Empty;
+
+				config.SetValue(key, value);
+			}
+
+			return config;
+		}
+
+		/// <summary>
+		/// Returns a <see cref="IGenesisConfig"/> instance from a file at <paramref name="filePath"/>. Loads the file
+		/// as a .properties file if <paramref name="filePath"/> ends in ".properties", otherwise loads it as JSON.
 		/// </summary>
 		public static IGenesisConfig LoadGenesisConfigFromFile(this string filePath)
 		{
 			var fileContents = File.ReadAllText(filePath);
+
+			if (filePath.EndsWith(".properties"))
+			{
+				return fileContents.LoadGenesisConfigFromProperties();
+			}
+
 			return fileContents.LoadGenesisConfigFromJson();
 		}
 
@@ -65,6 +98,52 @@ namespace Genesis.CLI
 		public static string ConvertToJson(this GenesisConfig genesisConfig)
 		{
 			return JsonConvert.SerializeObject(genesisConfig, Formatting.Indented);
+		}
+
+		/// <summary>
+		/// Returns a string representing the serialized java properties form of this config.
+		/// </summary>
+		public static string ConvertToPropertiesFile(this GenesisConfig genesisConfig)
+		{
+			var stringBuilder = new StringBuilder();
+			var separator = Separator("=");
+			var expressions = new List<ITopLevelExpression>();
+			foreach (var kvp in genesisConfig.keyValuePairs)
+			{
+				ValueExpression value;
+				var rawValue = kvp.value;
+
+				// If the config value is an array, attempt to split it out over multiple lines
+				var arrayRawValue = rawValue.Split(",");
+				if (arrayRawValue.Length > 1)
+				{
+					stringBuilder.Clear();
+					stringBuilder.AppendLine(" /");
+					for (var i = 0; i < arrayRawValue.Length; i++)
+					{
+						var str = arrayRawValue[i];
+						stringBuilder.Append($"    {str.Trim()} /");
+
+						if (i < arrayRawValue.Length - 1)
+						{
+							stringBuilder.AppendLine();
+						}
+					}
+
+					value = Value(stringBuilder.ToString());
+				}
+				else
+				{
+					value = Value(kvp.value);
+				}
+
+				var key = Key(kvp.key);
+				expressions.Add(Pair(key, separator, value));
+				expressions.Add(Whitespace("\n"));
+			}
+
+			var properties = Doc(expressions.ToArray());
+			return properties.ToString().ToUnixLineEndings();
 		}
 	}
 }

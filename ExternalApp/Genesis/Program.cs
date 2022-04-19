@@ -110,9 +110,16 @@ namespace Genesis.CLI
 					}
 
 					// Write config to file.
-					var jsonContents = genesisConfig.ConvertToJson();
-					await File.WriteAllTextAsync(configOptions.CreatePath, jsonContents);
+					var fileContents = configOptions.UsePropertiesFile
+						? genesisConfig.ConvertToPropertiesFile()
+						: genesisConfig.ConvertToJson();
 
+					var filePath = configOptions.UsePropertiesFile
+						? configOptions.CreatePath + ".properties"
+						: configOptions.CreatePath + ".json";
+
+					await File.WriteAllTextAsync(filePath, fileContents);
+					
 					_LOGGER.Verbose("Config is written to {CreatePath}.", configOptions.CreatePath);
 				}
 			}
@@ -178,6 +185,8 @@ namespace Genesis.CLI
 						{
 							if (File.Exists(configFilePath))
 							{
+								_LOGGER.Verbose("Attempting to load file config from {ConfigFilePath}.", configFilePath);
+
 								configs.Add(configFilePath.LoadGenesisConfigFromFile());
 							}
 							else
