@@ -43,8 +43,9 @@ namespace Genesis.CLI
 		[Option(
 			longName: "output-path",
 			SetName = "create",
-			HelpText = "The output file path where this config should be written",
-			Default = "new_config.json")]
+			HelpText = "The output file path where this config should be written. Depending on the type of file " +
+			           "written the appropriate file extension will be used (.json or .properties).",
+			Default = "Genesis.CLI")]
 		public string CreatePath { get; set; }
 
 		[Option(
@@ -64,5 +65,11 @@ namespace Genesis.CLI
 			HelpText = "Forces out-of-date plugins to be loaded",
 			Default = false)]
 		public bool DoLoadUnsafe { get; set; }
+
+		[Option(
+			"use-properties-file",
+			HelpText = "Creates a properties config file rather than a json file.",
+			Default = false)]
+		public bool UsePropertiesFile { get; set; }
 	}
 }
