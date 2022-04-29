@@ -114,9 +114,16 @@ namespace Genesis.CLI
 						? genesisConfig.ConvertToPropertiesFile()
 						: genesisConfig.ConvertToJson();
 
-					var filePath = configOptions.UsePropertiesFile
-						? configOptions.CreatePath + ".properties"
-						: configOptions.CreatePath + ".json";
+
+					var extension = configOptions.UsePropertiesFile
+						? ".properties"
+						: ".json";
+
+					var filePath = configOptions.CreatePath;
+					if (!filePath.EndsWith(extension))
+					{
+						filePath = Path.GetFullPath(filePath + extension);
+					}
 
 					await File.WriteAllTextAsync(filePath, fileContents);
 					
