@@ -20,8 +20,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="LazyCache" Version="2.4.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.10.0-1.final" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.10.0-1.final" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.1.0" />
 		<PackageReference Include="Serilog" Version="2.11.0" />
 	</ItemGroup>
 
